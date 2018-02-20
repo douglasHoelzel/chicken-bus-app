@@ -15,7 +15,11 @@ import { Marker, Callout } from 'expo';
 import { Button, List, ListItem } from 'native-base';
 import Modal from "react-native-modal";
 
-
+{/* Notes:
+    Like and dislike need update ajax calls,
+    You need a get ajax call for a single object given a title,
+    If time: animation on like, make a cusom modal popup
+*/}
 export default class MapScreen extends React.Component {
     
 constructor(props){
@@ -41,10 +45,10 @@ toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
 }   
 likePress(){
-   Alert.alert('Like Clicked');
+   Alert.alert('You Clicked Like');
 }
 dislikePress(){
-    Alert.alert('Dislike Clicked');
+    Alert.alert('You Clicked Dislike');
 }
 
   render() {
