@@ -1,13 +1,6 @@
 import React from 'react';
 import {
-  Image,
-  Alert,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+  Image, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { MapView } from 'expo';
@@ -19,15 +12,29 @@ import Modal from "react-native-modal";
     Like and dislike need update ajax calls,
     You need a get ajax call for a single object given a title,
     If time: animation on like, make a cusom modal popup
+    
+    Later:
+    Custom modal for like / dislike (cool animation)
+    Fix spacing between like / dislike buttons
 */}
 export default class MapScreen extends React.Component {
     
 constructor(props){
     super(props);
     this.state = {  
-        markers: [] ,
+        markers: [],
         isButtonDisabled: false,
-        isModalVisible: false
+        isModalVisible: false,
+        singleLocation: {
+                            	"likes": 19,
+                            	"dislikes": 2,
+                            	"_id": "5a85e5754186bb002f57eef7",
+                            	"title": "SouthPoint Mall",
+                            	"description": "Shopping Mall",
+                            	"latitude": 35.904412,
+                            	"longitude": -78.943713,
+                            	"__v": 0
+                            }
     };
 }
 static navigationOptions = {
@@ -42,6 +49,9 @@ getAllLocations = async () => {
     const json = await response.json();
     this.setState({ markers: json.doc });
 };
+getSingleLocation = async () => {
+
+};
 toggleMainModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
 }   
@@ -55,11 +65,10 @@ dislikePress = () => {
 }
 
   render() {
+      console.log("SingleLocation: ", this.state.singleLocation);
     return (
       <View style={styles.container}>
-            <Text style={styles.getStartedText}>
-              Map
-            </Text>
+            <Text style={styles.getStartedText}> Map </Text>
             <MapView
                 style={{ flex: 1 }}
                 initialRegion={{
@@ -89,10 +98,10 @@ dislikePress = () => {
  
                     <List>
                         <ListItem >
-                          <Text>Name: Buns </Text>
+                          <Text>Name: {this.state.singleLocation.title} </Text>
                         </ListItem>
                         <ListItem>
-                          <Text>Description: Hamburger Restaurant</Text>
+                          <Text>Description: {this.state.singleLocation.description}</Text>
                         </ListItem>
                         <ListItem>
                           <Text>Town: Chapel Hill </Text>
@@ -109,32 +118,36 @@ dislikePress = () => {
                    </List>
                    <View style={styles.rowContainer}>
                     <TouchableOpacity onPress={this.likePress} disabled={this.state.isButtonDisabled}> 
-                        <Text style={styles.thumbsIconText}><Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 9 </Text>
+                        <Text style={styles.thumbsIconText}>
+                            <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 
+                            {this.state.singleLocation.likes} </Text>
                     </TouchableOpacity>
+                    <View style={styles.likeImageBuffer}></View>
                     <TouchableOpacity onPress={this.dislikePress} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconText}><Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/> 2 </Text>
+                        <Text style={styles.thumbsIconText}>
+                        <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
+                         {this.state.singleLocation.dislikes} </Text>
                     </TouchableOpacity>
                     </View>
 
-                <Button block style={styles.backButton}
-                    onPress={this.toggleMainModal}>
-                    <Text style={styles.backButtonText}>Back</Text>
-                </Button>
+                    <Button block style={styles.backButton}
+                        onPress={this.toggleMainModal}>
+                        <Text style={styles.backButtonText}>Back</Text>
+                    </Button>
               </View>
-          </ScrollView>
-
-            </Modal>
+              </ScrollView>
+              </Modal>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  getStartedText: {
+getStartedText: {
     fontSize: 20,
     color: 'rgba(96,100,109, 1)',
     marginTop: 30,
@@ -152,6 +165,7 @@ detailsHeader:{
 },
 rowContainer:{
     paddingTop: 30,
+    paddingBottom: 30,
     justifyContent: 'center',
     flexDirection: 'row'
 },
@@ -164,12 +178,14 @@ thumbsIconText: {
 thumbsUpIcon:{
     width: 20,
     height: 20,
-    marginLeft: 10,
 },
 thumbsDownIcon:{
     width: 20,
     height: 20,
-    marginLeft: 10,
+},
+likeImageBuffer:{
+    marginLeft: 20,
+    marginRight: 20,
 },
 modal: {
   flex: 1,
