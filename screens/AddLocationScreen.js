@@ -12,7 +12,7 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
-export default class HomeScreen extends React.Component {
+export default class AddLocation extends React.Component {
   static navigationOptions = {
     header: null,
   };
@@ -22,18 +22,10 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/chickenBusLogo1.png')
-                  : require('../assets/images/chickenBusLogo1.png')
-              }
-              style={styles.welcomeImage}
-            />
           </View>
           <View style={styles.getStartedContainer}>
             <Text style={styles.getStartedText}>
-              Login Page
+              Add Location Page
             </Text>
           </View>
         </ScrollView>
