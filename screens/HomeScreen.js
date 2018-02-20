@@ -22,13 +22,12 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
-            <Image
+            <Image style={styles.welcomeImage}
               source={
                 __DEV__
                   ? require('../assets/images/chickenBusLogo1.png')
                   : require('../assets/images/chickenBusLogo1.png')
               }
-              style={styles.welcomeImage}
             />
           </View>
           <View style={styles.getStartedContainer}>
