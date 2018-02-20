@@ -9,21 +9,38 @@ import {
   View,
 } from 'react-native';
 import { WebBrowser } from 'expo';
+import { MapView } from 'expo';
 
-import { MonoText } from '../components/StyledText';
 
 export default class MapScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
+  
+  fetchAllLocations = async () => {
+        const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations");
+        const json = await response.json();
+        this.setState({ data: json });
+        console.log("AJAX RETURNS: " , json);
+    };
 
   render() {
+      console.log("inside of render function");
     return (
       <View style={styles.container}>
             <Text style={styles.getStartedText}>
-              Map Page
+              Map
             </Text>
-          </View>
+            <MapView
+                style={{ flex: 1 }}
+                initialRegion={{
+                  latitude: 35.889942,
+                  longitude: -78.862621,
+                  latitudeDelta: 1,
+                  longitudeDelta: 1,
+                }}
+              />
+      </View>
     );
   }
 }
