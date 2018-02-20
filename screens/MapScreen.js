@@ -26,6 +26,7 @@ constructor(props){
     super(props);
     this.state = {  
         markers: [] ,
+        isButtonDisabled: false,
         isModalVisible: false
     };
 }
@@ -41,14 +42,16 @@ getAllLocations = async () => {
     const json = await response.json();
     this.setState({ markers: json.doc });
 };
-toggleModal = () => {
+toggleMainModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
 }   
-likePress(){
-   Alert.alert('You Clicked Like');
+likePress = () => {
+   Alert.alert('Like Added');
+   this.setState({ isButtonDisabled: true});
 }
-dislikePress(){
-    Alert.alert('You Clicked Dislike');
+dislikePress = () => {
+    Alert.alert('Dislike Added');
+    this.setState({ isButtonDisabled: true});
 }
 
   render() {
@@ -73,7 +76,7 @@ dislikePress(){
                   title={marker.title}
                   description={marker.description}
                   key={marker._id}
-                  onCalloutPress={this.toggleModal}
+                  onCalloutPress={this.toggleMainModal}
                   />
                   ))}
               </MapView>
@@ -105,16 +108,16 @@ dislikePress(){
                         </ListItem>
                    </List>
                    <View style={styles.rowContainer}>
-                    <TouchableOpacity onPress={this.likePress}> 
+                    <TouchableOpacity onPress={this.likePress} disabled={this.state.isButtonDisabled}> 
                         <Text style={styles.thumbsIconText}><Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 9 </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.dislikePress}>
+                    <TouchableOpacity onPress={this.dislikePress} disabled={this.state.isButtonDisabled}>
                         <Text style={styles.thumbsIconText}><Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/> 2 </Text>
                     </TouchableOpacity>
                     </View>
 
                 <Button block style={styles.backButton}
-                    onPress={this.toggleModal}>
+                    onPress={this.toggleMainModal}>
                     <Text style={styles.backButtonText}>Back</Text>
                 </Button>
               </View>
