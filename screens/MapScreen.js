@@ -10,14 +10,16 @@ import {
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { MapView } from 'expo';
+import { Marker, Callout } from 'expo';
+
 
 export default class MapScreen extends React.Component {
 constructor(props){
     super(props);
-    this.state = {
-        rovers: [],
-        data: []
-    }
+    this.state = {  
+        markers: [] ,
+        isModalVisible: false
+    };
 }
 
 
@@ -26,25 +28,16 @@ constructor(props){
   };
   
   componentWillMount(){
-        this.fetchAllLocations();
-        this.getRovers();
-        
+        this.fetchAllLocations();        
   }
-  getRovers = async () =>{
-      var url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations";
-      return fetch(url).then((res) => res.json());
-      this.setState({ rovers: res.rovers});
-      console.log("inside of rovers function");
-  };
   fetchAllLocations = async () => {
         const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations");
         const json = await response.json();
-        this.setState({ data: json });
+        this.setState({ markers: json.doc });
     };
 
   render() {
-      console.log("Data[]: " , this.state.data);
-      console.log("Rovers[]: " , this.state.rovers);
+      console.log("markers: " , this.state.markers);
     return (
       <View style={styles.container}>
             <Text style={styles.getStartedText}>
@@ -58,18 +51,18 @@ constructor(props){
                   latitudeDelta: 1,
                   longitudeDelta: 1,
                 }}
-                />
-                  {/*{this.state.data.map(marker => (
-                  <Marker 
+                >
+                  {this.state.markers.map(marker => (
+                  <MapView.Marker 
                   coordinate={{
                   latitude: marker.latitude,
                   longitude:  marker.longitude}}
                   title={marker.title}
                   description={marker.description}
-                  onCalloutPress={this.toggleModal}
+                  key={marker._id}
                   />
                   ))}
-              </MapView>*/}
+              </MapView>
       </View>
     );
   }
