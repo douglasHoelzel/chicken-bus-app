@@ -41,9 +41,11 @@ toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
 }   
 likePress(){
-   Alert.alert('Like Clicked')
+   Alert.alert('Like Clicked');
 }
-
+dislikePress(){
+    Alert.alert('Dislike Clicked');
+}
 
   render() {
     return (
@@ -99,8 +101,12 @@ likePress(){
                         </ListItem>
                    </List>
                    <View style={styles.rowContainer}>
-                    <Text style={styles.thumbsIconText}><Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 9 </Text>
-                    <Text style={styles.thumbsIconText}><Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/> 2 </Text>
+                    <TouchableOpacity onPress={this.likePress}> 
+                        <Text style={styles.thumbsIconText}><Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 9 </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.dislikePress}>
+                        <Text style={styles.thumbsIconText}><Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/> 2 </Text>
+                    </TouchableOpacity>
                     </View>
 
                 <Button block style={styles.backButton}
