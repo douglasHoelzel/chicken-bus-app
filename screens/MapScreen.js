@@ -16,6 +16,10 @@ import Modal from "react-native-modal";
     Later:
     Custom modal for like / dislike (cool animation)
     Fix spacing between like / dislike buttons
+    Share on facebook button
+    
+    Other: 
+    API key for Google geocoding: AIzaSyBF6LAi7J1sHx6Xsd5m-praYGy6Ys6R0eI
 */}
 export default class MapScreen extends React.Component {
     
@@ -24,7 +28,9 @@ constructor(props){
     this.state = {  
         markers: [],
         isButtonDisabled: false,
-        isModalVisible: false,
+        isMainModalVisible: false,
+        latitude: null,
+        longitude: null,
         singleLocation: {
                             	"likes": 19,
                             	"dislikes": 2,
@@ -53,7 +59,7 @@ getSingleLocation = async () => {
 
 };
 toggleMainModal = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible });
+    this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
 }   
 likePress = () => {
    Alert.alert('Like Added');
@@ -65,7 +71,6 @@ dislikePress = () => {
 }
 
   render() {
-      console.log("SingleLocation: ", this.state.singleLocation);
     return (
       <View style={styles.container}>
             <Text style={styles.getStartedText}> Map </Text>
@@ -91,7 +96,7 @@ dislikePress = () => {
               </MapView>
               
               <Modal style={styles.modal}
-                isVisible={this.state.isModalVisible}>
+                isVisible={this.state.isMainModalVisible}>
                 <ScrollView>
               <View style={{width: 372}}>
                 <Text style={styles.detailsHeader}>Details </Text>
@@ -104,7 +109,7 @@ dislikePress = () => {
                           <Text>Description: {this.state.singleLocation.description}</Text>
                         </ListItem>
                         <ListItem>
-                          <Text>Town: Chapel Hill </Text>
+                          <Text>City: Chapel Hill </Text>
                         </ListItem>
                         <ListItem>
                           <Text>Times Visited:  847 </Text>
@@ -136,6 +141,11 @@ dislikePress = () => {
                     </Button>
               </View>
               </ScrollView>
+              </Modal>
+              <Modal style={styles.likeModal}
+                isVisible={this.state.isLikeModalVisible}>
+                <Text> Like Modal </Text>
+ 
               </Modal>
       </View>
     );
@@ -192,6 +202,12 @@ modal: {
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: '#FFFFFF',
+},
+likeModal:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2BD228',
 },
 backButton: {
   borderRadius: 0,
