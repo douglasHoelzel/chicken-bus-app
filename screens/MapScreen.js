@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Image, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View,
+  Image, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { MapView } from 'expo';
@@ -9,8 +9,6 @@ import { Button, List, ListItem } from 'native-base';
 import Modal from "react-native-modal";
 
 {/* Notes:
-    Like and dislike need update ajax calls,
-    You need a get ajax call for a single object given a title,
     If time: animation on like, make a cusom modal popup
     
     Later:
@@ -56,6 +54,7 @@ toggleMainModal = (location) => {
 }   
 toggleMainModalNoAjax = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
+    this.setState({ isButtonDisabled: false});
 }   
 likePress = (location, choice) => {
    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikes";
@@ -125,16 +124,16 @@ likePress = (location, choice) => {
                         </ListItem>
                    </List>
                    <View style={styles.rowContainer}>
-                    <TouchableOpacity onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}> 
-                        <Text style={styles.thumbsIconText}>
+                    <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}> 
+                        <Text style={styles.thumbsIconTextLeft}>
                             <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 
                             {this.state.tempLocation.likes} </Text>
                     </TouchableOpacity>
                     <View style={styles.likeImageBuffer}></View>
-                    <TouchableOpacity onPress={() => this.likePress(this.state.tempLocation.title, "dislike")} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconText}>
+                    <TouchableOpacity style={styles.thumbButtonOpacityRight}  onPress={() => this.likePress(this.state.tempLocation.title, "dislike")} disabled={this.state.isButtonDisabled}>
+                        <Text style={styles.thumbsIconTextRight}>{this.state.tempLocation.dislikes} </Text>
                         <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
-                         {this.state.tempLocation.dislikes} </Text>
+                         
                     </TouchableOpacity>
                     </View>
 
@@ -145,12 +144,10 @@ likePress = (location, choice) => {
               </View>
               </ScrollView>
               </Modal>
-              <Modal style={styles.likeModal}
-                isVisible={this.state.isLikeModalVisible}>
-                <Text> Like Modal </Text>
- 
-              </Modal>
       </View>
+      
+      
+     
     );
   }
 }
@@ -182,11 +179,18 @@ rowContainer:{
     justifyContent: 'center',
     flexDirection: 'row'
 },
-thumbsIconText: {
+thumbsIconTextLeft: {
     fontWeight: 'bold',
     fontSize:  21,
     color: '#4B4B4B',
     paddingLeft: 10,
+},
+thumbsIconTextRight: {
+    fontWeight: 'bold',
+    fontSize:  21,
+    color: '#4B4B4B',
+    paddingLeft: 30,
+    marginTop: -3,
 },
 thumbsUpIcon:{
     width: 20,
@@ -195,6 +199,7 @@ thumbsUpIcon:{
 thumbsDownIcon:{
     width: 20,
     height: 20,
+    marginTop: -23,
 },
 likeImageBuffer:{
     marginLeft: 20,
@@ -206,12 +211,6 @@ modal: {
   justifyContent: 'center',
   backgroundColor: '#FFFFFF',
 },
-likeModal:{
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#2BD228',
-},
 backButton: {
   borderRadius: 0,
   backgroundColor: '#5E8DF7',
@@ -222,5 +221,23 @@ backButtonText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize:  18,
+},
+thumbButtonOpacityLeft:{
+    height: 70,
+    width: 70,
+    borderRadius: 40,
+    paddingTop: 22,
+    paddingLeft: 9,
+    position: 'relative',
+    backgroundColor: '#F1F1F1'
+},
+thumbButtonOpacityRight:{
+    height: 70,
+    width: 70,
+    borderRadius: 40,
+    paddingTop: 26,
+    paddingLeft: 11,
+    position: 'relative',
+    backgroundColor: '#F1F1F1'
 }
 });

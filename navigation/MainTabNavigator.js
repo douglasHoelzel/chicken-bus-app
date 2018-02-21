@@ -15,10 +15,10 @@ export default TabNavigator(
     Home: {
       screen: HomeScreen,
     },
-    MapPage: {
+    Map: {
       screen: MapScreen,
     },
-    AddLocation: {
+    Add: {
       screen: AddLocationScreen,
     },
     Settings: {
@@ -37,10 +37,10 @@ export default TabNavigator(
                 ? `ios-home${focused ? '' : '-outline'}`
                 : 'md-home';
             break;
-          case 'MapPage':
+          case 'Map':
             iconName = Platform.OS === 'ios' ? `ios-map${focused ? '' : '-outline'}` : 'md-map';
             break;
-            case 'AddLocation':
+            case 'Add':
               iconName = Platform.OS === 'ios' ? `ios-add${focused ? '' : '-outline'}` : 'md-add';
               break;
           case 'Settings':
