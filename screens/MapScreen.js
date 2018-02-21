@@ -29,18 +29,7 @@ constructor(props){
         markers: [],
         isButtonDisabled: false,
         isMainModalVisible: false,
-        latitude: null,
-        longitude: null,
-        singleLocation: {
-                            	"likes": 19,
-                            	"dislikes": 2,
-                            	"_id": "5a85e5754186bb002f57eef7",
-                            	"title": "SouthPoint Mall",
-                            	"description": "Shopping Mall",
-                            	"latitude": 35.904412,
-                            	"longitude": -78.943713,
-                            	"__v": 0
-                            }
+        tempLocation: [],
     };
 }
 static navigationOptions = {
@@ -48,22 +37,32 @@ static navigationOptions = {
 };
   
 componentWillMount(){
-        this.getAllLocations();        
+        this.getAllLocations();  
 }
 getAllLocations = async () => {
     const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations");
     const json = await response.json();
     this.setState({ markers: json.doc });
 };
-getSingleLocation = async () => {
-
+getSingleLocation = async (location) => {
+    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getlocation/" + location;
+    const response = await fetch(url);
+    const json = await response.json();
+    this.setState({ tempLocation: json.doc });
+    console.log("JSON: ", json.doc);
 };
-toggleMainModal = () => {
+toggleMainModal = (location) => {
+    this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
+    this.getSingleLocation(location);
+}   
+toggleMainModalNoAjax = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
 }   
-likePress = () => {
+likePress = (location) => {
+   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getlocation/" + location;
    Alert.alert('Like Added');
    this.setState({ isButtonDisabled: true});
+   console.log("Like Location: " , location);
 }
 dislikePress = () => {
     Alert.alert('Dislike Added');
@@ -90,7 +89,7 @@ dislikePress = () => {
                   title={marker.title}
                   description={marker.description}
                   key={marker._id}
-                  onCalloutPress={this.toggleMainModal}
+                  onCalloutPress={() => this.toggleMainModal(marker.title)}
                   />
                   ))}
               </MapView>
@@ -103,10 +102,10 @@ dislikePress = () => {
  
                     <List>
                         <ListItem >
-                          <Text>Name: {this.state.singleLocation.title} </Text>
+                          <Text>Name: {this.state.tempLocation.title} </Text>
                         </ListItem>
                         <ListItem>
-                          <Text>Description: {this.state.singleLocation.description}</Text>
+                          <Text>Description: {this.state.tempLocation.description}</Text>
                         </ListItem>
                         <ListItem>
                           <Text>City: Chapel Hill </Text>
@@ -122,21 +121,21 @@ dislikePress = () => {
                         </ListItem>
                    </List>
                    <View style={styles.rowContainer}>
-                    <TouchableOpacity onPress={this.likePress} disabled={this.state.isButtonDisabled}> 
+                    <TouchableOpacity onPress={() => this.likePress(this.state.tempLocation.title)} disabled={this.state.isButtonDisabled}> 
                         <Text style={styles.thumbsIconText}>
                             <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 
-                            {this.state.singleLocation.likes} </Text>
+                            {this.state.tempLocation.likes} </Text>
                     </TouchableOpacity>
                     <View style={styles.likeImageBuffer}></View>
                     <TouchableOpacity onPress={this.dislikePress} disabled={this.state.isButtonDisabled}>
                         <Text style={styles.thumbsIconText}>
                         <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
-                         {this.state.singleLocation.dislikes} </Text>
+                         {this.state.tempLocation.dislikes} </Text>
                     </TouchableOpacity>
                     </View>
 
-                    <Button block style={styles.backButton}
-                        onPress={this.toggleMainModal}>
+                    <Button block style={styles.backButton} 
+                        onPress={this.toggleMainModalNoAjax}>
                         <Text style={styles.backButtonText}>Back</Text>
                     </Button>
               </View>
