@@ -49,7 +49,6 @@ getSingleLocation = async (location) => {
     const response = await fetch(url);
     const json = await response.json();
     this.setState({ tempLocation: json.doc });
-    console.log("JSON: ", json.doc);
 };
 toggleMainModal = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
@@ -59,13 +58,35 @@ toggleMainModalNoAjax = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
 }   
 likePress = (location) => {
-   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getlocation/" + location;
+   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikes";
    Alert.alert('Like Added');
+   fetch(url, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'like',
+            title: location,
+          })
+        });
    this.setState({ isButtonDisabled: true});
-   console.log("Like Location: " , location);
 }
-dislikePress = () => {
+dislikePress = (location) => {
+    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikes";
     Alert.alert('Dislike Added');
+    fetch(url, {
+           method: 'POST',
+           headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             type: 'dislike',
+             title: location,
+           })
+         });
     this.setState({ isButtonDisabled: true});
 }
 
@@ -127,7 +148,7 @@ dislikePress = () => {
                             {this.state.tempLocation.likes} </Text>
                     </TouchableOpacity>
                     <View style={styles.likeImageBuffer}></View>
-                    <TouchableOpacity onPress={this.dislikePress} disabled={this.state.isButtonDisabled}>
+                    <TouchableOpacity onPress={() => this.dislikePress(this.state.tempLocation.title)} disabled={this.state.isButtonDisabled}>
                         <Text style={styles.thumbsIconText}>
                         <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
                          {this.state.tempLocation.dislikes} </Text>
