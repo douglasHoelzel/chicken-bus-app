@@ -7,6 +7,7 @@ import { MapView } from 'expo';
 import { Marker, Callout } from 'expo';
 import { Button, List, ListItem } from 'native-base';
 import Modal from "react-native-modal";
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 {/* Notes:
     If time: animation on like, make a cusom modal popup
@@ -27,6 +28,7 @@ constructor(props){
         markers: [],
         isButtonDisabled: false,
         isMainModalVisible: false,
+        showAlert: false,
         tempLocation: [],
     };
 }
@@ -56,9 +58,19 @@ toggleMainModalNoAjax = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
     this.setState({ isButtonDisabled: false});
 }   
+showAlert = () => {
+    this.setState({
+      showAlert: true
+    });
+  };
+
+  hideAlert = () => {
+    this.setState({
+      showAlert: false
+    });
+  };
 likePress = (location, choice) => {
    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikes";
-   Alert.alert('Like Added');
    fetch(url, {
           method: 'POST',
           headers: {
@@ -71,6 +83,7 @@ likePress = (location, choice) => {
           })
         });
    this.setState({ isButtonDisabled: true});
+   this.showAlert();
 }
   render() {
     return (
