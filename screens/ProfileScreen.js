@@ -21,7 +21,7 @@ export default class SettingsScreen extends React.Component {
     return (
       <View style={styles.container}>
             <Text style={styles.getStartedText}>
-              Settings Page
+              Profile Page
             </Text>
           </View>
     );

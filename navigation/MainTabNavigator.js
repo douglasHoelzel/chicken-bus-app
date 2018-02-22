@@ -7,7 +7,7 @@ import Colors from '../constants/Colors';
 
 import HomeScreen from '../screens/HomeScreen';
 import MapScreen from '../screens/MapScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import AddLocationScreen from '../screens/AddLocationScreen';
 
 export default TabNavigator(
@@ -21,8 +21,8 @@ export default TabNavigator(
     Add: {
       screen: AddLocationScreen,
     },
-    Settings: {
-      screen: SettingsScreen,
+    Profile: {
+      screen: ProfileScreen,
     },
   },
   {
@@ -43,7 +43,7 @@ export default TabNavigator(
             case 'Add':
               iconName = Platform.OS === 'ios' ? `ios-add${focused ? '' : '-outline'}` : 'md-add';
               break;
-          case 'Settings':
+          case 'Profile':
             iconName =
               Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
         }
