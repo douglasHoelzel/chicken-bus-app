@@ -45,7 +45,7 @@ export default TabNavigator(
               break;
           case 'Profile':
             iconName =
-              Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
+              Platform.OS === 'ios' ? `ios-person${focused ? '' : '-outline'}` : 'md-person';
         }
         return (
           <Ionicons
