@@ -24,11 +24,11 @@ constructor(props){
   static navigationOptions = {
     header: null,
   };
-  
+
   componentWillMount(){
         this.fetchAllLocations();
         this.getRovers();
-        
+
   }
   getRovers = async () =>{
       var url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations";
@@ -60,7 +60,7 @@ constructor(props){
                 }}
                 />
                   {/*{this.state.data.map(marker => (
-                  <Marker 
+                  <Marker
                   coordinate={{
                   latitude: marker.latitude,
                   longitude:  marker.longitude}}
