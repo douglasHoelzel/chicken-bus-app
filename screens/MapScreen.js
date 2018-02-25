@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Image, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View
+  Image, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { MapView } from 'expo';
