@@ -138,7 +138,9 @@ export default class AddLocation extends React.Component {
     console.log("Latitude: " + event.nativeEvent.coordinate.latitude
      + " Longitude: " + event.nativeEvent.coordinate.longitude);
      elat = event.nativeEvent.coordinate.latitude;
+     elat = elat.toString();
      elon = event.nativeEvent.coordinate.longitude;
+     elon = elon.toString();
      this.setState({lat: elat});
      this.setState({long: elon});
   }
@@ -182,8 +184,8 @@ export default class AddLocation extends React.Component {
                <View style={styles.lowerModalContainer}>
                  <Text>Press on map to select location, then press DONE below.</Text>
                  <Text>You have selected the following values:</Text>
-                 <Text>Latitude: {this.state.lat}</Text>
-                 <Text>Longitude: {this.state.long}</Text>
+                 <Text>Latitude: {this.state.lat.toString()}</Text>
+                 <Text>Longitude: {this.state.long.toString()}</Text>
                  <Button info
                    style={styles.mapModalButton}
                    onPress={() => this.closeModal()}>
