@@ -32,6 +32,7 @@ constructor(props){
 }
 static navigationOptions = {
     header: null,
+<<<<<<< HEAD
 };
   
 componentWillMount(){
@@ -60,6 +61,20 @@ showAlert = () => {
     this.setState({
       showAlert: true
     });
+=======
+  };
+
+  componentWillMount(){
+        this.fetchAllLocations();
+        this.getRovers();
+
+  }
+  getRovers = async () =>{
+      var url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations";
+      return fetch(url).then((res) => res.json());
+      this.setState({ rovers: res.rovers});
+      console.log("inside of rovers function");
+>>>>>>> averybranch
   };
 
   hideAlert = () => {
@@ -110,9 +125,16 @@ likePress = (location, choice) => {
                   longitude: -78.862621,
                   latitudeDelta: 1,
                   longitudeDelta: 1,
+<<<<<<< HEAD
                 }}>
                   {this.state.markers.map(marker => (
                   <MapView.Marker 
+=======
+                }}
+                />
+                  {/*{this.state.data.map(marker => (
+                  <Marker
+>>>>>>> averybranch
                   coordinate={{
                   latitude: marker.latitude,
                   longitude:  marker.longitude}}
