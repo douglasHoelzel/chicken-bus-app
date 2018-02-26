@@ -62,18 +62,6 @@ showAlert = () => {
     });
   };
 
-  componentWillMount(){
-        this.fetchAllLocations();
-        this.getRovers();
-
-  }
-  getRovers = async () =>{
-      var url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations";
-      return fetch(url).then((res) => res.json());
-      this.setState({ rovers: res.rovers});
-      console.log("inside of rovers function");
-  };
-
   hideAlert = () => {
     this.setState({
       showAlert: false
@@ -125,12 +113,6 @@ likePress = (location, choice) => {
                 }}>
                   {this.state.markers.map(marker => (
                   <MapView.Marker 
-=======
-                }}
-                />
-                  {/*{this.state.data.map(marker => (
-                  <Marker
->>>>>>> averybranch
                   coordinate={{
                   latitude: marker.latitude,
                   longitude:  marker.longitude}}
