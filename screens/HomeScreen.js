@@ -36,7 +36,7 @@ componentWillMount(){
     }
     firebase.initializeApp(firebaseConfig);
 }
-onEmailLoginPress = (email, password) => {
+onEmailSignInPress = (email, password) => {
     console.log("Existing user signing in");
     console.log("Email Passed In: " + email);
     console.log("Password Passed In: " + password);
@@ -47,11 +47,11 @@ onEmailLoginPress = (email, password) => {
           console.log("SIGN IN ERROR CODE: " + errorCode);
           console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
     });
-    this.setState({loading: false});
+    this.setState({loading: false, isLoggedIn: true});
 };
 
 onEmailSignUpPress = (email, password) => {
-    console.log("New user being entered");
+    console.log("New User Being Entered");
     console.log("Email Passed In: " + email);
     console.log("Password Passed In: " + password);
     this.setState({loading: true});
@@ -62,8 +62,14 @@ onEmailSignUpPress = (email, password) => {
           console.log("SIGN UP ERROR MESSAGE: " + errorMessage);
           
     });
-    this.setState({loading: false});
+    this.setState({loading: false, isLoggedIn: true});
 };
+
+onSignOutPress = () => {
+    console.log("User being logged out");
+    this.setState({isLoggedIn: false, email: '', password: ''});
+};
+
 
 renderCurrentState(){
     if(this.state.loading){
@@ -73,6 +79,18 @@ renderCurrentState(){
             </View>
         );
     }
+    if(this.state.isLoggedIn){
+    return(
+        <View style={styles.container}>
+                <TouchableOpacity
+                    style={styles.signOutButton}
+                    onPress={() => this.onSignOutPress()}
+                >
+                <Text style={styles.signOutButtonText}> Sign Out </Text>
+                </TouchableOpacity>
+        </View>
+    );
+}
     return (
         <View style={styles.container}>
             {/* Logo Image */}
@@ -112,9 +130,18 @@ renderCurrentState(){
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.onEmailSignUpPress(this.state.email, this.state.password)}
+                        onPress={() => this.onEmailSignInPress(this.state.email, this.state.password)}
                     >
                     <Text style={styles.buttonText}> Sign In </Text>
+                    </TouchableOpacity>
+            </View>
+            {/* Sign Up Button */}
+            <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonCell}
+                        onPress={() => this.onEmailSignUpPress(this.state.email, this.state.password)}
+                    >
+                    <Text style={styles.buttonText}> Sign Up </Text>
                     </TouchableOpacity>
             </View>
           </ScrollView>
@@ -180,5 +207,19 @@ buttonCell:{
  loader:{
      alignItems: 'center',
      marginTop: 350,
+ },
+ signOutButton:{
+     alignItems: 'center',
+     backgroundColor: '#3F62CB',
+     marginTop: 300,
+     marginLeft: 110,
+     height: 50,
+     width: 200,
+     padding: 10,
+     borderRadius: 10,
+ },
+ signOutButtonText:{
+     fontSize: 20,
+     color: '#fff',
  }
 });
