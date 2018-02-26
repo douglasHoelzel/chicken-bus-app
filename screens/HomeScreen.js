@@ -26,7 +26,7 @@ constructor(props){
         isLoggedIn: false,
         email: '',
         password: '',
-        authenticating: false,
+        loading: false,
     };
 }
 componentWillMount(){
@@ -36,61 +36,97 @@ componentWillMount(){
     }
     firebase.initializeApp(firebaseConfig);
 }
-submitEmail = () => {
-    console.log("Email Button Pressed");
+onEmailLoginPress = (email, password) => {
+    console.log("Existing user signing in");
+    console.log("Email Passed In: " + email);
+    console.log("Password Passed In: " + password);
+    this.setState({loading: true});
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log("SIGN IN ERROR CODE: " + errorCode);
+          console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
+    });
+    this.setState({loading: false});
+};
+
+onEmailSignUpPress = (email, password) => {
+    console.log("New user being entered");
+    console.log("Email Passed In: " + email);
+    console.log("Password Passed In: " + password);
+    this.setState({loading: true});
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log("SIGN UP ERROR CODE: " + errorCode);
+          console.log("SIGN UP ERROR MESSAGE: " + errorMessage);
+          
+    });
+    this.setState({loading: false});
 };
 
 renderCurrentState(){
-    
+    if(this.state.loading){
+        return(
+            <View>
+                <ActivityIndicator size = 'large' style={styles.loader}/>
+            </View>
+        );
+    }
+    return (
+        <View style={styles.container}>
+            {/* Logo Image */}
+            <ScrollView style={styles.container} 
+                  contentContainerStyle={styles.contentContainer}>
+                  <View style={styles.welcomeContainer}>
+                  <Image style={styles.welcomeImage}
+                  source={require('../assets/images/chickenBusLogo1.png')}
+              />
+            </View>
+            {/* Email */}
+            <View style={styles.emailContainer}>
+                <TextInput
+                    style={{height: 40,
+                        paddingLeft: 10,
+                        backgroundColor: '#DFDFDF',
+                        borderRadius: 6,}}
+                    placeholder="Email"
+                    onChangeText={(email) => this.setState({email})}
+                    value = {this.state.email}
+                />
+            </View>
+            {/* Password */}
+            <View style={styles.passwordContainer}>
+                <TextInput
+                    style={{height: 40,
+                        paddingLeft: 10,
+                        backgroundColor: '#DFDFDF',
+                        borderRadius: 6,}}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    onChangeText={(password) => this.setState({password})}
+                    value = {this.state.password}
+                />
+            </View>
+            {/* Sign In Button */}
+            <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonCell}
+                        onPress={() => this.onEmailSignUpPress(this.state.email, this.state.password)}
+                    >
+                    <Text style={styles.buttonText}> Sign In </Text>
+                    </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+    );
 }
 
 render() {
     return (
-      <View style={styles.container}>
-          {/* Logo Image */}
-          <ScrollView style={styles.container} 
-                contentContainerStyle={styles.contentContainer}>
-                <View style={styles.welcomeContainer}>
-                <Image style={styles.welcomeImage}
-                source={require('../assets/images/chickenBusLogo1.png')}
-            />
-          </View>
-          {/* Email */}
-          <View style={styles.emailContainer}>
-              <TextInput
-                  style={{height: 40,
-                      paddingLeft: 10,
-                      backgroundColor: '#DFDFDF',
-                      borderRadius: 6,}}
-                  placeholder="Email"
-                  onChangeText={(email) => this.setState({email})}
-                  value = {this.state.email}
-              />
-          </View>
-          {/* Password */}
-          <View style={styles.passwordContainer}>
-              <TextInput
-                  style={{height: 40,
-                      paddingLeft: 10,
-                      backgroundColor: '#DFDFDF',
-                      borderRadius: 6,}}
-                  secureTextEntry={true}
-                  placeholder="Password"
-                  onChangeText={(password) => this.setState({password})}
-                  value = {this.state.password}
-              />
-          </View>
-          {/* Sign In Button */}
-          <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                      style={styles.buttonCell}
-                      onPress={() => this.submitEmail()}
-                  >
-                  <Text style={styles.buttonText}> Sign In </Text>
-                  </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </View>
+        <View style={styles.container}>
+            {this.renderCurrentState()}
+        </View>
     );
   }
 }
@@ -140,5 +176,9 @@ buttonCell:{
      backgroundColor: '#F69134',
      borderRadius: 10,
      width: 200,
-  }
+ },
+ loader:{
+     alignItems: 'center',
+     marginTop: 350,
+ }
 });
