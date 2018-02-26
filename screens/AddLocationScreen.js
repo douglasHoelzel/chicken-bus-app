@@ -1,24 +1,26 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   Image,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Alert,
 } from 'react-native';
 import {
+  Button,
   Container,
-  Header,
   Content,
   Form,
+  Header,
   Item,
   Input,
   Label,
-  Button
 } from 'native-base';
+import { MapView } from 'expo';
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
@@ -27,6 +29,8 @@ export default class AddLocation extends React.Component {
   constructor(props){
     super(props);
     this.state = {
+        markers: [],
+        modalVisible: false,
         location: '',
         desc: '',
         lat: '',
@@ -37,6 +41,14 @@ export default class AddLocation extends React.Component {
   static navigationOptions = {
     header: null,
   };
+
+  openModal() {
+    this.setState({modalVisible:true});
+  }
+
+  closeModal() {
+    this.setState({modalVisible:false});
+  }
 
 //Takes input from form, sends to api
   submitPress = (location, desc, lat, long) => {
@@ -114,8 +126,21 @@ export default class AddLocation extends React.Component {
           )
           console.log(err);
         });
-
+        clearState = '';
+        this.setState({location: clearState});
+        this.setState({desc: clearState});
+        this.setState({lat: clearState});
+        this.setState({long: clearState});
       }
+  }
+
+  mapPress = (event) => {
+    console.log("Latitude: " + event.nativeEvent.coordinate.latitude
+     + " Longitude: " + event.nativeEvent.coordinate.longitude);
+     elat = event.nativeEvent.coordinate.latitude;
+     elon = event.nativeEvent.coordinate.longitude;
+     this.setState({lat: elat});
+     this.setState({long: elon});
   }
 
 //the following code was used to test the form before testing it with the api
@@ -132,10 +157,42 @@ export default class AddLocation extends React.Component {
 
   render() {
     return (
-      //The following is native-base to create the form itself, written by Avery
-      <Container style={styles.container}>
+
+      <View style={styles.container}>
         <Header><Text style={styles.getStartedText}>Add Location Form</Text></Header>
         <Content>
+          <Modal
+               visible={this.state.modalVisible}
+               animationType={'slide'}
+               onRequestClose={() => this.closeModal()}
+           >
+             <View style={styles.modalContainer}>
+               <View style={styles.upperModalContainer}>
+                 <MapView
+                     style={{ flex: 1 }}
+                     initialRegion={{
+                       latitude: 35.889942,
+                       longitude: -78.862621,
+                       latitudeDelta: 1,
+                       longitudeDelta: 1,
+                     }}
+                     onPress = {(event) => this.mapPress(event)}>
+                  </MapView>
+               </View>
+               <View style={styles.lowerModalContainer}>
+                 <Text>Press on map to select location, then press DONE below.</Text>
+                 <Text>You have selected the following values:</Text>
+                 <Text>Latitude: {this.state.lat}</Text>
+                 <Text>Longitude: {this.state.long}</Text>
+                 <Button info
+                   style={styles.mapModalButton}
+                   onPress={() => this.closeModal()}>
+                     <Text style={styles.buttonText}>DONE</Text>
+                 </Button>
+               </View>
+             </View>
+           </Modal>
+
           <Form>
 
             <Item style={styles.formText}>
@@ -153,6 +210,17 @@ export default class AddLocation extends React.Component {
                 value={this.state.desc}
                 onChangeText={(d) => this.setState({desc: d})}
               />
+            </Item>
+
+
+            <Button info
+              style={styles.mapButton}
+              onPress={() => this.openModal()}>
+                <Text style={styles.buttonText}>MAP</Text>
+            </Button>
+
+            <Item style={styles.infoLabel}>
+              <Label style={styles.infoLabelText}>Select Latitude and Longitude with button above or input manually below.</Label>
             </Item>
 
 
@@ -187,7 +255,14 @@ export default class AddLocation extends React.Component {
 
           </Form>
         </Content>
-      </Container>
+
+      </View>
+
+
+
+      //The following is native-base to create the form itself, written by Avery
+      // <Container style={styles.container}>
+      // </Container>
 
     );
   }
@@ -221,11 +296,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  mapButton: {
+    alignSelf: 'center',
+    marginTop: 30,
+    marginBottom: 30,
+    height: 50,
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mapModalButton: {
+    alignSelf: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+    height: 50,
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   formText: {
     alignSelf: 'center',
   },
   label: {
     textAlign: 'center',
+    fontSize: 15,
+  },
+  infoLabel: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoLabelText: {
+    textAlign: 'center',
+    fontSize: 15,
+    marginBottom: 10,
   },
   getStartedText: {
     fontSize: 20,
@@ -239,5 +342,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     lineHeight: 24,
     textAlign: 'center',
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  upperModalContainer: {
+    flex: 3,
+  },
+  lowerModalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#c1f0ff',
+  },
 });
