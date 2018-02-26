@@ -8,10 +8,9 @@ import { Marker, Callout } from 'expo';
 import { Button, List, ListItem } from 'native-base';
 import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
+import { createStore } from 'redux';
 
-{/* Notes:
-    If time: animation on like, make a cusom modal popup
-    
+{/* Notes:    
     Later:
     Custom modal for like / dislike (cool animation)
     Fix spacing between like / dislike buttons
@@ -21,7 +20,6 @@ import AwesomeAlert from 'react-native-awesome-alerts';
     API key for Google geocoding: AIzaSyBF6LAi7J1sHx6Xsd5m-praYGy6Ys6R0eI
 */}
 export default class MapScreen extends React.Component {
-    
 constructor(props){
     super(props);
     this.state = {  
@@ -86,6 +84,22 @@ likePress = (location, choice) => {
    this.showAlert();
 }
   render() {
+      const reducer = function(state, action){
+          if(action.type === "ATTACK"){
+              return action.payload
+          }
+          return state;
+      }
+      const store = createStore(reducer, "User");
+
+
+      store.subscribe(() => {
+          console.log("Store is now: ", store.getState());
+      })
+
+
+      store.dispatch({type: "ATTACK", payload: "Iron Man"})
+
     return (
       <View style={styles.container}>
             <Text style={styles.getStartedText}> Map </Text>
@@ -130,10 +144,10 @@ likePress = (location, choice) => {
                           <Text>Times Visited:  847 </Text>
                         </ListItem>
                         <ListItem>
-                          <Text>Comments:  Comments can go here, they might be long and overflow </Text>
+                          <Text>Comments:  Comments can go here </Text>
                         </ListItem>
                         <ListItem>
-                          <Text>Placeholder: Data can go here </Text>
+                          <Text>Placeholder: Some other data can go here </Text>
                         </ListItem>
                    </List>
                    <View style={styles.rowContainer}>
