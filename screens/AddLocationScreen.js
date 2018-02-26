@@ -31,10 +31,13 @@ export default class AddLocation extends React.Component {
     this.state = {
         markers: [],
         modalVisible: false,
+        markerVisible: false,
         location: '',
         desc: '',
         lat: '',
         long: '',
+        markerLat: 0,
+        markerLong: 0,
     };
   }
 
@@ -131,6 +134,9 @@ export default class AddLocation extends React.Component {
         this.setState({desc: clearState});
         this.setState({lat: clearState});
         this.setState({long: clearState});
+        this.setState({markerVisible: false});
+        this.setState({markerLat: 0});
+        this.setState({markerLong: 0});
       }
   }
 
@@ -138,9 +144,12 @@ export default class AddLocation extends React.Component {
     console.log("Latitude: " + event.nativeEvent.coordinate.latitude
      + " Longitude: " + event.nativeEvent.coordinate.longitude);
      elat = event.nativeEvent.coordinate.latitude;
+     this.setState({markerLat: elat});
      elat = elat.toString();
      elon = event.nativeEvent.coordinate.longitude;
+     this.setState({markerLong: elon});
      elon = elon.toString();
+     this.setState({markerVisible: true});
      this.setState({lat: elat});
      this.setState({long: elon});
   }
@@ -179,6 +188,14 @@ export default class AddLocation extends React.Component {
                        longitudeDelta: 1,
                      }}
                      onPress = {(event) => this.mapPress(event)}>
+
+                     <MapView.Marker
+                     visible={this.state.markerVisible}
+                     coordinate={{
+                     latitude: this.state.markerLat,
+                     longitude: this.state.markerLong}}
+                     />
+
                   </MapView>
                </View>
                <View style={styles.lowerModalContainer}>
