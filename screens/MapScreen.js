@@ -60,13 +60,12 @@ showAlert = () => {
     this.setState({
       showAlert: true
     });
-  };
-
-  hideAlert = () => {
+};
+hideAlert = () => {
     this.setState({
       showAlert: false
     });
-  };
+};
 likePress = (location, choice) => {
    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikes";
    fetch(url, {

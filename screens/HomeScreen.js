@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Text,
+  Alert,
   TouchableOpacity,
   View,
   TextInput
@@ -13,7 +14,9 @@ import {
 import { WebBrowser } from 'expo';
 import { MonoText } from '../components/StyledText';
 import * as firebase from 'firebase';
-import { List, ListItem, Button, Icon} from 'react-native-elements';
+import Modal from "react-native-modal";
+import { Button, List, ListItem } from 'native-base';
+
 
 
 export default class HomeScreen extends React.Component {
@@ -27,6 +30,7 @@ constructor(props){
         email: '',
         password: '',
         loading: false,
+        isSignUpModalVisible: false,
     };
 }
 componentWillMount(){
@@ -46,6 +50,7 @@ onEmailSignInPress = (email, password) => {
           var errorMessage = error.message;
           console.log("SIGN IN ERROR CODE: " + errorCode);
           console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
+          Alert.alert(errorMessage);
     });
     this.setState({loading: false, isLoggedIn: true});
 };
@@ -60,7 +65,7 @@ onEmailSignUpPress = (email, password) => {
           var errorMessage = error.message;
           console.log("SIGN UP ERROR CODE: " + errorCode);
           console.log("SIGN UP ERROR MESSAGE: " + errorMessage);
-          
+          Alert.alert(errorMessage);
     });
     this.setState({loading: false, isLoggedIn: true});
 };
@@ -70,6 +75,9 @@ onSignOutPress = () => {
     this.setState({isLoggedIn: false, email: '', password: ''});
 };
 
+toggleSignUpModal = () => {
+    this.setState({ isSignUpModalVisible: !this.state.isSignUpModalVisible });
+}
 
 renderCurrentState(){
     if(this.state.loading){
@@ -90,7 +98,7 @@ renderCurrentState(){
                 </TouchableOpacity>
         </View>
     );
-}
+    }
     return (
         <View style={styles.container}>
             {/* Logo Image */}
@@ -139,12 +147,52 @@ renderCurrentState(){
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.onEmailSignUpPress(this.state.email, this.state.password)}
+                        onPress={() => this.toggleSignUpModal()}
                     >
-                    <Text style={styles.buttonText}> Sign Up </Text>
+                    <Text style={styles.buttonText}> Create Account </Text>
                     </TouchableOpacity>
             </View>
           </ScrollView>
+          {/* Sign Up Modal */}
+          <Modal style={styles.modal} isVisible={this.state.isSignUpModalVisible}>
+            <ScrollView>
+            <View style={{width: 372}}>
+            {/* Header */}
+            <Text style={styles.detailsHeader}>Create your account </Text>
+            {/* Email */}
+            <View style={styles.emailContainer}>
+                <TextInput
+                    style={{height: 40,
+                        paddingLeft: 10,
+                        backgroundColor: '#ECEAEA',
+                        }}
+                    placeholder="Email"
+                    onChangeText={(email) => this.setState({email})}
+                    value = {this.state.email}
+                />
+            </View>
+            {/* Password */}
+            <View style={styles.passwordContainer}>
+                <TextInput
+                    style={{height: 40,
+                        paddingLeft: 10,
+                        backgroundColor: '#DFDFDF',
+                        borderRadius: 6,}}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    onChangeText={(password) => this.setState({password})}
+                    value = {this.state.password}
+                />
+            </View>
+            {/* Sign Up Button */}
+            <Button block style={styles.signUpModalButton}
+                onPress={this.toggleSignUpModal}>
+                <Text style={styles.signUpModalButtonText}>Sign Up</Text>
+            </Button>
+            
+           </View>
+           </ScrollView>
+           </Modal>
         </View>
     );
 }
@@ -221,5 +269,32 @@ buttonCell:{
  signOutButtonText:{
      fontSize: 20,
      color: '#fff',
+ },
+ modal: {
+   flex: 1,
+   alignItems: 'center',
+   justifyContent: 'center',
+   backgroundColor: '#FFFFFF',
+ },
+ detailsHeader:{
+     paddingTop: 20,
+     paddingLeft: 10,
+     backgroundColor: '#5E8DF7',
+     height: 60,
+     fontSize: 25,
+     fontWeight: 'bold',
+     color: "#fff"
+ },
+ signUpModalButton: {
+   marginTop: 100,
+   borderRadius: 0,
+   backgroundColor: '#5E8DF7',
+   height: 50,
+ },
+ signUpModalButtonText: {
+     justifyContent: 'center',
+     color: '#fff',
+     fontWeight: 'bold',
+     fontSize:  18,
  }
 });
