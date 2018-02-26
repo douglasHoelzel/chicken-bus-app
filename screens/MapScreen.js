@@ -10,19 +10,19 @@ import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { createStore } from 'redux';
 
-{/* Notes:    
+{/* Notes:
     Later:
     Custom modal for like / dislike (cool animation)
     Fix spacing between like / dislike buttons
     Share on facebook button
-    
-    Other: 
+
+    Other:
     API key for Google geocoding: AIzaSyBF6LAi7J1sHx6Xsd5m-praYGy6Ys6R0eI
 */}
 export default class MapScreen extends React.Component {
 constructor(props){
     super(props);
-    this.state = {  
+    this.state = {
         markers: [],
         isButtonDisabled: false,
         isMainModalVisible: false,
@@ -33,9 +33,9 @@ constructor(props){
 static navigationOptions = {
     header: null,
 };
-  
+
 componentWillMount(){
-        this.getAllLocations();  
+        this.getAllLocations();
 }
 getAllLocations = async () => {
     const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations");
@@ -51,11 +51,11 @@ getSingleLocation = async (location) => {
 toggleMainModal = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
     this.getSingleLocation(location);
-}   
+}
 toggleMainModalNoAjax = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
     this.setState({ isButtonDisabled: false});
-}   
+}
 showAlert = () => {
     this.setState({
       showAlert: true
@@ -112,7 +112,7 @@ likePress = (location, choice) => {
                   longitudeDelta: 1,
                 }}>
                   {this.state.markers.map(marker => (
-                  <MapView.Marker 
+                  <MapView.Marker
                   coordinate={{
                   latitude: marker.latitude,
                   longitude:  marker.longitude}}
@@ -123,13 +123,13 @@ likePress = (location, choice) => {
                   />
                   ))}
               </MapView>
-              
+
               <Modal style={styles.modal}
                 isVisible={this.state.isMainModalVisible}>
                 <ScrollView>
               <View style={{width: 372}}>
                 <Text style={styles.detailsHeader}>Details </Text>
- 
+
                     <List>
                         <ListItem >
                           <Text>Name: {this.state.tempLocation.title} </Text>
@@ -151,20 +151,19 @@ likePress = (location, choice) => {
                         </ListItem>
                    </List>
                    <View style={styles.rowContainer}>
-                    <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}> 
-                        <Text style={styles.thumbsIconTextLeft}>
-                            <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/> 
-                            {this.state.tempLocation.likes} </Text>
+                    <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}>
+                        <Text style={styles.thumbsIconTextLeft}>  {this.state.tempLocation.likes} </Text>
+                        <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/>
                     </TouchableOpacity>
                     <View style={styles.likeImageBuffer}></View>
                     <TouchableOpacity style={styles.thumbButtonOpacityRight}  onPress={() => this.likePress(this.state.tempLocation.title, "dislike")} disabled={this.state.isButtonDisabled}>
                         <Text style={styles.thumbsIconTextRight}>{this.state.tempLocation.dislikes} </Text>
                         <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
-                         
+
                     </TouchableOpacity>
                     </View>
 
-                    <Button block style={styles.backButton} 
+                    <Button block style={styles.backButton}
                         onPress={this.toggleMainModalNoAjax}>
                         <Text style={styles.backButtonText}>Back</Text>
                     </Button>
@@ -172,9 +171,9 @@ likePress = (location, choice) => {
               </ScrollView>
               </Modal>
       </View>
-      
-      
-     
+
+
+
     );
   }
 }
@@ -210,7 +209,7 @@ thumbsIconTextLeft: {
     fontWeight: 'bold',
     fontSize:  21,
     color: '#4B4B4B',
-    paddingLeft: 10,
+    paddingLeft: 18,
 },
 thumbsIconTextRight: {
     fontWeight: 'bold',
@@ -222,6 +221,7 @@ thumbsIconTextRight: {
 thumbsUpIcon:{
     width: 20,
     height: 20,
+    marginTop: -23,
 },
 thumbsDownIcon:{
     width: 20,
