@@ -94,7 +94,6 @@ likePress = (location, choice) => {
 
 
       store.subscribe(() => {
-          console.log("Store is now: ", store.getState());
       })
 
 
