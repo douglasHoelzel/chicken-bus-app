@@ -18,7 +18,11 @@ import Modal from "react-native-modal";
 import { Button, List, ListItem } from 'native-base';
 
 
-
+{/* Notes:
+    Currently there is a bug in the create account Modal
+    where if you enter jibberish as a username without an email @
+    symbol it crashes
+*/}
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
