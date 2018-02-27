@@ -330,7 +330,7 @@ buttonCell:{
      alignItems: 'center',
      padding: 10,
      paddingTop: 10,
-     backgroundColor: '#F69134',
+     backgroundColor: '#ffab00',
      borderRadius: 6,
      width: 200,
  },
