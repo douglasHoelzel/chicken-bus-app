@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  ListView,
   TouchableOpacity,
   View,
   Alert,
@@ -20,6 +21,8 @@ import Modal from "react-native-modal";
 {/* Notes:
     In here we will display all pulled data from the individual logged in user
     Make ajax call to change user name
+
+    Bug: Profile picture won't show on iPhone when scanning the published QR code
 */}
 
 export default class SettingsScreen extends React.Component {
@@ -60,7 +63,7 @@ render() {
           <List>
               <ListItem >
                   <Image style={styles.profileImage}
-                  source={require('../assets/images/testUserImage.png')}
+                  source={this.state.testUserImage}
                   />
               </ListItem>
               <ListItem >
