@@ -16,6 +16,8 @@ import { MonoText } from '../components/StyledText';
 import * as firebase from 'firebase';
 import Modal from "react-native-modal";
 import { Button, List, ListItem } from 'native-base';
+GLOBAL = require('./Global.js');
+
 
 
 {/* Notes:
@@ -29,7 +31,7 @@ export default class HomeScreen extends React.Component {
 };
 constructor(props){
     super(props);
-    this.state = {  
+    this.state = {
         isLoggedIn: false,
         email: '',
         password: '',
@@ -52,16 +54,18 @@ onEmailSignInPress = (email, password) => {
     .then((user) => {
         console.log('User successfully logged in', user);
         this.setState({userID: user.G});
-        console.log("User ID: " + this.state.userID); 
+        GLOBAL.USERID = user.G;
+        GLOBAL.ISLOGGEDIN = true;
+        GLOBAL.EMAIL = user.email;
         this.setState({loading: false, isLoggedIn: true});
       })
-    .catch((error) =>  { 
+    .catch((error) =>  {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
         Alert.alert(errorMessage);
         this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
-    })    
+    })
 };
 
 onEmailSignUpPress = (email, password) => {
@@ -71,23 +75,24 @@ onEmailSignUpPress = (email, password) => {
     .then((user) => {
         console.log('User successfully logged in', user);
         this.setState({userID: user.G});
-        console.log("User ID: " + this.state.userID); 
+        GLOBAL.USERID = user.G;
+        GLOBAL.ISLOGGEDIN = true;
         this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false});
       })
-    .catch((error) =>  { 
+    .catch((error) =>  {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
         Alert.alert(errorMessage);
         this.setState({loading: false, isLoggedIn: false, isSignUpModalVisible: false});
         console.log("end of error message");
-    })   
+    })
     this.toggleSignUpModal();
 };
 
 onSignOutPress = () => {
     console.log("User being logged out");
-    this.setState({isLoggedIn: false, email: '', password: ''});
+    this.clearAllData();
 };
 
 toggleSignUpModal = () => {
@@ -98,7 +103,14 @@ onCreateAccountPress = (email, password) => {
     console.log("Creating New Account");
     this.onEmailSignUpPress(email, password);
 }
-
+clearAllData = () => {
+    console.log("Clearning All Data on Sign Out");
+    this.setState({isLoggedIn: false, userID: '', email: '', password: ''});
+    GLOBAL.USERID = '';
+    GLOBAL.USERNAME = '';
+    GLOBAL.EMAIL = '';
+    GLOBAL.ISLOGGEDIN = false;
+}
 renderCurrentState(){
     if(this.state.loading){
         return(
@@ -122,7 +134,7 @@ renderCurrentState(){
     return (
         <View style={styles.container}>
             {/* Logo Image */}
-            <ScrollView style={styles.container} 
+            <ScrollView style={styles.container}
                   contentContainerStyle={styles.contentContainer}>
                   <View style={styles.welcomeContainer}>
                   <Image style={styles.welcomeImage}
@@ -218,7 +230,7 @@ renderCurrentState(){
              >
                 <Text style={styles.signUpModalButtonText}>Back</Text>
             </Button>
-            
+
            </View>
            </ScrollView>
            </Modal>

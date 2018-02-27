@@ -15,7 +15,7 @@ import { Button, List, ListItem } from 'native-base';
 import { WebBrowser } from 'expo';
 import { MonoText } from '../components/StyledText';
 import Modal from "react-native-modal";
-
+GLOBAL = require('./Global.js');
 
 
 {/* Notes:
@@ -67,10 +67,10 @@ render() {
                   />
               </ListItem>
               <ListItem >
-                <Text>Name: John Doe </Text>
+                <Text>User Name: {GLOBAL.USERNAME} </Text>
               </ListItem>
               <ListItem>
-                <Text>Email: testemail@gmail.com</Text>
+                <Text>Email: {GLOBAL.EMAIL}</Text>
               </ListItem>
               <ListItem>
                 <Text>Reputation: Power Adder </Text>

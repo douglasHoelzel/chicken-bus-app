@@ -9,7 +9,7 @@ import { Button, List, ListItem } from 'native-base';
 import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { createStore } from 'redux';
-
+GLOBAL = require('./Global.js');
 {/* Notes:
     Later:
     Custom modal for like / dislike (cool animation)
@@ -28,7 +28,7 @@ constructor(props){
         isMainModalVisible: false,
         showAlert: false,
         tempLocation: [],
-        markerImage: require('../assets/images/redMarker.png')
+        markerImage: require('../assets/images/redMarker.png'),
     };
 }
 static navigationOptions = {
