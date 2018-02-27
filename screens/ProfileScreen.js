@@ -52,6 +52,9 @@ export default class SettingsScreen extends React.Component {
                 <Text>Locations Added:  11 </Text>
               </ListItem>
               <ListItem>
+                <Text>Liked Locations:  23 </Text>
+              </ListItem>
+              <ListItem>
                 <Text>Comments:  Comments can go here </Text>
               </ListItem>
               <ListItem>
@@ -79,7 +82,7 @@ profileHeader:{
     marginTop: 30,
     paddingTop: 20,
     paddingLeft: 10,
-    backgroundColor: '#5E8DF7',
+    backgroundColor: '#5A87ED',
     height: 60,
     fontSize: 25,
     fontWeight: 'bold',
