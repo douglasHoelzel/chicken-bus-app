@@ -36,6 +36,7 @@ constructor(props){
         email: '',
         password: '',
         userID: '',
+        userName: '',
         loading: false,
         isSignUpModalVisible: false,
     };
@@ -68,8 +69,8 @@ onEmailSignInPress = (email, password) => {
     })
 };
 
-onEmailSignUpPress = (email, password) => {
-    console.log("New User Being Entered");
+onEmailSignUpPress = (userName, email, password) => {
+    console.log("New User Name Being Entered : " + userName);
     this.setState({loading: true});
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
@@ -77,6 +78,8 @@ onEmailSignUpPress = (email, password) => {
         this.setState({userID: user.G});
         GLOBAL.USERID = user.G;
         GLOBAL.ISLOGGEDIN = true;
+        GLOBAL.USERNAME = this.state.userName;
+        GLOBAL.EMAIL = this.state.email;
         this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false});
       })
     .catch((error) =>  {
@@ -99,9 +102,9 @@ toggleSignUpModal = () => {
     this.setState({ isSignUpModalVisible: !this.state.isSignUpModalVisible });
 }
 
-onCreateAccountPress = (email, password) => {
+onCreateAccountPress = (userName, email, password) => {
     console.log("Creating New Account");
-    this.onEmailSignUpPress(email, password);
+    this.onEmailSignUpPress(userName, email, password);
 }
 clearAllData = () => {
     console.log("Clearning All Data on Sign Out");
@@ -191,13 +194,25 @@ renderCurrentState(){
             <View style={{width: 372}}>
             {/* Modal Header */}
             <Text style={styles.detailsHeader}>Create your account </Text>
+                {/* Modal Username */}
+                <View style={styles.userNameContainer}>
+                    <TextInput
+                        style={{height: 50,
+                            paddingLeft: 10,
+                            marginLeft: 20,
+                            backgroundColor: '#E4E4E4',
+                            borderRadius: 6}}
+                        placeholder="User Name"
+                        onChangeText={(userName) => this.setState({userName})}
+                        value = {this.state.userName}
+                    />
+                </View>
             {/* Modal Email */}
-            <View style={styles.emailContainer}>
+            <View style={styles.passwordContainer}>
                 <TextInput
                     style={{height: 50,
                         paddingLeft: 10,
                         marginLeft: 20,
-                        marginBottom: 10,
                         backgroundColor: '#E4E4E4',
                         borderRadius: 6}}
                     placeholder="Email"
@@ -221,7 +236,7 @@ renderCurrentState(){
             </View>
             {/* Modal Sign Up Button */}
             <Button block style={styles.signUpModalButton}
-             onPress={() => this.onCreateAccountPress(this.state.email, this.state.password)}
+             onPress={() => this.onCreateAccountPress(this.state.userName, this.state.email, this.state.password)}
              >
                 <Text style={styles.signUpModalButtonText}>Sign Up</Text>
             </Button>
@@ -277,7 +292,10 @@ const styles = StyleSheet.create({
  passwordContainer:{
      width: 350,
      paddingTop: 10,
-     paddingBottom: 20,
+ },
+ userNameContainer:{
+     width: 350,
+     paddingTop: 50,
  },
  buttonContainer:{
     justifyContent: 'center',

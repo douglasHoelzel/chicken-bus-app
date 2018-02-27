@@ -59,15 +59,12 @@ render() {
   return (
       <View style={styles.container}>
       <ScrollView>
-      <Text style={styles.profileHeader}>UserName </Text>
+      <Text style={styles.profileHeader}>{GLOBAL.USERNAME} </Text>
           <List>
               <ListItem >
                   <Image style={styles.profileImage}
                   source={this.state.testUserImage}
                   />
-              </ListItem>
-              <ListItem >
-                <Text>User Name: {GLOBAL.USERNAME} </Text>
               </ListItem>
               <ListItem>
                 <Text>Email: {GLOBAL.EMAIL}</Text>
