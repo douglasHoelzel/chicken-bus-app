@@ -53,7 +53,6 @@ onEmailSignInPress = (email, password) => {
     this.setState({loading: true});
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((user) => {
-        console.log('User successfully logged in', user);
         this.setState({userID: user.G});
         GLOBAL.USERID = user.G;
         GLOBAL.ISLOGGEDIN = true;
@@ -74,7 +73,6 @@ onEmailSignUpPress = (userName, email, password) => {
     this.setState({loading: true});
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
-        console.log('User successfully logged in', user);
         this.setState({userID: user.G});
         GLOBAL.USERID = user.G;
         GLOBAL.ISLOGGEDIN = true;
@@ -94,7 +92,7 @@ onEmailSignUpPress = (userName, email, password) => {
 };
 
 onSignOutPress = () => {
-    console.log("User being logged out");
+    console.log("User Signing Out");
     this.clearAllData();
 };
 
@@ -107,7 +105,7 @@ onCreateAccountPress = (userName, email, password) => {
     this.onEmailSignUpPress(userName, email, password);
 }
 clearAllData = () => {
-    console.log("Clearning All Data on Sign Out");
+    console.log("Clearning All User Data on Sign Out");
     this.setState({isLoggedIn: false, userID: '', email: '', password: ''});
     GLOBAL.USERID = '';
     GLOBAL.USERNAME = '';
@@ -329,6 +327,7 @@ buttonCell:{
  },
  signOutButtonText:{
      fontSize: 20,
+     marginTop: 3,
      color: '#fff',
  },
  modal: {
