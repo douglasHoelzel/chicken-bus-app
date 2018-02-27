@@ -54,13 +54,12 @@ onEmailSignInPress = (email, password) => {
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((user) => {
         console.log("User ID: " + user);
-        this.setState({userID: user.G});
-        GLOBAL.USERID = user.G;
+        GLOBAL.USERID = user.uid;
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.EMAIL = user.email;
-        console.log("UserID from sign in: " + user.G);
-        this.getUserInfo(user.G);
-        this.setState({loading: false, isLoggedIn: true});
+        console.log("UserID from sign in: " + user.uid);
+        this.getUserInfo(user.uid);
+        this.setState({loading: false, isLoggedIn: true, userID: user.uid});
       })
     .catch((error) =>  {
         var errorCode = error.code;
@@ -81,7 +80,7 @@ onEmailSignUpPress = (userName, email, password) => {
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = this.state.email;
-        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, userID: user.G});
+        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, userID: user.uid});
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
@@ -119,6 +118,11 @@ getUserInfo = async (userID) => {
     const response = await fetch(url);
     const json = await response.json();
     console.log("GET USER JSON: " + JSON.stringify(json));
+    console.log("USERID JSON: " + json.doc.userID);
+    GLOBAL.USERNAME = json.doc.username;
+    GLOBAL.USERID = json.doc.userID;
+    GLOBAL.EMAIL = '';
+    GLOBAL.ISLOGGEDIN = true;
 };
 
 toggleSignUpModal = () => {
