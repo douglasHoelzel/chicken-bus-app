@@ -13,7 +13,7 @@ import { createStore } from 'redux';
 {/* Notes:
     Later:
     Custom modal for like / dislike (cool animation)
-    Fix spacing between like / dislike buttons
+    Fix spacing around like / dislike buttons
     Share on facebook button
 
     Other:
@@ -28,6 +28,7 @@ constructor(props){
         isMainModalVisible: false,
         showAlert: false,
         tempLocation: [],
+        markerImage: require('../assets/images/redMarker.png')
     };
 }
 static navigationOptions = {
@@ -117,7 +118,7 @@ likePress = (location, choice) => {
                   title={marker.title}
                   description={marker.description}
                   key={marker._id}
-                  image={require('../assets/images/blueMarker.png')}
+                  image={this.state.markerImage}
                   onCalloutPress={() => this.toggleMainModal(marker.title)}
                   />
                   ))}
