@@ -53,11 +53,11 @@ onEmailSignInPress = (email, password) => {
     this.setState({loading: true});
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((user) => {
-        console.log("User ID: " + user);
+        console.log("New User ID: " + JSON.stringify(user));
         GLOBAL.USERID = user.uid;
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.EMAIL = user.email;
-        console.log("UserID from sign in: " + user.uid);
+        console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
         this.setState({loading: false, isLoggedIn: true, userID: user.uid});
       })
@@ -75,7 +75,6 @@ onEmailSignUpPress = (userName, email, password) => {
     this.setState({loading: true});
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
-        console.log("New User ID: " + JSON.stringify(user));
         GLOBAL.USERID = user.uid;
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.USERNAME = this.state.userName;
@@ -113,15 +112,11 @@ onSignOutPress = () => {
 };
 
 getUserInfo = async (userID) => {
-    console.log("getUserInfo() userID param coming in " + userID);
     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getuser/" + userID;
     const response = await fetch(url);
     const json = await response.json();
-    console.log("GET USER JSON: " + JSON.stringify(json));
-    console.log("USERID JSON: " + json.doc.userID);
     GLOBAL.USERNAME = json.doc.username;
     GLOBAL.USERID = json.doc.userID;
-    GLOBAL.EMAIL = '';
     GLOBAL.ISLOGGEDIN = true;
 };
 
