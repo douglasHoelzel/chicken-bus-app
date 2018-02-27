@@ -53,6 +53,7 @@ onEmailSignInPress = (email, password) => {
     this.setState({loading: true});
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((user) => {
+        console.log("User ID: " + user);
         this.setState({userID: user.G});
         GLOBAL.USERID = user.G;
         GLOBAL.ISLOGGEDIN = true;
@@ -71,16 +72,16 @@ onEmailSignInPress = (email, password) => {
 };
 
 onEmailSignUpPress = (userName, email, password) => {
-    console.log("New User Name Being Entered : " + userName);
+    console.log("New User Name Being Entered : " + userName + " email: " + email + " password: " + password);
     this.setState({loading: true});
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
-        this.setState({userID: user.G});
-        GLOBAL.USERID = user.G;
+        console.log("New User ID: " + JSON.stringify(user));
+        GLOBAL.USERID = user.uid;
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = this.state.email;
-        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false});
+        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, userID: user.G});
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
@@ -130,7 +131,7 @@ onCreateAccountPress = (userName, email, password) => {
 }
 clearAllData = () => {
     console.log("Clearning All User Data on Sign Out");
-    this.setState({isLoggedIn: false, userID: '', email: '', password: ''});
+    this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
     GLOBAL.USERID = '';
     GLOBAL.USERNAME = '';
     GLOBAL.EMAIL = '';

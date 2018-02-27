@@ -67,6 +67,9 @@ render() {
                   />
               </ListItem>
               <ListItem>
+                <Text>UserID: {GLOBAL.USERID}</Text>
+              </ListItem>
+              <ListItem>
                 <Text>Email: {GLOBAL.EMAIL}</Text>
               </ListItem>
               <ListItem>
