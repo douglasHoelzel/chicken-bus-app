@@ -57,6 +57,7 @@ onEmailSignInPress = (email, password) => {
         GLOBAL.USERID = user.G;
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.EMAIL = user.email;
+        this.getUserInfo(GLOBAL.USERID);
         this.setState({loading: false, isLoggedIn: true});
       })
     .catch((error) =>  {
@@ -79,6 +80,19 @@ onEmailSignUpPress = (userName, email, password) => {
         GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = this.state.email;
         this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false});
+        {/* Sends New User Information to Database*/}
+        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
+        fetch(url, {
+               method: 'POST',
+               headers: {
+                 Accept: 'application/json',
+                 'Content-Type': 'application/json',
+               },
+               body: JSON.stringify({
+                 userID: GLOBAL.USERID,
+                 username: GLOBAL.USERNAME,
+               })
+        });
       })
     .catch((error) =>  {
         var errorCode = error.code;
@@ -94,6 +108,13 @@ onEmailSignUpPress = (userName, email, password) => {
 onSignOutPress = () => {
     console.log("User Signing Out");
     this.clearAllData();
+};
+
+getUserInfo = async (userID) => {
+    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getuser/" + userID;
+    const response = await fetch(url);
+    const json = await response.json();
+    console.log("Returned user info: " + json);
 };
 
 toggleSignUpModal = () => {
