@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
   TextInput
 } from 'react-native';
 import { Button, List, ListItem } from 'native-base';
@@ -18,34 +19,41 @@ import Modal from "react-native-modal";
 
 {/* Notes:
     In here we will display all pulled data from the individual logged in user
+    Make ajax call to change user name
 */}
 
 export default class SettingsScreen extends React.Component {
-  static navigationOptions = {
+static navigationOptions = {
     header: null,
-  };
-  constructor(props){
+};
+constructor(props){
       super(props);
       this.state = {
           testUserImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
           newUserName: '',
       };
-  }
-  componentWillMount(){
+}
+componentWillMount(){
+}
 
-  }
-
-  toggleUserNameModal = () => {
+toggleUserNameModal = () => {
       this.setState({ isUserNameModalVisible: !this.state.isUserNameModalVisible });
-  }
-  onChangeUserNamePress = (newUserName) => {
+}
+
+onChangeUserNamePress = (newUserName) => {
+    if(newUserName === ''){
+          Alert.alert("Enter a new user name");
+    }
+    else{
       console.log("Chaning user name to: " + newUserName);
       this.toggleUserNameModal();
-  };
+      this.setState({newUserName: ''});
+   }
+};
 
-  render() {
-    return (
+render() {
+  return (
       <View style={styles.container}>
       <ScrollView>
       <Text style={styles.profileHeader}>UserName </Text>
@@ -127,7 +135,7 @@ export default class SettingsScreen extends React.Component {
      </Modal>
       </View>
     );
-  }
+ }
 }
 
 const styles = StyleSheet.create({
