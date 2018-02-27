@@ -163,7 +163,7 @@ renderCurrentState(){
                   contentContainerStyle={styles.contentContainer}>
                   <View style={styles.welcomeContainer}>
                   <Image style={styles.welcomeImage}
-                  source={require('../assets/images/chickenBusLogo1.png')}
+                  source={require('../assets/images/chickenBusLogo3.png')}
                   />
             </View>
             {/* Email */}
@@ -300,14 +300,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   welcomeImage: {
-    width: 300,
-    height: 100,
+    width: 600,
+    height: 300,
     resizeMode: 'contain',
-    marginTop: 50,
     marginLeft: -10,
  },
  emailContainer:{
-     marginTop: 130,
+     marginTop: 10,
      width: 350,
      paddingTop: 10,
  },
