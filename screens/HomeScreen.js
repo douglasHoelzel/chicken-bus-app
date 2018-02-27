@@ -127,7 +127,7 @@ renderCurrentState(){
                   <View style={styles.welcomeContainer}>
                   <Image style={styles.welcomeImage}
                   source={require('../assets/images/chickenBusLogo1.png')}
-              />
+                  />
             </View>
             {/* Email */}
             <View style={styles.emailContainer}>
