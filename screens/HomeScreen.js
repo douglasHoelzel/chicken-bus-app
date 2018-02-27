@@ -47,15 +47,14 @@ onEmailSignInPress = (email, password) => {
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((user) => {
         console.log('User successfully logged in', user);
-        this.setState({userID: user});
-        console.log("User ID: " + this.state.userID.G); 
+        this.setState({userID: user.G});
+        console.log("User ID: " + this.state.userID); 
         this.setState({loading: false, isLoggedIn: true});
       })
     .catch((error) =>  { 
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log("SIGN IN ERROR CODE: " + errorCode);
-        console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
+        console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
         Alert.alert(errorMessage);
         this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
     })    
@@ -67,18 +66,19 @@ onEmailSignUpPress = (email, password) => {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
         console.log('User successfully logged in', user);
-        this.setState({userID: user});
-        console.log("User ID: " + this.state.userID.G); 
-        this.setState({loading: false, isLoggedIn: true});
+        this.setState({userID: user.G});
+        console.log("User ID: " + this.state.userID); 
+        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false});
       })
     .catch((error) =>  { 
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log("SIGN IN ERROR CODE: " + errorCode);
-        console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
+        console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
         Alert.alert(errorMessage);
-        this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
+        this.setState({loading: false, isLoggedIn: false, isSignUpModalVisible: false});
+        console.log("end of error message");
     })   
+    this.toggleSignUpModal();
 };
 
 onSignOutPress = () => {
@@ -92,7 +92,6 @@ toggleSignUpModal = () => {
 
 onCreateAccountPress = (email, password) => {
     console.log("Creating New Account");
-    this.toggleSignUpModal();
     this.onEmailSignUpPress(email, password);
 }
 
@@ -129,10 +128,10 @@ renderCurrentState(){
             {/* Email */}
             <View style={styles.emailContainer}>
                 <TextInput
-                    style={{height: 40,
+                    style={{height: 50,
                         paddingLeft: 10,
-                        backgroundColor: '#DFDFDF',
-                        borderRadius: 6,}}
+                        backgroundColor: '#ECE8E8',
+                        borderRadius: 3,}}
                     placeholder="Email"
                     onChangeText={(email) => this.setState({email})}
                     value = {this.state.email}
@@ -141,10 +140,10 @@ renderCurrentState(){
             {/* Password */}
             <View style={styles.passwordContainer}>
                 <TextInput
-                    style={{height: 40,
+                    style={{height: 50,
                         paddingLeft: 10,
-                        backgroundColor: '#DFDFDF',
-                        borderRadius: 6,}}
+                        backgroundColor: '#ECE8E8',
+                        borderRadius: 3,}}
                     secureTextEntry={true}
                     placeholder="Password"
                     onChangeText={(password) => this.setState({password})}
@@ -179,9 +178,9 @@ renderCurrentState(){
             {/* Modal Email */}
             <View style={styles.emailContainer}>
                 <TextInput
-                    style={{height: 40,
+                    style={{height: 50,
                         paddingLeft: 10,
-                        marginLeft: 50,
+                        marginLeft: 20,
                         marginBottom: 10,
                         backgroundColor: '#E4E4E4',
                         borderRadius: 6}}
@@ -193,9 +192,9 @@ renderCurrentState(){
             {/* Modal Password */}
             <View style={styles.passwordContainer}>
                 <TextInput
-                    style={{height: 40,
+                    style={{height: 50,
                         paddingLeft: 10,
-                        marginLeft: 50,
+                        marginLeft: 20,
                         backgroundColor: '#E4E4E4',
                         borderRadius: 6}}
                     secureTextEntry={true}
@@ -209,6 +208,11 @@ renderCurrentState(){
              onPress={() => this.onCreateAccountPress(this.state.email, this.state.password)}
              >
                 <Text style={styles.signUpModalButtonText}>Sign Up</Text>
+            </Button>
+            <Button block style={styles.backModalButton}
+             onPress={() => this.toggleSignUpModal()}
+             >
+                <Text style={styles.signUpModalButtonText}>Back</Text>
             </Button>
             
            </View>
@@ -246,17 +250,18 @@ const styles = StyleSheet.create({
     width: 300,
     height: 100,
     resizeMode: 'contain',
-    marginTop: 30,
+    marginTop: 50,
     marginLeft: -10,
  },
  emailContainer:{
-     marginTop: 100,
-     width: 300,
+     marginTop: 130,
+     width: 350,
      paddingTop: 10,
  },
  passwordContainer:{
-     width: 300,
+     width: 350,
      paddingTop: 10,
+     paddingBottom: 20,
  },
  buttonContainer:{
     justifyContent: 'center',
@@ -269,8 +274,9 @@ buttonText:{
 buttonCell:{
      alignItems: 'center',
      padding: 10,
+     paddingTop: 10,
      backgroundColor: '#F69134',
-     borderRadius: 10,
+     borderRadius: 6,
      width: 200,
  },
  loader:{
@@ -307,7 +313,13 @@ buttonCell:{
      color: "#fff"
  },
  signUpModalButton: {
-   marginTop: 100,
+   marginTop: 200,
+   borderRadius: 0,
+   backgroundColor: '#5E8DF7',
+   height: 50,
+ },
+ backModalButton: {
+   marginTop: 5,
    borderRadius: 0,
    backgroundColor: '#5E8DF7',
    height: 50,
