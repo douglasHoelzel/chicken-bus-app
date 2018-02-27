@@ -117,6 +117,7 @@ likePress = (location, choice) => {
                   title={marker.title}
                   description={marker.description}
                   key={marker._id}
+                  image={require('../assets/images/blueMarker.png')}
                   onCalloutPress={() => this.toggleMainModal(marker.title)}
                   />
                   ))}
