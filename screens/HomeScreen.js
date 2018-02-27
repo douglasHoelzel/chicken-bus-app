@@ -29,6 +29,7 @@ constructor(props){
         isLoggedIn: false,
         email: '',
         password: '',
+        userID: '',
         loading: false,
         isSignUpModalVisible: false,
     };
@@ -42,32 +43,42 @@ componentWillMount(){
 }
 onEmailSignInPress = (email, password) => {
     console.log("Existing user signing in");
-    console.log("Email Passed In: " + email);
-    console.log("Password Passed In: " + password);
     this.setState({loading: true});
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log("SIGN IN ERROR CODE: " + errorCode);
-          console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
-          Alert.alert(errorMessage);
-    });
-    this.setState({loading: false, isLoggedIn: true});
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((user) => {
+        console.log('User successfully logged in', user);
+        this.setState({userID: user});
+        console.log("User ID: " + this.state.userID.G); 
+        this.setState({loading: false, isLoggedIn: true});
+      })
+    .catch((error) =>  { 
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log("SIGN IN ERROR CODE: " + errorCode);
+        console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
+        Alert.alert(errorMessage);
+        this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
+    })    
 };
 
 onEmailSignUpPress = (email, password) => {
     console.log("New User Being Entered");
-    console.log("Email Passed In: " + email);
-    console.log("Password Passed In: " + password);
     this.setState({loading: true});
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log("SIGN UP ERROR CODE: " + errorCode);
-          console.log("SIGN UP ERROR MESSAGE: " + errorMessage);
-          Alert.alert(errorMessage);
-    });
-    this.setState({loading: false, isLoggedIn: true});
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((user) => {
+        console.log('User successfully logged in', user);
+        this.setState({userID: user});
+        console.log("User ID: " + this.state.userID.G); 
+        this.setState({loading: false, isLoggedIn: true});
+      })
+    .catch((error) =>  { 
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log("SIGN IN ERROR CODE: " + errorCode);
+        console.log("SIGN IN ERROR MESSAGE: " + errorMessage);
+        Alert.alert(errorMessage);
+        this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
+    })   
 };
 
 onSignOutPress = () => {
@@ -77,6 +88,12 @@ onSignOutPress = () => {
 
 toggleSignUpModal = () => {
     this.setState({ isSignUpModalVisible: !this.state.isSignUpModalVisible });
+}
+
+onCreateAccountPress = (email, password) => {
+    console.log("Creating New Account");
+    this.toggleSignUpModal();
+    this.onEmailSignUpPress(email, password);
 }
 
 renderCurrentState(){
@@ -143,7 +160,7 @@ renderCurrentState(){
                     <Text style={styles.buttonText}> Sign In </Text>
                     </TouchableOpacity>
             </View>
-            {/* Sign Up Button */}
+            {/* Create Account Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
@@ -153,40 +170,44 @@ renderCurrentState(){
                     </TouchableOpacity>
             </View>
           </ScrollView>
-          {/* Sign Up Modal */}
+          {/* Create Account Modal */}
           <Modal style={styles.modal} isVisible={this.state.isSignUpModalVisible}>
             <ScrollView>
             <View style={{width: 372}}>
-            {/* Header */}
+            {/* Modal Header */}
             <Text style={styles.detailsHeader}>Create your account </Text>
-            {/* Email */}
+            {/* Modal Email */}
             <View style={styles.emailContainer}>
                 <TextInput
                     style={{height: 40,
                         paddingLeft: 10,
-                        backgroundColor: '#ECEAEA',
-                        }}
+                        marginLeft: 50,
+                        marginBottom: 10,
+                        backgroundColor: '#E4E4E4',
+                        borderRadius: 6}}
                     placeholder="Email"
                     onChangeText={(email) => this.setState({email})}
                     value = {this.state.email}
                 />
             </View>
-            {/* Password */}
+            {/* Modal Password */}
             <View style={styles.passwordContainer}>
                 <TextInput
                     style={{height: 40,
                         paddingLeft: 10,
-                        backgroundColor: '#DFDFDF',
-                        borderRadius: 6,}}
+                        marginLeft: 50,
+                        backgroundColor: '#E4E4E4',
+                        borderRadius: 6}}
                     secureTextEntry={true}
                     placeholder="Password"
                     onChangeText={(password) => this.setState({password})}
                     value = {this.state.password}
                 />
             </View>
-            {/* Sign Up Button */}
+            {/* Modal Sign Up Button */}
             <Button block style={styles.signUpModalButton}
-                onPress={this.toggleSignUpModal}>
+             onPress={() => this.onCreateAccountPress(this.state.email, this.state.password)}
+             >
                 <Text style={styles.signUpModalButtonText}>Sign Up</Text>
             </Button>
             
@@ -259,7 +280,7 @@ buttonCell:{
  signOutButton:{
      alignItems: 'center',
      backgroundColor: '#3F62CB',
-     marginTop: 300,
+     marginTop: 350,
      marginLeft: 110,
      height: 50,
      width: 200,
