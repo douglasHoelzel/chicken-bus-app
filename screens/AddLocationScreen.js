@@ -37,7 +37,7 @@ export default class AddLocation extends React.Component {
         desc: '',
         lat: '',
         long: '',
-        category: '',
+        cat: '',
         markerLat: 0,
         markerLong: 0,
     };
@@ -56,9 +56,9 @@ export default class AddLocation extends React.Component {
   }
 
 //Takes input from form, sends to api
-  submitPress = (location, desc, lat, long) => {
+  submitPress = (location, desc, lat, long, cat) => {
     //Check if parts of form are empty, alert user to complete form.
-      if(!location || !desc || !lat || !long || !category){
+      if(!location || !desc || !lat || !long || !cat){
         console.log("Please fill out entire form before submitting.")
         Alert.alert(
           'Form Incomplete',
@@ -82,6 +82,7 @@ export default class AddLocation extends React.Component {
                 description: desc,
                 latitude: lat,
                 longitude: long,
+                category: cat,
               })
         }).then(response => {
           //if response is 200 (success), alert user and log response
@@ -136,6 +137,7 @@ export default class AddLocation extends React.Component {
         this.setState({desc: clearState});
         this.setState({lat: clearState});
         this.setState({long: clearState});
+        this.setState({cat: clearState});
         this.setState({markerVisible: false});
         this.setState({markerLat: 0});
         this.setState({markerLong: 0});
@@ -232,8 +234,8 @@ export default class AddLocation extends React.Component {
             <Item style={styles.formText}>
               <Label style={styles.label}>Category: </Label>
               <Picker
-                selectedValue={this.state.category}
-                onValueChange={(itemValue, itemIndex) => this.setState({category: itemValue})}>
+                selectedValue={this.state.cat}
+                onValueChange={(itemValue, itemIndex) => this.setState({cat: itemValue})}>
                 <Picker.Item label="<Select Category>" value="" />
                 <Picker.Item label="Nature" value="greenMarker" />
                 <Picker.Item label="Landmark" value="blueMarker" />
@@ -276,7 +278,8 @@ export default class AddLocation extends React.Component {
                 this.state.location,
                 this.state.desc,
                 this.state.lat,
-                this.state.long
+                this.state.long,
+                this.state.cat,
               )}>
                 <Text style={styles.buttonText}>SUBMIT</Text>
             </Button>
