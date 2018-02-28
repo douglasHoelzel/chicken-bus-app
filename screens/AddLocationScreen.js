@@ -159,18 +159,6 @@ export default class AddLocation extends React.Component {
      this.setState({long: elon});
   }
 
-//the following code was used to test the form before testing it with the api
-//It is no longer necessary, but left here for documentation purposes.
-  // testSubmit = (location, desc, lat, long) => {
-  //   if(!location || !desc || !lat || !long){
-  //     console.log("Please Complete All Parts Of Form");
-  //   }
-  //   else{
-  //     console.log(location, desc, lat, long);
-  //   }
-  // }
-
-
   render() {
     return (
 
@@ -238,13 +226,13 @@ export default class AddLocation extends React.Component {
                 selectedValue={this.state.cat}
                 onValueChange={(itemValue, itemIndex) => this.setState({cat: itemValue})}>
                 <Picker.Item label="<Select Category>" value="" />
-                <Picker.Item label="Nature" value="greenMarker" />
-                <Picker.Item label="Landmark" value="blueMarker" />
-                <Picker.Item label="Entertainment" value="lightBlueMarker" />
-                <Picker.Item label="Shopping" value="purpleMarker" />
-                <Picker.Item label="Food" value="redMarker" />
-                <Picker.Item label="Transportation" value="yellowMarker" />
-                <Picker.Item label="Other" value="orangeMarker" />
+                <Picker.Item label="Nature" value="Nature" />
+                <Picker.Item label="Landmark" value="Landmark" />
+                <Picker.Item label="Entertainment" value="Entertainment" />
+                <Picker.Item label="Shopping" value="Shopping" />
+                <Picker.Item label="Food" value="Food" />
+                <Picker.Item label="Transportation" value="Transportation" />
+                <Picker.Item label="Other" value="Other" />
               </Picker>
             </Item>
 

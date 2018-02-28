@@ -21,13 +21,13 @@ GLOBAL = require('./Global.js');
     API key for Google geocoding: AIzaSyBF6LAi7J1sHx6Xsd5m-praYGy6Ys6R0eI
 */}
 var imageMap = {
-  'redMarker' : require('../assets/images/redMarker.png'),
-  'blueMarker': require('../assets/images/blueMarker.png'),
-  'orangeMarker': require('../assets/images/orangeMarker.png'),
-  'greenMarker': require('../assets/images/greenMarker.png'),
-  'lightBlueMarker': require('../assets/images/lightBlueMarker.png'),
-  'purpleMarker': require('../assets/images/purpleMarker.png'),
-  'yellowMarker': require('../assets/images/yellowMarker.png')
+  'Food' : require('../assets/images/redMarker.png'),
+  'Landmark': require('../assets/images/blueMarker.png'),
+  'Other': require('../assets/images/orangeMarker.png'),
+  'Nature': require('../assets/images/greenMarker.png'),
+  'Entertainment': require('../assets/images/lightBlueMarker.png'),
+  'Shopping': require('../assets/images/purpleMarker.png'),
+  'Transportation': require('../assets/images/yellowMarker.png')
 }
 export default class MapScreen extends React.Component {
 constructor(props){
