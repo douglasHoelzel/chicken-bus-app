@@ -82,11 +82,7 @@ export default class AddLocation extends React.Component {
                 description: desc,
                 latitude: lat,
                 longitude: long,
-<<<<<<< HEAD
                 category: cat,
-=======
-                category: 'orangeMarker'
->>>>>>> d2c88bc539cd9bd492c6ed8f7dbbc15e710abdd4
               })
         }).then(response => {
           //if response is 200 (success), alert user and log response
