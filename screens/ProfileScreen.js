@@ -70,7 +70,7 @@ render() {
                 <Text>Email: {GLOBAL.EMAIL}</Text>
               </ListItem>
               <ListItem>
-                <Text>Reputation: Power Adder </Text>
+                <Text>Reputation: {GLOBAL.USERID} </Text>
               </ListItem>
               <ListItem>
                 <Text>Locations Added:  11 </Text>

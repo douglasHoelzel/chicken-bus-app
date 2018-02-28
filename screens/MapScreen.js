@@ -9,6 +9,7 @@ import { Button, List, ListItem } from 'native-base';
 import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { createStore } from 'redux';
+
 GLOBAL = require('./Global.js');
 {/* Notes:
     Later:
@@ -19,6 +20,15 @@ GLOBAL = require('./Global.js');
     Other:
     API key for Google geocoding: AIzaSyBF6LAi7J1sHx6Xsd5m-praYGy6Ys6R0eI
 */}
+var imageMap = {
+  'redMarker' : require('../assets/images/redMarker.png'),
+  'blueMarker': require('../assets/images/blueMarker.png'),
+  'orangeMarker': require('../assets/images/orangeMarker.png'),
+  'greenMarker': require('../assets/images/greenMarker.png'),
+  'lightBlueMarker': require('../assets/images/lightBlueMarker.png'),
+  'purpleMarker': require('../assets/images/purpleMarker.png'),
+  'yellowMarker': require('../assets/images/yellowMarker.png')
+}
 export default class MapScreen extends React.Component {
 constructor(props){
     super(props);
@@ -28,9 +38,9 @@ constructor(props){
         isMainModalVisible: false,
         showAlert: false,
         tempLocation: [],
-        markerImage: require('../assets/images/redMarker.png'),
     };
 }
+
 static navigationOptions = {
     header: null,
 };
@@ -80,25 +90,24 @@ likePress = (location, choice) => {
             title: location,
           })
         });
+   if(GLOBAL.ISLOGGEDIN){
+   const url2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikedlocation";
+   fetch(url2, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userID: GLOBAL.USERID,
+            title: location,
+          })
+        });
+    }
    this.setState({ isButtonDisabled: true});
    this.showAlert();
 }
   render() {
-      const reducer = function(state, action){
-          if(action.type === "ATTACK"){
-              return action.payload
-          }
-          return state;
-      }
-      const store = createStore(reducer, "User");
-
-
-      store.subscribe(() => {
-      })
-
-
-      store.dispatch({type: "ATTACK", payload: "Iron Man"})
-
     return (
       <View style={styles.container}>
             <Text style={styles.getStartedText}> Map </Text>
@@ -118,9 +127,10 @@ likePress = (location, choice) => {
                   title={marker.title}
                   description={marker.description}
                   key={marker._id}
-                  image={this.state.markerImage}
-                  onCalloutPress={() => this.toggleMainModal(marker.title)}
-                  />
+                  onCalloutPress={() => this.toggleMainModal(marker.title)}>
+                  <Image source={imageMap[marker.category]}
+                   style={styles.markers}/>
+                  </MapView.Marker>
                   ))}
               </MapView>
 
@@ -136,6 +146,9 @@ likePress = (location, choice) => {
                         </ListItem>
                         <ListItem>
                           <Text>Description: {this.state.tempLocation.description}</Text>
+                        </ListItem>
+                        <ListItem>
+                          <Text> Category: {this.state.tempLocation.category} </Text>
                         </ListItem>
                         <ListItem>
                           <Text>City: Chapel Hill </Text>
@@ -266,5 +279,9 @@ thumbButtonOpacityRight:{
     paddingLeft: 11,
     position: 'relative',
     backgroundColor: '#F1F1F1'
+},
+markers:{
+    height: 30,
+    width: 30
 }
 });

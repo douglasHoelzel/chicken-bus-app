@@ -53,12 +53,13 @@ onEmailSignInPress = (email, password) => {
     this.setState({loading: true});
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((user) => {
-        this.setState({userID: user.G});
-        GLOBAL.USERID = user.G;
+        console.log("New User ID: " + JSON.stringify(user));
+        GLOBAL.USERID = user.uid;
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.EMAIL = user.email;
-        this.getUserInfo(GLOBAL.USERID);
-        this.setState({loading: false, isLoggedIn: true});
+        console.log("Email: " + user.email);
+        this.getUserInfo(user.uid);
+        this.setState({loading: false, isLoggedIn: true, userID: user.uid});
       })
     .catch((error) =>  {
         var errorCode = error.code;
@@ -70,18 +71,18 @@ onEmailSignInPress = (email, password) => {
 };
 
 onEmailSignUpPress = (userName, email, password) => {
-    console.log("New User Name Being Entered : " + userName);
+    console.log("New User Name Being Entered : " + userName + " email: " + email + " password: " + password);
     this.setState({loading: true});
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
-        this.setState({userID: user.G});
-        GLOBAL.USERID = user.G;
+        GLOBAL.USERID = user.uid;
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = this.state.email;
-        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false});
+        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, userID: user.uid});
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
+        console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
         fetch(url, {
                method: 'POST',
                headers: {
@@ -114,7 +115,9 @@ getUserInfo = async (userID) => {
     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getuser/" + userID;
     const response = await fetch(url);
     const json = await response.json();
-    console.log("Returned user info: " + json);
+    GLOBAL.USERNAME = json.doc.username;
+    GLOBAL.USERID = json.doc.userID;
+    GLOBAL.ISLOGGEDIN = true;
 };
 
 toggleSignUpModal = () => {
@@ -127,7 +130,7 @@ onCreateAccountPress = (userName, email, password) => {
 }
 clearAllData = () => {
     console.log("Clearning All User Data on Sign Out");
-    this.setState({isLoggedIn: false, userID: '', email: '', password: ''});
+    this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
     GLOBAL.USERID = '';
     GLOBAL.USERNAME = '';
     GLOBAL.EMAIL = '';
@@ -160,7 +163,7 @@ renderCurrentState(){
                   contentContainerStyle={styles.contentContainer}>
                   <View style={styles.welcomeContainer}>
                   <Image style={styles.welcomeImage}
-                  source={require('../assets/images/chickenBusLogo1.png')}
+                  source={require('../assets/images/chickenBusLogo3.png')}
                   />
             </View>
             {/* Email */}
@@ -297,14 +300,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   welcomeImage: {
-    width: 300,
-    height: 100,
+    width: 600,
+    height: 300,
     resizeMode: 'contain',
-    marginTop: 50,
     marginLeft: -10,
  },
  emailContainer:{
-     marginTop: 130,
+     marginTop: 10,
      width: 350,
      paddingTop: 10,
  },
@@ -328,7 +330,7 @@ buttonCell:{
      alignItems: 'center',
      padding: 10,
      paddingTop: 10,
-     backgroundColor: '#F69134',
+     backgroundColor: '#ffab00',
      borderRadius: 6,
      width: 200,
  },
