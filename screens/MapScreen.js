@@ -5,7 +5,7 @@ import {
 import { WebBrowser } from 'expo';
 import { MapView } from 'expo';
 import { Marker, Callout } from 'expo';
-import { Button, List, ListItem } from 'native-base';
+import { Button, List, ListItem, Header, Left, Body, Right, Icon, Title} from 'native-base';
 import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { createStore } from 'redux';
@@ -110,7 +110,16 @@ likePress = (location, choice) => {
   render() {
     return (
       <View style={styles.container}>
-            <Text style={styles.getStartedText}> Map </Text>
+            {/* Header */}
+            <Header>
+                <Left>
+                    <Button transparent>
+                        <Text>Filter</Text>
+                    </Button>
+                </Left>
+            </Header>
+
+            {/* Map */}
             <MapView
                 style={{ flex: 1 }}
                 initialRegion={{
