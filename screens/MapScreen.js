@@ -108,7 +108,6 @@ likePress = (location, choice) => {
    this.showAlert();
 }
   render() {
-      console.log("Markers: " + JSON.stringify(this.state.markers[0]));
     return (
       <View style={styles.container}>
             <Text style={styles.getStartedText}> Map </Text>
