@@ -157,7 +157,7 @@ likePress = (location, choice) => {
                           <Text>Description: {this.state.tempLocation.description}</Text>
                         </ListItem>
                         <ListItem>
-                          <Text> Category: {this.state.tempLocation.category} </Text>
+                          <Text>Category: {this.state.tempLocation.category} </Text>
                         </ListItem>
                         <ListItem>
                           <Text>City: Chapel Hill </Text>

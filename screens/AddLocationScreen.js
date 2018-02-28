@@ -163,7 +163,7 @@ export default class AddLocation extends React.Component {
     return (
 
       <View style={styles.container}>
-        <Header><Text style={styles.getStartedText}>Add Location Form</Text></Header>
+        <Header><Text style={styles.getStartedText}>Add a location</Text></Header>
         <Content>
           <Modal
                visible={this.state.modalVisible}
@@ -277,29 +277,9 @@ export default class AddLocation extends React.Component {
         </Content>
 
       </View>
-
-
-
-      //The following is native-base to create the form itself, written by Avery
-      // <Container style={styles.container}>
-      // </Container>
-
     );
   }
 }
-
-      //Comment code below is the previous AddLocation.js code, current code is above.
-      //This is left here for documentation purposes only.
-
-      // <View style={styles.container}>
-      //       <Text style={styles.getStartedText}>
-      //         Add Location Page
-      //       </Text>
-      //       <Text style={styles.getStartedText}>
-      //         Currently being edited by Avery
-      //       </Text>
-      //     </View>
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
