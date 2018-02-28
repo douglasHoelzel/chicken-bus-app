@@ -19,9 +19,11 @@ import {
   Item,
   Input,
   Label,
+  Picker,
 } from 'native-base';
 import { MapView } from 'expo';
 import { WebBrowser } from 'expo';
+
 import { MonoText } from '../components/StyledText';
 
 export default class AddLocation extends React.Component {
@@ -35,6 +37,7 @@ export default class AddLocation extends React.Component {
         desc: '',
         lat: '',
         long: '',
+        cat: '',
         markerLat: 0,
         markerLong: 0,
     };
@@ -53,9 +56,9 @@ export default class AddLocation extends React.Component {
   }
 
 //Takes input from form, sends to api
-  submitPress = (location, desc, lat, long) => {
+  submitPress = (location, desc, lat, long, cat) => {
     //Check if parts of form are empty, alert user to complete form.
-      if(!location || !desc || !lat || !long){
+      if(!location || !desc || !lat || !long || !cat){
         console.log("Please fill out entire form before submitting.")
         Alert.alert(
           'Form Incomplete',
@@ -79,7 +82,7 @@ export default class AddLocation extends React.Component {
                 description: desc,
                 latitude: lat,
                 longitude: long,
-                category: 'purpleMarker'
+                category: cat,
               })
         }).then(response => {
           //if response is 200 (success), alert user and log response
@@ -134,6 +137,7 @@ export default class AddLocation extends React.Component {
         this.setState({desc: clearState});
         this.setState({lat: clearState});
         this.setState({long: clearState});
+        this.setState({cat: clearState});
         this.setState({markerVisible: false});
         this.setState({markerLat: 0});
         this.setState({markerLong: 0});
@@ -200,11 +204,7 @@ export default class AddLocation extends React.Component {
                   </MapView>
                </View>
                <View style={styles.lowerModalContainer}>
-                 <Text>Press on map to select location, then press DONE below.</Text>
-                 <Text>You have selected the following values:</Text>
-                 <Text>Latitude: {this.state.lat.toString()}</Text>
-                 <Text>Longitude: {this.state.long.toString()}</Text>
-                 <Button info
+                 <Button block
                    style={styles.mapModalButton}
                    onPress={() => this.closeModal()}>
                      <Text style={styles.buttonText}>DONE</Text>
@@ -232,16 +232,27 @@ export default class AddLocation extends React.Component {
               />
             </Item>
 
+            <Item style={styles.formText}>
+              <Label style={styles.label}>Category: </Label>
+              <Picker
+                selectedValue={this.state.cat}
+                onValueChange={(itemValue, itemIndex) => this.setState({cat: itemValue})}>
+                <Picker.Item label="<Select Category>" value="" />
+                <Picker.Item label="Nature" value="greenMarker" />
+                <Picker.Item label="Landmark" value="blueMarker" />
+                <Picker.Item label="Entertainment" value="lightBlueMarker" />
+                <Picker.Item label="Shopping" value="purpleMarker" />
+                <Picker.Item label="Food" value="redMarker" />
+                <Picker.Item label="Transportation" value="yellowMarker" />
+                <Picker.Item label="Other" value="orangeMarker" />
+              </Picker>
+            </Item>
 
-            <Button info
+            <Button block
               style={styles.mapButton}
               onPress={() => this.openModal()}>
-                <Text style={styles.buttonText}>MAP</Text>
+                <Text style={styles.buttonText}>SELECT LOCATION</Text>
             </Button>
-
-            <Item style={styles.infoLabel}>
-              <Label style={styles.infoLabelText}>Select Latitude and Longitude with button above or input manually below.</Label>
-            </Item>
 
 
             <Item style={styles.formText}>
@@ -262,13 +273,14 @@ export default class AddLocation extends React.Component {
             </Item>
 
 
-            <Button info
+            <Button block
               style={styles.submitButton}
               onPress={() => this.submitPress(
                 this.state.location,
                 this.state.desc,
                 this.state.lat,
-                this.state.long
+                this.state.long,
+                this.state.cat,
               )}>
                 <Text style={styles.buttonText}>SUBMIT</Text>
             </Button>
@@ -308,47 +320,11 @@ const styles = StyleSheet.create({
   header: {
     textAlign: 'center',
   },
-  submitButton: {
-    alignSelf: 'center',
-    marginTop: 30,
-    height: 50,
-    width: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mapButton: {
-    alignSelf: 'center',
-    marginTop: 30,
-    marginBottom: 30,
-    height: 50,
-    width: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mapModalButton: {
-    alignSelf: 'center',
-    marginTop: 10,
-    marginBottom: 10,
-    height: 50,
-    width: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   formText: {
-    alignSelf: 'center',
+
   },
   label: {
-    textAlign: 'center',
     fontSize: 15,
-  },
-  infoLabel: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  infoLabelText: {
-    textAlign: 'center',
-    fontSize: 15,
-    marginBottom: 10,
   },
   getStartedText: {
     fontSize: 20,
@@ -369,12 +345,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   upperModalContainer: {
-    flex: 3,
+    flex: 8,
   },
   lowerModalContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#c1f0ff',
+    backgroundColor: '#fff',
+  },
+  submitButton: {
+    borderRadius: 0,
+    backgroundColor: '#5E8DF7',
+    height: 50,
+  },
+  mapButton: {
+    borderRadius: 0,
+    backgroundColor: '#5E8DF7',
+    height: 50,
+  },
+  mapModalButton: {
+    flex: 1,
+    borderRadius: 0,
+    backgroundColor: '#5E8DF7',
+    height: 50,
   },
 });
