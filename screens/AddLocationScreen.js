@@ -80,6 +80,7 @@ export default class AddLocation extends React.Component {
                 description: desc,
                 latitude: lat,
                 longitude: long,
+                category: 'orangeMarker'
               })
         }).then(response => {
           //if response is 200 (success), alert user and log response
@@ -137,6 +138,7 @@ export default class AddLocation extends React.Component {
         this.setState({markerVisible: false});
         this.setState({markerLat: 0});
         this.setState({markerLong: 0});
+
       }
   }
 
