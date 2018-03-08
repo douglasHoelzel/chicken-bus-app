@@ -20,9 +20,7 @@ GLOBAL = require('./Global.js');
 
 {/* Notes:
     In here we will display all pulled data from the individual logged in user
-    Make ajax call to change user name
 
-    Bug: Profile picture won't show on iPhone when scanning the published QR code
 */}
 
 export default class SettingsScreen extends React.Component {
@@ -54,7 +52,9 @@ onChangeUserNamePress = (newUserName) => {
       this.setState({newUserName: ''});
    }
 };
-
+addPicturePress = () => {
+    console.log("CLicked add picture");
+}
 render() {
   return (
       <View style={styles.container}>
@@ -65,6 +65,11 @@ render() {
                   <Image style={styles.profileImage}
                   source={this.state.testUserImage}
                   />
+              {/* Add Photo Button */}
+              <TouchableOpacity style={styles.addPhotoButton}  onPress={() => this.addPicturePress()}>
+                  <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
+              </TouchableOpacity>
+              {/* Profile Details */}
               </ListItem>
               <ListItem>
                 <Text>Email: {GLOBAL.EMAIL}</Text>
@@ -106,8 +111,10 @@ render() {
       <View style={{width: 372}}>
       {/* Modal Header */}
       <Text style={styles.detailsHeader}>Change your user name </Text>
-      {/* Modal Email */}
+      {/* Modal User Name Field */}
       <View style={styles.userNameContainer}>
+          <Text style={styles.currentUserName}>Current User Name: </Text>
+          <Text style={styles.userNameText}>{GLOBAL.USERNAME}</Text>
           <TextInput
               style={{height: 50,
                   paddingLeft: 10,
@@ -122,7 +129,7 @@ render() {
       {/* Modal Sign Up Button */}
       <Button block style={styles.changeUserNameButton}
        onPress={() => this.onChangeUserNamePress(this.state.newUserName)}>
-          <Text style={styles.changeUserNameButtonText}>Change User Name</Text>
+          <Text style={styles.changeUserNameButtonText}>Submit</Text>
       </Button>
       {/* Back Button */}
       <Button block style={styles.backButton}
@@ -179,7 +186,7 @@ userNameContainer:{
     paddingTop: 10,
 },
 changeUserNameButton: {
-  marginTop: 300,
+  marginTop: 240,
   borderRadius: 0,
   backgroundColor: '#5E8DF7',
   height: 50,
@@ -195,5 +202,29 @@ changeUserNameButtonText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize:  18,
+},
+userNameText:{
+    fontSize: 20,
+    marginLeft: 20,
+    marginBottom: 30,
+},
+currentUserName:{
+    fontSize: 20,
+    marginLeft: 20,
+    marginBottom: 10,
+},
+addPhotoButton:{
+    backgroundColor: '#E0E0E0',
+    width: 50,
+    height: 50,
+    marginTop: 280,
+    marginLeft: -80,
+    borderRadius: 100
+},
+plusSignIcon:{
+    width: 20,
+    height: 20,
+    marginTop: 15,
+    marginLeft: 15,
 }
 });
