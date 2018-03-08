@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  AppRegistry,
   Image,
   Platform,
   ScrollView,
@@ -9,12 +10,14 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  PixelRatio,
   TextInput
 } from 'react-native';
 import { Button, List, ListItem } from 'native-base';
 import { WebBrowser } from 'expo';
 import { MonoText } from '../components/StyledText';
 import Modal from "react-native-modal";
+import { ImagePicker } from 'expo';
 GLOBAL = require('./Global.js');
 
 
@@ -24,6 +27,7 @@ GLOBAL = require('./Global.js');
 */}
 
 export default class SettingsScreen extends React.Component {
+
 static navigationOptions = {
     header: null,
 };
@@ -33,6 +37,7 @@ constructor(props){
           testUserImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
           newUserName: '',
+          image: null,
       };
 }
 componentWillMount(){
@@ -52,10 +57,28 @@ onChangeUserNamePress = (newUserName) => {
       this.setState({newUserName: ''});
    }
 };
+selectPhotoTapped = async () => {
+    console.log("Add Photo Button Clicked");
+
+   let result = await ImagePicker.launchImageLibraryAsync({
+     allowsEditing: true,
+     aspect: [4, 3],
+   });
+
+   console.log(result);
+
+   if (!result.cancelled) {
+     this.setState({ image: result.uri });
+   }
+ };
+
+
 addPicturePress = () => {
     console.log("CLicked add picture");
+
 }
 render() {
+    let { image } = this.state;
   return (
       <View style={styles.container}>
       <ScrollView>
@@ -66,9 +89,19 @@ render() {
                   source={this.state.testUserImage}
                   />
               {/* Add Photo Button */}
-              <TouchableOpacity style={styles.addPhotoButton}  onPress={() => this.addPicturePress()}>
+              <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
               </TouchableOpacity>
+
+
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Button
+          title="Pick an image from camera roll"
+          onPress={this._pickImage}
+        />
+        {image &&
+          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      </View>
               {/* Profile Details */}
               </ListItem>
               <ListItem>
