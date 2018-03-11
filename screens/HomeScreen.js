@@ -96,6 +96,7 @@ onEmailSignUpPress = (userName, email, password) => {
                  username: GLOBAL.USERNAME,
                })
         });
+        this.props.navigation.navigate('Map');
       })
     .catch((error) =>  {
         var errorCode = error.code;
