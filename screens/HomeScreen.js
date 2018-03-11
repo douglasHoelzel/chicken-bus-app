@@ -16,6 +16,7 @@ import { MonoText } from '../components/StyledText';
 import * as firebase from 'firebase';
 import Modal from "react-native-modal";
 import { Button, List, ListItem } from 'native-base';
+import { TabNavigator } from 'react-navigation';
 GLOBAL = require('./Global.js');
 
 
@@ -60,6 +61,7 @@ onEmailSignInPress = (email, password) => {
         console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
         this.setState({loading: false, isLoggedIn: true, userID: user.uid});
+        this.props.navigation.navigate('Map');
       })
     .catch((error) =>  {
         var errorCode = error.code;
