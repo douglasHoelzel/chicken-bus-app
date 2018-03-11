@@ -60,7 +60,7 @@ onEmailSignInPress = (email, password) => {
         GLOBAL.EMAIL = user.email;
         console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
-        this.setState({loading: false, isLoggedIn: true, userID: user.uid});
+        this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
         this.props.navigation.navigate('Map');
       })
     .catch((error) =>  {
@@ -68,7 +68,7 @@ onEmailSignInPress = (email, password) => {
         var errorMessage = error.message;
         console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
         Alert.alert(errorMessage);
-        this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
+        this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     })
 };
 
@@ -81,7 +81,7 @@ onEmailSignUpPress = (userName, email, password) => {
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = this.state.email;
-        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, userID: user.uid});
+        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, email: '', userName: '', userID: '', password: ''});
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
@@ -133,7 +133,7 @@ onCreateAccountPress = (userName, email, password) => {
 }
 clearAllData = () => {
     console.log("Clearning All User Data on Sign Out");
-    this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
+    this.setState({isLoggedIn: false, userName: '', userID: '', userName: '', email: '', password: ''});
     GLOBAL.USERID = '';
     GLOBAL.USERNAME = '';
     GLOBAL.EMAIL = '';
@@ -146,18 +146,6 @@ renderCurrentState(){
                 <ActivityIndicator size = 'large' style={styles.loader}/>
             </View>
         );
-    }
-    if(this.state.isLoggedIn){
-    return(
-        <View style={styles.container}>
-                <TouchableOpacity
-                    style={styles.signOutButton}
-                    onPress={() => this.onSignOutPress()}
-                >
-                <Text style={styles.signOutButtonText}> Sign Out </Text>
-                </TouchableOpacity>
-        </View>
-    );
     }
     return (
         <View style={styles.container}>

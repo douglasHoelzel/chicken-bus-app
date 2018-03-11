@@ -57,6 +57,19 @@ onChangeUserNamePress = (newUserName) => {
       this.setState({newUserName: ''});
    }
 };
+onSignOutPress = () => {
+    console.log("User Signing Out");
+    this.clearAllData();
+};
+clearAllData = () => {
+    console.log("Clearning All User Data on Sign Out");
+    this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
+    GLOBAL.USERID = '';
+    GLOBAL.USERNAME = '';
+    GLOBAL.EMAIL = '';
+    GLOBAL.ISLOGGEDIN = false;
+    this.props.navigation.navigate('Home');
+}
 selectPhotoTapped = async () => {
     console.log("Add Photo Button Clicked");
 
@@ -75,8 +88,8 @@ selectPhotoTapped = async () => {
 
 addPicturePress = () => {
     console.log("CLicked add picture");
-
 }
+
 render() {
     let { image } = this.state;
   return (
@@ -133,6 +146,11 @@ render() {
          <Button block style={styles.backButton}
           onPress={() => this.toggleUserNameModal()}>
              <Text style={styles.changeUserNameButtonText}>Change User Name</Text>
+         </Button>
+         <Button block
+             style={styles.signOutButton}
+             onPress={() => this.onSignOutPress()}>
+             <Text style={styles.signOutButtonText}> Sign Out </Text>
          </Button>
     </ScrollView>
 
@@ -259,5 +277,17 @@ plusSignIcon:{
     height: 20,
     marginTop: 15,
     marginLeft: 15,
+},
+signOutButton:{
+    marginTop: 10,
+    borderRadius: 0,
+    backgroundColor: '#5E8DF7',
+    height: 50,
+},
+signOutButtonText:{
+    justifyContent: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize:  18,
 }
 });
