@@ -225,7 +225,7 @@ export default class AddLocation extends React.Component {
               <Picker
                 selectedValue={this.state.cat}
                 onValueChange={(itemValue, itemIndex) => this.setState({cat: itemValue})}>
-                <Picker.Item label="<Select Category>" value="" />
+                <Picker.Item label="Select Category" value="" />
                 <Picker.Item label="Nature" value="Nature" />
                 <Picker.Item label="Landmark" value="Landmark" />
                 <Picker.Item label="Entertainment" value="Entertainment" />
@@ -239,7 +239,7 @@ export default class AddLocation extends React.Component {
             <Button block
               style={styles.mapButton}
               onPress={() => this.openModal()}>
-                <Text style={styles.buttonText}>SELECT LOCATION</Text>
+                <Text style={styles.buttonText}>Select Location</Text>
             </Button>
 
 
