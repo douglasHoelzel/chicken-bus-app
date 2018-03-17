@@ -22,7 +22,8 @@ GLOBAL = require('./Global.js');
 
 
 {/* Notes:
-    In here we will display all pulled data from the individual logged in user
+    Come back later and make sure that the image getting displayed is an ajax call from the backend
+    this should help with displaying the image
 
 */}
 
@@ -34,13 +35,14 @@ static navigationOptions = {
 constructor(props){
       super(props);
       this.state = {
-          testUserImage: require('../assets/images/testUserImage.png'),
+          userImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
           newUserName: '',
           image: null,
       };
 }
 componentWillMount(){
+    GLOBAL.USERIMAGE = this.state.userImage;
 }
 
 toggleUserNameModal = () => {
@@ -81,14 +83,11 @@ selectPhotoTapped = async () => {
    console.log(result);
 
    if (!result.cancelled) {
-     this.setState({ image: result.uri });
+     this.setState({ image  : result.uri });
    }
  };
 
 
-addPicturePress = () => {
-    console.log("CLicked add picture");
-}
 
 render() {
     let { image } = this.state;
@@ -99,7 +98,7 @@ render() {
           <List>
               <ListItem >
                   <Image style={styles.profileImage}
-                  source={this.state.testUserImage}
+                  source={GLOBAL.USERIMAGE}
                   />
               {/* Add Photo Button */}
               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
@@ -113,7 +112,7 @@ render() {
           onPress={this._pickImage}
         />
         {image &&
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+          <Image source={{ uri: image }}  style={styles.profileImage}/>}
       </View>
               {/* Profile Details */}
               </ListItem>
