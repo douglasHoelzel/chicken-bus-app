@@ -16,6 +16,7 @@ import { MonoText } from '../components/StyledText';
 import * as firebase from 'firebase';
 import Modal from "react-native-modal";
 import { Button, List, ListItem } from 'native-base';
+import { TabNavigator } from 'react-navigation';
 GLOBAL = require('./Global.js');
 
 
@@ -143,7 +144,6 @@ loginWithFacebook = async() => {
     });
   }
 }
-
 onEmailSignInPress = (email, password) => {
     console.log("Existing user signing in");
     this.setState({loading: true});
@@ -155,29 +155,15 @@ onEmailSignInPress = (email, password) => {
         GLOBAL.EMAIL = user.email;
         console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
-        this.setState({loading: false, isLoggedIn: true, userID: user.uid});
-        {/* Sends New User Information to Database*/}
-        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
-        console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
-        fetch(url, {
-               method: 'POST',
-               headers: {
-                 Accept: 'application/json',
-                 'Content-Type': 'application/json',
-               },
-               body: JSON.stringify({
-                 userID: GLOBAL.USERID,
-                 username: GLOBAL.USERNAME,
-               })
-          });
+        this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
+        this.props.navigation.navigate('Map');
       })
     .catch((error) =>  {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
         Alert.alert(errorMessage);
-        this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
-
+        this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     })
 };
 
@@ -190,7 +176,7 @@ onEmailSignUpPress = (userName, email, password) => {
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = this.state.email;
-        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, userID: user.uid});
+        this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, email: '', userName: '', userID: '', password: ''});
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
@@ -205,6 +191,7 @@ onEmailSignUpPress = (userName, email, password) => {
                  username: GLOBAL.USERNAME,
                })
         });
+        this.props.navigation.navigate('Map');
       })
     .catch((error) =>  {
         var errorCode = error.code;
@@ -241,7 +228,7 @@ onCreateAccountPress = (userName, email, password) => {
 }
 clearAllData = () => {
     console.log("Clearning All User Data on Sign Out");
-    this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
+    this.setState({isLoggedIn: false, userName: '', userID: '', userName: '', email: '', password: ''});
     GLOBAL.USERID = '';
     GLOBAL.USERNAME = '';
     GLOBAL.EMAIL = '';
@@ -254,18 +241,6 @@ renderCurrentState(){
                 <ActivityIndicator size = 'large' style={styles.loader}/>
             </View>
         );
-    }
-    if(this.state.isLoggedIn){
-    return(
-        <View style={styles.container}>
-                <TouchableOpacity
-                    style={styles.signOutButton}
-                    onPress={() => this.onSignOutPress()}
-                >
-                <Text style={styles.signOutButtonText}> Sign Out </Text>
-                </TouchableOpacity>
-        </View>
-    );
     }
     return (
         <View style={styles.container}>
@@ -320,7 +295,7 @@ renderCurrentState(){
                     <Text style={styles.buttonText}> Create Account </Text>
                     </TouchableOpacity>
             </View>
-            {/*Create Google Button*/}
+            {/* Google Button*/}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
@@ -330,7 +305,7 @@ renderCurrentState(){
                     <Text style={styles.buttonText}> Sign In With Google </Text>
                     </TouchableOpacity>
             </View>
-            {/*Create Facebook Button*/}
+            {/* Facebook Button*/}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
