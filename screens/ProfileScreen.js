@@ -22,8 +22,8 @@ GLOBAL = require('./Global.js');
 
 
 {/* Notes:
-    Come back later and make sure that the image getting displayed is an ajax call from the backend
-    this should help with displaying the image
+    Come back later and make sure that the image getting displayed is
+    an ajax call from the backend this should help with displaying the image
 
 */}
 
