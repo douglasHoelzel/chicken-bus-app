@@ -3,4 +3,5 @@ module.exports = {
   USERNAME: '',
   ISLOGGEDIN: false,
   EMAIL: '',
+  USERIMAGE: null,
 };

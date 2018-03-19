@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  AppRegistry,
   Image,
   Platform,
   ScrollView,
@@ -9,35 +10,39 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  PixelRatio,
   TextInput
 } from 'react-native';
 import { Button, List, ListItem } from 'native-base';
 import { WebBrowser } from 'expo';
 import { MonoText } from '../components/StyledText';
 import Modal from "react-native-modal";
+import { ImagePicker } from 'expo';
 GLOBAL = require('./Global.js');
 
 
 {/* Notes:
-    In here we will display all pulled data from the individual logged in user
-    Make ajax call to change user name
+    Come back later and make sure that the image getting displayed is
+    an ajax call from the backend this should help with displaying the image
 
-    Bug: Profile picture won't show on iPhone when scanning the published QR code
 */}
 
 export default class SettingsScreen extends React.Component {
+
 static navigationOptions = {
     header: null,
 };
 constructor(props){
       super(props);
       this.state = {
-          testUserImage: require('../assets/images/testUserImage.png'),
+          userImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
           newUserName: '',
+          image: null,
       };
 }
 componentWillMount(){
+    GLOBAL.USERIMAGE = this.state.userImage;
 }
 
 toggleUserNameModal = () => {
@@ -54,8 +59,38 @@ onChangeUserNamePress = (newUserName) => {
       this.setState({newUserName: ''});
    }
 };
+onSignOutPress = () => {
+    console.log("User Signing Out");
+    this.clearAllData();
+};
+clearAllData = () => {
+    console.log("Clearning All User Data on Sign Out");
+    this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
+    GLOBAL.USERID = '';
+    GLOBAL.USERNAME = '';
+    GLOBAL.EMAIL = '';
+    GLOBAL.ISLOGGEDIN = false;
+    this.props.navigation.navigate('Home');
+}
+selectPhotoTapped = async () => {
+    console.log("Add Photo Button Clicked");
+
+   let result = await ImagePicker.launchImageLibraryAsync({
+     allowsEditing: true,
+     aspect: [4, 3],
+   });
+
+   console.log(result);
+
+   if (!result.cancelled) {
+     this.setState({ image  : result.uri });
+   }
+ };
+
+
 
 render() {
+    let { image } = this.state;
   return (
       <View style={styles.container}>
       <ScrollView>
@@ -63,14 +98,29 @@ render() {
           <List>
               <ListItem >
                   <Image style={styles.profileImage}
-                  source={this.state.testUserImage}
+                  source={GLOBAL.USERIMAGE}
                   />
+              {/* Add Photo Button */}
+              <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
+                  <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
+              </TouchableOpacity>
+
+
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Button
+          title="Pick an image from camera roll"
+          onPress={this._pickImage}
+        />
+        {image &&
+          <Image source={{ uri: image }}  style={styles.profileImage}/>}
+      </View>
+              {/* Profile Details */}
               </ListItem>
               <ListItem>
                 <Text>Email: {GLOBAL.EMAIL}</Text>
               </ListItem>
               <ListItem>
-                <Text>Reputation: {GLOBAL.USERID} </Text>
+                <Text>Reputation: 63 </Text>
               </ListItem>
               <ListItem>
                 <Text>Locations Added:  11 </Text>
@@ -96,6 +146,11 @@ render() {
           onPress={() => this.toggleUserNameModal()}>
              <Text style={styles.changeUserNameButtonText}>Change User Name</Text>
          </Button>
+         <Button block
+             style={styles.signOutButton}
+             onPress={() => this.onSignOutPress()}>
+             <Text style={styles.signOutButtonText}> Sign Out </Text>
+         </Button>
     </ScrollView>
 
 
@@ -106,8 +161,10 @@ render() {
       <View style={{width: 372}}>
       {/* Modal Header */}
       <Text style={styles.detailsHeader}>Change your user name </Text>
-      {/* Modal Email */}
+      {/* Modal User Name Field */}
       <View style={styles.userNameContainer}>
+          <Text style={styles.currentUserName}>Current User Name: </Text>
+          <Text style={styles.userNameText}>{GLOBAL.USERNAME}</Text>
           <TextInput
               style={{height: 50,
                   paddingLeft: 10,
@@ -122,7 +179,7 @@ render() {
       {/* Modal Sign Up Button */}
       <Button block style={styles.changeUserNameButton}
        onPress={() => this.onChangeUserNamePress(this.state.newUserName)}>
-          <Text style={styles.changeUserNameButtonText}>Change User Name</Text>
+          <Text style={styles.changeUserNameButtonText}>Submit</Text>
       </Button>
       {/* Back Button */}
       <Button block style={styles.backButton}
@@ -179,7 +236,7 @@ userNameContainer:{
     paddingTop: 10,
 },
 changeUserNameButton: {
-  marginTop: 300,
+  marginTop: 240,
   borderRadius: 0,
   backgroundColor: '#5E8DF7',
   height: 50,
@@ -191,6 +248,42 @@ backButton: {
   height: 50,
 },
 changeUserNameButtonText: {
+    justifyContent: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize:  18,
+},
+userNameText:{
+    fontSize: 20,
+    marginLeft: 20,
+    marginBottom: 30,
+},
+currentUserName:{
+    fontSize: 20,
+    marginLeft: 20,
+    marginBottom: 10,
+},
+addPhotoButton:{
+    backgroundColor: '#E0E0E0',
+    width: 50,
+    height: 50,
+    marginTop: 280,
+    marginLeft: -80,
+    borderRadius: 100
+},
+plusSignIcon:{
+    width: 20,
+    height: 20,
+    marginTop: 15,
+    marginLeft: 15,
+},
+signOutButton:{
+    marginTop: 10,
+    borderRadius: 0,
+    backgroundColor: '#5E8DF7',
+    height: 50,
+},
+signOutButtonText:{
     justifyContent: 'center',
     color: '#fff',
     fontWeight: 'bold',

@@ -162,7 +162,7 @@ export default class AddLocation extends React.Component {
     return (
 
       <View style={styles.container}>
-        <Header><Text style={styles.getStartedText}>Add Location Form</Text></Header>
+        <Header><Text style={styles.getStartedText}>Add a location</Text></Header>
         <Content>
           <Modal
                visible={this.state.modalVisible}
@@ -225,7 +225,7 @@ export default class AddLocation extends React.Component {
                 selectedValue={this.state.cat}
                 style={{width: 200}}
                 onValueChange={(itemValue, itemIndex) => this.setState({cat: itemValue})}>
-                <Picker.Item label="<Select Category>" value="" />
+                <Picker.Item label="Select Category" value="" />
                 <Picker.Item label="Nature" value="Nature" />
                 <Picker.Item label="Landmark" value="Landmark" />
                 <Picker.Item label="Entertainment" value="Entertainment" />
@@ -239,7 +239,7 @@ export default class AddLocation extends React.Component {
             <Button block
               style={styles.mapButton}
               onPress={() => this.openModal()}>
-                <Text style={styles.buttonText}>SELECT LOCATION</Text>
+                <Text style={styles.buttonText}>Select Location</Text>
             </Button>
 
 
@@ -277,29 +277,9 @@ export default class AddLocation extends React.Component {
         </Content>
 
       </View>
-
-
-
-      //The following is native-base to create the form itself, written by Avery
-      // <Container style={styles.container}>
-      // </Container>
-
     );
   }
 }
-
-      //Comment code below is the previous AddLocation.js code, current code is above.
-      //This is left here for documentation purposes only.
-
-      // <View style={styles.container}>
-      //       <Text style={styles.getStartedText}>
-      //         Add Location Page
-      //       </Text>
-      //       <Text style={styles.getStartedText}>
-      //         Currently being edited by Avery
-      //       </Text>
-      //     </View>
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

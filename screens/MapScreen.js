@@ -72,6 +72,12 @@ showAlert = () => {
       showAlert: true
     });
 };
+userButtonPress = () => {
+    this.props.navigation.navigate('Profile');
+};
+filterButtonPress = () => {
+    Alert.alert("Filter Button Pressed");
+};
 hideAlert = () => {
     this.setState({
       showAlert: false
@@ -113,10 +119,15 @@ likePress = (location, choice) => {
             {/* Header */}
             <Header>
                 <Left>
-                    <Button transparent>
+                    <TouchableOpacity onPress={() => this.filterButtonPress()}>
                         <Text>Filter</Text>
-                    </Button>
+                    </TouchableOpacity>
                 </Left>
+                <Right>
+                        <TouchableOpacity style={styles.userButton} onPress={() => this.userButtonPress()}>
+                           <Icon style={styles.userButtonIcon} name='person'/>
+                        </TouchableOpacity>
+                </Right>
             </Header>
 
             {/* Map */}
@@ -157,7 +168,7 @@ likePress = (location, choice) => {
                           <Text>Description: {this.state.tempLocation.description}</Text>
                         </ListItem>
                         <ListItem>
-                          <Text> Category: {this.state.tempLocation.category} </Text>
+                          <Text>Category: {this.state.tempLocation.category} </Text>
                         </ListItem>
                         <ListItem>
                           <Text>City: Chapel Hill </Text>
@@ -291,6 +302,18 @@ thumbButtonOpacityRight:{
 },
 markers:{
     height: 30,
-    width: 30
+    width: 30,
+    position: 'relative',
+},
+userButton:{
+    backgroundColor: '#DDDDDD',
+    borderRadius: 90,
+    height: 40,
+    width: 40
+},
+userButtonIcon:{
+    marginLeft: 10,
+    marginTop: 4,
+    position: 'relative'
 }
 });
