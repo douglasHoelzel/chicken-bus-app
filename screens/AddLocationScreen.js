@@ -141,7 +141,6 @@ export default class AddLocation extends React.Component {
         this.setState({markerVisible: false});
         this.setState({markerLat: 0});
         this.setState({markerLong: 0});
-
       }
   }
 
@@ -224,6 +223,7 @@ export default class AddLocation extends React.Component {
               <Label style={styles.label}>Category: </Label>
               <Picker
                 selectedValue={this.state.cat}
+                style={{width: 200}}
                 onValueChange={(itemValue, itemIndex) => this.setState({cat: itemValue})}>
                 <Picker.Item label="<Select Category>" value="" />
                 <Picker.Item label="Nature" value="Nature" />
@@ -307,6 +307,7 @@ const styles = StyleSheet.create({
   },
   header: {
     textAlign: 'center',
+    backgroundColor: '#fff',
   },
   formText: {
 
