@@ -87,6 +87,7 @@ loginWithGoogle = async() => {
                  username: GLOBAL.USERNAME,
                })
           });
+          this.props.navigation.navigate('Map');
       })
     .catch((error) => {
       var errorCode = error.code;
@@ -134,6 +135,7 @@ loginWithFacebook = async() => {
                  username: GLOBAL.USERNAME,
                })
           });
+          this.props.navigation.navigate('Map');
       })
     .catch((error) => {
       var errorCode = error.code;
