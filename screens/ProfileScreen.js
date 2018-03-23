@@ -22,7 +22,8 @@ GLOBAL = require('./Global.js');
 
 
 {/* Notes:
-    In here we will display all pulled data from the individual logged in user
+    Come back later and make sure that the image getting displayed is
+    an ajax call from the backend this should help with displaying the image
 
 */}
 
@@ -34,13 +35,14 @@ static navigationOptions = {
 constructor(props){
       super(props);
       this.state = {
-          testUserImage: require('../assets/images/testUserImage.png'),
+          userImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
           newUserName: '',
           image: null,
       };
 }
 componentWillMount(){
+    GLOBAL.USERIMAGE = this.state.userImage;
 }
 
 toggleUserNameModal = () => {
@@ -57,6 +59,19 @@ onChangeUserNamePress = (newUserName) => {
       this.setState({newUserName: ''});
    }
 };
+onSignOutPress = () => {
+    console.log("User Signing Out");
+    this.clearAllData();
+};
+clearAllData = () => {
+    console.log("Clearning All User Data on Sign Out");
+    this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
+    GLOBAL.USERID = '';
+    GLOBAL.USERNAME = '';
+    GLOBAL.EMAIL = '';
+    GLOBAL.ISLOGGEDIN = false;
+    this.props.navigation.navigate('Home');
+}
 selectPhotoTapped = async () => {
     console.log("Add Photo Button Clicked");
 
@@ -68,15 +83,12 @@ selectPhotoTapped = async () => {
    console.log(result);
 
    if (!result.cancelled) {
-     this.setState({ image: result.uri });
+     this.setState({ image  : result.uri });
    }
  };
 
 
-addPicturePress = () => {
-    console.log("CLicked add picture");
 
-}
 render() {
     let { image } = this.state;
   return (
@@ -86,7 +98,7 @@ render() {
           <List>
               <ListItem >
                   <Image style={styles.profileImage}
-                  source={this.state.testUserImage}
+                  source={GLOBAL.USERIMAGE}
                   />
               {/* Add Photo Button */}
               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
@@ -100,7 +112,7 @@ render() {
           onPress={this._pickImage}
         />
         {image &&
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+          <Image source={{ uri: image }}  style={styles.profileImage}/>}
       </View>
               {/* Profile Details */}
               </ListItem>
@@ -133,6 +145,11 @@ render() {
          <Button block style={styles.backButton}
           onPress={() => this.toggleUserNameModal()}>
              <Text style={styles.changeUserNameButtonText}>Change User Name</Text>
+         </Button>
+         <Button block
+             style={styles.signOutButton}
+             onPress={() => this.onSignOutPress()}>
+             <Text style={styles.signOutButtonText}> Sign Out </Text>
          </Button>
     </ScrollView>
 
@@ -259,5 +276,17 @@ plusSignIcon:{
     height: 20,
     marginTop: 15,
     marginLeft: 15,
+},
+signOutButton:{
+    marginTop: 10,
+    borderRadius: 0,
+    backgroundColor: '#5E8DF7',
+    height: 50,
+},
+signOutButtonText:{
+    justifyContent: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize:  18,
 }
 });
