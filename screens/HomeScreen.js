@@ -76,9 +76,10 @@ loginWithGoogle = async() => {
       console.log("New User ID: " + JSON.stringify(user));
       GLOBAL.USERID = user.uid;
       GLOBAL.ISLOGGEDIN = true;
+      GLOBAL.USERNAME = this.state.userName;
       GLOBAL.EMAIL = user.email;
       console.log("Email: " + user.email);
-    //  this.getUserInfo(user.uid);
+      this.getUserInfo(user.uid);
     this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
     this.props.navigation.navigate('Map');
 
@@ -110,7 +111,7 @@ loginWithGoogle = async() => {
 loginWithFacebook = async() => {
   const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
     '201285720459409',
-    { permissions: ['public_profile', 'email'] }
+  {scope: 'email,public_profile'}
   );
 
   if (type === 'success') {
@@ -121,7 +122,7 @@ loginWithFacebook = async() => {
     this.setState({loading: true});
 
     firebase.auth().signInWithCredential(credential)
-    .then((user) => {
+    .then(async (user) => {
       this.toggleCreateUserNameModal();
       console.log("New User ID: " + JSON.stringify(user));
 
@@ -133,7 +134,6 @@ loginWithFacebook = async() => {
       this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
 
       this.props.navigation.navigate('Map');
-
 
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
@@ -197,7 +197,6 @@ onEmailSignUpPress = (userName, email, password) => {
         GLOBAL.EMAIL = this.state.email;
         this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, email: '', userName: '', userID: '', password: ''});
         {/* Sends New User Information to Database*/}
-
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
         fetch(url, {
