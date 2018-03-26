@@ -9,7 +9,8 @@ import {
   Alert,
   TouchableOpacity,
   View,
-  TextInput
+  TextInput,
+  Switch
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { MonoText } from '../components/StyledText';
@@ -17,6 +18,7 @@ import * as firebase from 'firebase';
 import Modal from "react-native-modal";
 import { Button, List, ListItem } from 'native-base';
 import { TabNavigator } from 'react-navigation';
+
 GLOBAL = require('./Global.js');
 
 
@@ -30,7 +32,9 @@ export default class HomeScreen extends React.Component {
 };
 constructor(props){
     super(props);
+    this.toggleSwitch = this.toggleSwitch.bind(this);
     this.state = {
+        showPassword: true,
         isLoggedIn: false,
         email: '',
         password: '',
@@ -38,6 +42,7 @@ constructor(props){
         userName: '',
         loading: false,
         isSignUpModalVisible: false,
+        isCreateUserNameModalVisible: false,
     };
 }
 componentWillMount(){
@@ -64,13 +69,18 @@ loginWithGoogle = async() => {
 
     firebase.auth().signInWithCredential(credential)
     .then((user) => {
+      this.toggleCreateUserNameModal();
+
       console.log("New User ID: " + JSON.stringify(user));
       GLOBAL.USERID = user.uid;
       GLOBAL.ISLOGGEDIN = true;
+      GLOBAL.USERNAME = this.state.userName;
       GLOBAL.EMAIL = user.email;
       console.log("Email: " + user.email);
       this.getUserInfo(user.uid);
-        this.setState({loading: false, isLoggedIn: true, userID: user.uid});
+    this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
+    this.props.navigation.navigate('Map');
+
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
@@ -85,14 +95,13 @@ loginWithGoogle = async() => {
                  username: GLOBAL.USERNAME,
                })
           });
-          this.props.navigation.navigate('Map');
       })
     .catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
       console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
       Alert.alert(errorMessage);
-      this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
+      this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     });
   }
 }
@@ -100,7 +109,7 @@ loginWithGoogle = async() => {
 loginWithFacebook = async() => {
   const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
     '201285720459409',
-    { permissions: ['public_profile', 'email'] }
+  {scope: 'email,public_profile'}
   );
 
   if (type === 'success') {
@@ -111,14 +120,19 @@ loginWithFacebook = async() => {
     this.setState({loading: true});
 
     firebase.auth().signInWithCredential(credential)
-    .then((user) => {
+    .then(async (user) => {
+      this.toggleCreateUserNameModal();
       console.log("New User ID: " + JSON.stringify(user));
+
       GLOBAL.USERID = user.uid;
       GLOBAL.ISLOGGEDIN = true;
       GLOBAL.EMAIL = user.email;
       console.log("Email: " + user.email);
-      this.getUserInfo(user.uid);
-        this.setState({loading: false, isLoggedIn: true, userID: user.uid});
+      //this.getUserInfo(user.uid);
+      this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
+
+      this.props.navigation.navigate('Map');
+
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
@@ -133,17 +147,19 @@ loginWithFacebook = async() => {
                  username: GLOBAL.USERNAME,
                })
           });
-          this.props.navigation.navigate('Map');
       })
     .catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
       console.log("SIGN UP ERROR CODE: " + errorCode + " SIGN UP ERROR MESSAGE: " + errorMessage);
       Alert.alert(errorMessage);
-      this.setState({loading: false, isLoggedIn: false, password: '', email: ''});
+      this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     });
+
   }
+
 }
+
 onEmailSignInPress = (email, password) => {
     console.log("Existing user signing in");
     this.setState({loading: true});
@@ -152,6 +168,7 @@ onEmailSignInPress = (email, password) => {
         console.log("New User ID: " + JSON.stringify(user));
         GLOBAL.USERID = user.uid;
         GLOBAL.ISLOGGEDIN = true;
+        GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = user.email;
         console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
@@ -204,10 +221,6 @@ onEmailSignUpPress = (userName, email, password) => {
     this.toggleSignUpModal();
 };
 
-onSignOutPress = () => {
-    console.log("User Signing Out");
-    this.clearAllData();
-};
 
 getUserInfo = async (userID) => {
     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/getuser/" + userID;
@@ -221,19 +234,34 @@ getUserInfo = async (userID) => {
 toggleSignUpModal = () => {
     this.setState({ isSignUpModalVisible: !this.state.isSignUpModalVisible });
 }
+toggleCreateUserNameModal = () => {
+    this.setState({ isCreateUserNameModalVisible: !this.state.isCreateUserNameModalVisible });
+}
 
 onCreateAccountPress = (userName, email, password) => {
     console.log("Creating New Account");
     this.onEmailSignUpPress(userName, email, password);
 }
+
+onCreateUserNamePress = (userName) => {
+    console.log("Creating Username");
+    console.log("New User Name Being Entered : " + userName);
+    GLOBAL.USERNAME = this.state.userName;
+    this.toggleCreateUserNameModal();
+
+
+}
 clearAllData = () => {
-    console.log("Clearning All User Data on Sign Out");
+    console.log("Cleaning All User Data on Sign Out");
     this.setState({isLoggedIn: false, userName: '', userID: '', userName: '', email: '', password: ''});
     GLOBAL.USERID = '';
     GLOBAL.USERNAME = '';
     GLOBAL.EMAIL = '';
     GLOBAL.ISLOGGEDIN = false;
 }
+toggleSwitch() {
+   this.setState({ showPassword: !this.state.showPassword });
+ }
 renderCurrentState(){
     if(this.state.loading){
         return(
@@ -271,12 +299,21 @@ renderCurrentState(){
                         paddingLeft: 10,
                         backgroundColor: '#ECE8E8',
                         borderRadius: 3,}}
-                    secureTextEntry={true}
+                    secureTextEntry={this.state.showPassword}
                     placeholder="Password"
                     onChangeText={(password) => this.setState({password})}
                     value = {this.state.password}
                 />
+                <Text style={styles.showPasswordText}>Show Password</Text>
+
+                <Switch
+                  style={{marginTop:-25,
+                    marginLeft:110}}
+                  onValueChange={this.toggleSwitch}
+                  value={!this.state.showPassword}
+                />
             </View>
+
             {/* Sign In Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
@@ -295,7 +332,7 @@ renderCurrentState(){
                     <Text style={styles.buttonText}> Create Account </Text>
                     </TouchableOpacity>
             </View>
-            {/* Google Button*/}
+            {/*Google Button*/}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
@@ -305,7 +342,7 @@ renderCurrentState(){
                     <Text style={styles.buttonText}> Sign In With Google </Text>
                     </TouchableOpacity>
             </View>
-            {/* Facebook Button*/}
+            {/*Facebook Button*/}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
@@ -356,10 +393,18 @@ renderCurrentState(){
                         marginLeft: 20,
                         backgroundColor: '#E4E4E4',
                         borderRadius: 6}}
-                    secureTextEntry={true}
+                    secureTextEntry={this.state.showPassword}
                     placeholder="Password"
                     onChangeText={(password) => this.setState({password})}
                     value = {this.state.password}
+                />
+                <Text style={styles.showPasswordTextModal}>Show Password</Text>
+
+                <Switch
+                  style={{marginTop:-25,
+                    marginLeft:130}}
+                  onValueChange={this.toggleSwitch}
+                  value={!this.state.showPassword}
                 />
             </View>
             {/* Modal Sign Up Button */}
@@ -377,6 +422,37 @@ renderCurrentState(){
            </View>
            </ScrollView>
            </Modal>
+
+           <Modal style={styles.modal} isVisible={this.state.isCreateUserNameModalVisible}>
+             <ScrollView>
+             <View style={{width: 372}}>
+             {/* Modal Header */}
+             <Text style={styles.detailsHeader}>Create your username </Text>
+                 {/* Modal Username */}
+                 <View style={styles.userNameContainer}>
+                     <TextInput
+                         style={{height: 50,
+                             paddingLeft: 10,
+                             marginLeft: 20,
+                             backgroundColor: '#E4E4E4',
+                             borderRadius: 6}}
+                         placeholder="User Name"
+                         onChangeText={(userName) => this.setState({userName})}
+                         value = {this.state.userName}
+                     />
+                 </View>
+
+             {/* Modal Sign Up Button */}
+             <Button block style={styles.signUpModalButton}
+              onPress={() => this.onCreateUserNamePress(this.state.userName)}
+              >
+                 <Text style={styles.signUpModalButtonText}>Create</Text>
+             </Button>
+
+
+            </View>
+            </ScrollView>
+            </Modal>
         </View>
     );
 }
@@ -396,14 +472,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 0,
+    paddingBottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
+
   },
   welcomeContainer: {
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: 0,
+    marginBottom: 0,
+
   },
   welcomeImage: {
     width: 600,
@@ -412,13 +491,20 @@ const styles = StyleSheet.create({
     marginLeft: -10,
  },
  emailContainer:{
-     marginTop: 10,
+     marginTop: -50,
      width: 350,
-     paddingTop: 10,
+     paddingTop: 0,
  },
  passwordContainer:{
      width: 350,
-     paddingTop: 10,
+     paddingTop: 20,
+ },
+ showPasswordText:{
+   marginTop: 20,
+ },
+ showPasswordTextModal:{
+   marginTop: 20,
+   marginLeft:20,
  },
  userNameContainer:{
      width: 350,
@@ -427,7 +513,7 @@ const styles = StyleSheet.create({
  buttonContainer:{
     justifyContent: 'center',
     paddingHorizontal: 10,
-    paddingTop: 10,
+    paddingTop: 15,
 },
 buttonText:{
     color: '#fff'
@@ -443,21 +529,6 @@ buttonCell:{
  loader:{
      alignItems: 'center',
      marginTop: 350,
- },
- signOutButton:{
-     alignItems: 'center',
-     backgroundColor: '#3F62CB',
-     marginTop: 350,
-     marginLeft: 110,
-     height: 50,
-     width: 200,
-     padding: 10,
-     borderRadius: 10,
- },
- signOutButtonText:{
-     fontSize: 20,
-     marginTop: 3,
-     color: '#fff',
  },
  modal: {
    flex: 1,
