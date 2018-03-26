@@ -78,6 +78,7 @@ loginWithGoogle = async() => {
       console.log("Email: " + user.email);
       this.getUserInfo(user.uid);
     this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
+    this.downloadUserImage();
     this.props.navigation.navigate('Map');
 
         {/* Sends New User Information to Database*/}
@@ -129,7 +130,7 @@ loginWithFacebook = async() => {
       console.log("Email: " + user.email);
       //this.getUserInfo(user.uid);
       this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
-
+      this.downloadUserImage();
       this.props.navigation.navigate('Map');
 
         {/* Sends New User Information to Database*/}
@@ -197,6 +198,7 @@ onEmailSignUpPress = (userName, email, password) => {
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
+        this.downloadUserImage();
         fetch(url, {
                method: 'POST',
                headers: {
