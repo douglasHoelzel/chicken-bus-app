@@ -70,7 +70,7 @@ export default class AddLocation extends React.Component {
       }
       else{
         //If form is complete, send post to api
-        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/addlocation";
+        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/addlocation";
         fetch(url, {
               method: 'POST',
               headers: {

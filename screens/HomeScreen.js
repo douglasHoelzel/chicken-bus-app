@@ -22,9 +22,7 @@ GLOBAL = require('./Global.js');
 
 
 {/* Notes:
-    Currently there is a bug in the create account Modal
-    where if you enter jibberish as a username without an email @
-    symbol it crashes
+
 */}
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -74,7 +72,7 @@ loginWithGoogle = async() => {
       this.getUserInfo(user.uid);
         this.setState({loading: false, isLoggedIn: true, userID: user.uid});
         {/* Sends New User Information to Database*/}
-        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
+        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
         fetch(url, {
                method: 'POST',
@@ -122,7 +120,7 @@ loginWithFacebook = async() => {
       this.getUserInfo(user.uid);
         this.setState({loading: false, isLoggedIn: true, userID: user.uid});
         {/* Sends New User Information to Database*/}
-        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
+        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
         fetch(url, {
                method: 'POST',
@@ -180,7 +178,7 @@ onEmailSignUpPress = (userName, email, password) => {
         GLOBAL.EMAIL = this.state.email;
         this.setState({loading: false, isLoggedIn: true, isSignUpModalVisible: false, email: '', userName: '', userID: '', password: ''});
         {/* Sends New User Information to Database*/}
-        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/adduser";
+        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
         fetch(url, {
                method: 'POST',
@@ -212,7 +210,7 @@ onSignOutPress = () => {
 };
 
 getUserInfo = async (userID) => {
-    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getuser/" + userID;
+    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/getuser/" + userID;
     const response = await fetch(url);
     const json = await response.json();
     GLOBAL.USERNAME = json.doc.username;

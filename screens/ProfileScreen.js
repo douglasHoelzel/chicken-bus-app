@@ -64,6 +64,25 @@ onSignOutPress = () => {
     console.log("User Signing Out");
     this.clearAllData();
 };
+
+uploadUserImage = () => {
+    const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
+    fetch(uploadUserImageURL, {
+           method: 'POST',
+           headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             userID: GLOBAL.USERID,
+             base64: GLOBAL.USERIMAGE,
+           })
+      })
+    .catch((error) => {
+    console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
+    });
+};
+
 clearAllData = () => {
     console.log("Clearning All User Data on Sign Out");
     this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
@@ -73,6 +92,7 @@ clearAllData = () => {
     GLOBAL.ISLOGGEDIN = false;
     this.props.navigation.navigate('Home');
 }
+
 selectPhotoTapped = async () => {
     console.log("Add Photo Button Clicked");
 
