@@ -303,14 +303,6 @@ renderCurrentState(){
                     onChangeText={(password) => this.setState({password})}
                     value = {this.state.password}
                 />
-                <Text style={styles.showPasswordText}>Show Password</Text>
-
-                <Switch
-                  style={{marginTop:-25,
-                    marginLeft:110}}
-                  onValueChange={this.toggleSwitch}
-                  value={!this.state.showPassword}
-                />
             </View>
 
             {/* Sign In Button */}
