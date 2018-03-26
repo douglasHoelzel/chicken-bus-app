@@ -167,7 +167,6 @@ render() {
           title="Pick an image from camera roll"
           onPress={this._pickImage}
         />
-    {/*{image && <Image source={{ uri: GLOBAL.USERIMAGEBASE64 }}  style={styles.profileImage}/>}*/}
       </View>
               {/* Profile Details */}
               </ListItem>
@@ -268,7 +267,8 @@ profileHeader:{
 profileImage:{
     height: 300,
     width: 300,
-    marginLeft: 40
+    marginLeft: 40,
+    borderRadius: 150,
 },
 modal: {
   flex: 1,
