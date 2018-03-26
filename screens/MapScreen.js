@@ -49,12 +49,12 @@ componentWillMount(){
         this.getAllLocations();
 }
 getAllLocations = async () => {
-    const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/alllocations");
+    const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations");
     const json = await response.json();
     this.setState({ markers: json.doc });
 };
 getSingleLocation = async (location) => {
-    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/getlocation/" + location;
+    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getlocation/" + location;
     const response = await fetch(url);
     const json = await response.json();
     this.setState({ tempLocation: json.doc });
@@ -84,7 +84,7 @@ hideAlert = () => {
     });
 };
 likePress = (location, choice) => {
-   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikes";
+   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikes";
    fetch(url, {
           method: 'POST',
           headers: {
@@ -97,7 +97,7 @@ likePress = (location, choice) => {
           })
         });
    if(GLOBAL.ISLOGGEDIN){
-   const url2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikedlocation";
+   const url2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikedlocation";
    fetch(url2, {
           method: 'POST',
           headers: {

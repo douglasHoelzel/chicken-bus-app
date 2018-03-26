@@ -13,17 +13,18 @@ import {
   PixelRatio,
   TextInput
 } from 'react-native';
+import * as firebase from 'firebase';
 import { Button, List, ListItem } from 'native-base';
-import { WebBrowser } from 'expo';
 import { MonoText } from '../components/StyledText';
 import Modal from "react-native-modal";
-import { ImagePicker } from 'expo';
+import { ImagePicker, WebBrowser } from 'expo';
 GLOBAL = require('./Global.js');
 
 
 {/* Notes:
-    Come back later and make sure that the image getting displayed is
-    an ajax call from the backend this should help with displaying the image
+    Once image can be uploaded to Firebase:
+        - Upon creation of account have defauly image be loaded to Account
+        - Pull and display profile
 
 */}
 
