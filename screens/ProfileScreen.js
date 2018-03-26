@@ -21,6 +21,7 @@ import { ImagePicker, WebBrowser } from 'expo';
 GLOBAL = require('./Global.js');
 
 
+
 {/* Notes:
     Once image can be uploaded to Firebase:
         - Upon creation of account have defauly image be loaded to Account
@@ -66,6 +67,7 @@ onSignOutPress = () => {
 };
 
 uploadUserImage = () => {
+    console.log("Uploading user image");
     const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
     fetch(uploadUserImageURL, {
            method: 'POST',
@@ -75,12 +77,18 @@ uploadUserImage = () => {
            },
            body: JSON.stringify({
              userID: GLOBAL.USERID,
-             base64: GLOBAL.USERIMAGE,
+             //base64: GLOBAL.USERIMAGE,
+             base64: this.state.image,
            })
       })
     .catch((error) => {
     console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
     });
+};
+
+downloadUserImage = () => {
+    console.log("Fetching user image");
+
 };
 
 clearAllData = () => {
@@ -106,6 +114,8 @@ selectPhotoTapped = async () => {
    if (!result.cancelled) {
      this.setState({ image  : result.uri });
    }
+
+   this.uploadUserImage();
  };
 
 
