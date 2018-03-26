@@ -11,7 +11,9 @@ import {
   View,
   Alert,
   PixelRatio,
-  TextInput
+  TextInput,
+  ImageStore,
+  ImageEditor,
 } from 'react-native';
 import * as firebase from 'firebase';
 import { Button, List, ListItem } from 'native-base';
@@ -26,7 +28,6 @@ GLOBAL = require('./Global.js');
     Once image can be uploaded to Firebase:
         - Upon creation of account have defauly image be loaded to Account
         - Pull and display profile
-
 */}
 
 export default class SettingsScreen extends React.Component {
@@ -41,10 +42,12 @@ constructor(props){
           isUserNameModalVisible: false,
           newUserName: '',
           image: null,
+          base64Image: '',
       };
 }
 componentWillMount(){
     GLOBAL.USERIMAGE = this.state.userImage;
+    this.downloadUserImage();
 }
 
 toggleUserNameModal = () => {
@@ -68,26 +71,49 @@ onSignOutPress = () => {
 
 uploadUserImage = () => {
     console.log("Uploading user image");
-    const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
-    fetch(uploadUserImageURL, {
-           method: 'POST',
-           headers: {
-             Accept: 'application/json',
-             'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({
-             userID: GLOBAL.USERID,
-             //base64: GLOBAL.USERIMAGE,
-             base64: this.state.image,
-           })
-      })
-    .catch((error) => {
-    console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
-    });
+
+    // Converts image URL to Base64 String
+    Image.getSize(this.state.image, (width, height) => {
+      let imageSettings = {
+        offset: { x: 0, y: 0 },
+        size: { width: width, height: height }
+      };
+      ImageEditor.cropImage(this.state.image, imageSettings, (uri) => {
+        ImageStore.getBase64ForTag(uri, (data) => {
+          console.log("BASE64: " + data);
+          this.setState({base64Image: data});
+          console.log("String before ajax: " + this.state.base64Image);
+          GLOBAL.USERIMAGEBASE64 = this.state.base64Image;
+          const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
+          fetch(uploadUserImageURL, {
+                 method: 'POST',
+                 headers: {
+                   Accept: 'application/json',
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                   userID: GLOBAL.USERID,
+                   base64: GLOBAL.USERIMAGEBASE64,
+                 })
+            })
+          .catch((error) => {
+          console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
+          });
+        }, e => console.warn("getBase64ForTag: ", e))
+      }, e => console.warn("cropImage: ", e))
+    })
+
+
 };
 
-downloadUserImage = () => {
-    console.log("Fetching user image");
+downloadUserImage = async () => {
+    console.log("Downloading user image");
+    const downloadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/getuserimage/" + GLOBAL.USERID;
+    const response = await fetch(downloadUserImageURL);
+    const json = await response.json();
+
+    console.log(response);
+    console.log(json);
 
 };
 

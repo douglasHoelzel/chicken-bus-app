@@ -18,7 +18,6 @@ import * as firebase from 'firebase';
 import Modal from "react-native-modal";
 import { Button, List, ListItem } from 'native-base';
 import { TabNavigator } from 'react-navigation';
-
 GLOBAL = require('./Global.js');
 
 

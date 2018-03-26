@@ -4,4 +4,5 @@ module.exports = {
   ISLOGGEDIN: false,
   EMAIL: '',
   USERIMAGE: null,
+  USERIMAGEBASE64: '',
 };
