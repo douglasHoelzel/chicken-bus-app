@@ -172,6 +172,7 @@ onEmailSignInPress = (email, password) => {
         console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
         this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
+        this.downloadUserImage();
         this.props.navigation.navigate('Map');
       })
     .catch((error) =>  {
@@ -220,6 +221,21 @@ onEmailSignUpPress = (userName, email, password) => {
     this.toggleSignUpModal();
 };
 
+downloadUserImage = async () => {
+    console.log("Downloading user image");
+    const downloadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/getuserimage/" + GLOBAL.USERID;
+    const response = await fetch(downloadUserImageURL);
+    const json = await response.json();
+
+    if(json.doc === "Default Image" || json.doc === "" || json.doc === " "){
+        console.log("Defaul user image detected");
+    }
+    else{
+        console.log("json.doc");
+        console.log(json.doc);
+        GLOBAL.USERIMAGEBASE64 = json.doc;
+    }
+};
 
 getUserInfo = async (userID) => {
     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/getuser/" + userID;

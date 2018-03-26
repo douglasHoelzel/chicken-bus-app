@@ -20,6 +20,7 @@ import { Button, List, ListItem } from 'native-base';
 import { MonoText } from '../components/StyledText';
 import Modal from "react-native-modal";
 import { ImagePicker, WebBrowser } from 'expo';
+import TimerMixin from 'react-timer-mixin';
 GLOBAL = require('./Global.js');
 
 
@@ -40,20 +41,19 @@ constructor(props){
       this.state = {
           userImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
+          isUserNameModalVisible2: false,
           newUserName: '',
           image: null,
           base64Image: '',
-
       };
 }
 componentWillMount(){
-    this.downloadUserImage();
+    //this.downloadUserImage();
 }
 
 toggleUserNameModal = () => {
       this.setState({ isUserNameModalVisible: !this.state.isUserNameModalVisible });
 }
-
 onChangeUserNamePress = (newUserName) => {
     if(newUserName === ''){
           Alert.alert("Enter a new screen name");
@@ -126,6 +126,7 @@ clearAllData = () => {
     GLOBAL.USERNAME = '';
     GLOBAL.EMAIL = '';
     GLOBAL.ISLOGGEDIN = false;
+    GLOBAL.USERIMAGEBASE64 = GLOBAL.DEFAULTIMAGE;
     this.props.navigation.navigate('Home');
 }
 
@@ -207,7 +208,6 @@ render() {
              <Text style={styles.signOutButtonText}> Sign Out </Text>
          </Button>
     </ScrollView>
-
 
 
     {/* Create Account Modal */}
