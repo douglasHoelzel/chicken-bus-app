@@ -43,11 +43,13 @@ constructor(props){
           newUserName: '',
           image: null,
           base64Image: '',
+
       };
 }
 componentWillMount(){
     GLOBAL.USERIMAGE = this.state.userImage;
     this.downloadUserImage();
+    console.log("TestImage: ---> " + GLOBAL.TESTIMAGE);
 }
 
 toggleUserNameModal = () => {
@@ -80,10 +82,9 @@ uploadUserImage = () => {
       };
       ImageEditor.cropImage(this.state.image, imageSettings, (uri) => {
         ImageStore.getBase64ForTag(uri, (data) => {
-          console.log("BASE64: " + data);
           this.setState({base64Image: data});
-          console.log("String before ajax: " + this.state.base64Image);
-          GLOBAL.USERIMAGEBASE64 = this.state.base64Image;
+          GLOBAL.USERIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
+          console.log("BASE64:  " + GLOBAL.USERIMAGEBASE64);
           const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
           fetch(uploadUserImageURL, {
                  method: 'POST',
@@ -140,7 +141,7 @@ selectPhotoTapped = async () => {
    if (!result.cancelled) {
      this.setState({ image  : result.uri });
    }
-
+   GLOBAL.USERIMAGEBASE64 = this.state.image;
    this.uploadUserImage();
  };
 
@@ -154,9 +155,7 @@ render() {
       <Text style={styles.profileHeader}>{GLOBAL.USERNAME} </Text>
           <List>
               <ListItem >
-                  <Image style={styles.profileImage}
-                  source={GLOBAL.USERIMAGE}
-                  />
+                  <Image style={styles.profileImage} source={{ uri: GLOBAL.USERIMAGEBASE64 }}/>
               {/* Add Photo Button */}
               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
@@ -168,8 +167,7 @@ render() {
           title="Pick an image from camera roll"
           onPress={this._pickImage}
         />
-        {image &&
-          <Image source={{ uri: image }}  style={styles.profileImage}/>}
+    {/*{image && <Image source={{ uri: GLOBAL.USERIMAGEBASE64 }}  style={styles.profileImage}/>}*/}
       </View>
               {/* Profile Details */}
               </ListItem>
