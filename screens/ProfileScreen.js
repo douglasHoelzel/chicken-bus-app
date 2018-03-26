@@ -47,9 +47,7 @@ constructor(props){
       };
 }
 componentWillMount(){
-    GLOBAL.USERIMAGE = this.state.userImage;
     this.downloadUserImage();
-    console.log("TestImage: ---> " + GLOBAL.TESTIMAGE);
 }
 
 toggleUserNameModal = () => {
@@ -58,10 +56,10 @@ toggleUserNameModal = () => {
 
 onChangeUserNamePress = (newUserName) => {
     if(newUserName === ''){
-          Alert.alert("Enter a new user name");
+          Alert.alert("Enter a new screen name");
     }
     else{
-      console.log("Chaning user name to: " + newUserName);
+      console.log("Chaning screen name to: " + newUserName);
       this.toggleUserNameModal();
       this.setState({newUserName: ''});
    }
@@ -103,8 +101,6 @@ uploadUserImage = () => {
         }, e => console.warn("getBase64ForTag: ", e))
       }, e => console.warn("cropImage: ", e))
     })
-
-
 };
 
 downloadUserImage = async () => {
@@ -113,9 +109,14 @@ downloadUserImage = async () => {
     const response = await fetch(downloadUserImageURL);
     const json = await response.json();
 
-    console.log(response);
-    console.log(json);
-
+    if(json.doc === "Default Image" || json.doc === "" || json.doc === " "){
+        console.log("Defaul user image detected");
+    }
+    else{
+        console.log("json.doc");
+        console.log(json.doc);
+        GLOBAL.USERIMAGEBASE64 = json.doc;
+    }
 };
 
 clearAllData = () => {
@@ -195,10 +196,10 @@ render() {
                 <Text>Placeholder: Some other data can go here </Text>
               </ListItem>
          </List>
-         {/* Change User Name Button */}
+         {/* Change Screen Name Button */}
          <Button block style={styles.backButton}
           onPress={() => this.toggleUserNameModal()}>
-             <Text style={styles.changeUserNameButtonText}>Change User Name</Text>
+             <Text style={styles.changeUserNameButtonText}>Change Screen Name</Text>
          </Button>
          <Button block
              style={styles.signOutButton}
@@ -214,10 +215,10 @@ render() {
       <ScrollView>
       <View style={{width: 372}}>
       {/* Modal Header */}
-      <Text style={styles.detailsHeader}>Change your user name </Text>
-      {/* Modal User Name Field */}
+      <Text style={styles.detailsHeader}>Change your screen name </Text>
+      {/* Modal Screen Name Field */}
       <View style={styles.userNameContainer}>
-          <Text style={styles.currentUserName}>Current User Name: </Text>
+          <Text style={styles.currentUserName}>Current Screen Name: </Text>
           <Text style={styles.userNameText}>{GLOBAL.USERNAME}</Text>
           <TextInput
               style={{height: 50,
@@ -226,7 +227,7 @@ render() {
                   marginBottom: 10,
                   backgroundColor: '#E4E4E4',
                   borderRadius: 6}}
-              placeholder="New user name"
+              placeholder="New Screen name"
               onChangeText={(newUserName) => this.setState({newUserName})}
               value = {this.state.newUserName}/>
       </View>

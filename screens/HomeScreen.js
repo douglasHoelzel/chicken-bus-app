@@ -184,7 +184,7 @@ onEmailSignInPress = (email, password) => {
 };
 
 onEmailSignUpPress = (userName, email, password) => {
-    console.log("New User Name Being Entered : " + userName + " email: " + email + " password: " + password);
+    console.log("New Screen Name Being Entered : " + userName + " email: " + email + " password: " + password);
     this.setState({loading: true});
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
@@ -244,7 +244,7 @@ onCreateAccountPress = (userName, email, password) => {
 
 onCreateUserNamePress = (userName) => {
     console.log("Creating Username");
-    console.log("New User Name Being Entered : " + userName);
+    console.log("New Screen Name Being Entered : " + userName);
     GLOBAL.USERNAME = this.state.userName;
     this.toggleCreateUserNameModal();
 
@@ -358,7 +358,7 @@ renderCurrentState(){
                             marginLeft: 20,
                             backgroundColor: '#E4E4E4',
                             borderRadius: 6}}
-                        placeholder="User Name"
+                        placeholder="Screen Name"
                         onChangeText={(userName) => this.setState({userName})}
                         value = {this.state.userName}
                     />
@@ -418,7 +418,7 @@ renderCurrentState(){
              <ScrollView>
              <View style={{width: 372}}>
              {/* Modal Header */}
-             <Text style={styles.detailsHeader}>Create your username </Text>
+             <Text style={styles.detailsHeader}>Create your screen name </Text>
                  {/* Modal Username */}
                  <View style={styles.userNameContainer}>
                      <TextInput
@@ -427,7 +427,7 @@ renderCurrentState(){
                              marginLeft: 20,
                              backgroundColor: '#E4E4E4',
                              borderRadius: 6}}
-                         placeholder="User Name"
+                         placeholder="Screen Name"
                          onChangeText={(userName) => this.setState({userName})}
                          value = {this.state.userName}
                      />
