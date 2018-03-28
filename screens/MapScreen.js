@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Image, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated, ImageStore, ImageEditor,
+  Image, Alert, Item, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated, ImageStore, ImageEditor,
 } from 'react-native';
 import { ImagePicker, WebBrowser, MapView} from 'expo';
 import { Marker, Callout } from 'expo';
@@ -9,9 +9,10 @@ import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { createStore } from 'redux';
 GLOBAL = require('./Global.js');
+
 {/* Notes:
     - Put default image for Locations
-    - Check if there is a default image flag
+    - Be able to display list of images
 */}
 var imageMap = {
   'Food' : require('../assets/images/redMarker.png'),
@@ -30,8 +31,10 @@ constructor(props){
         isButtonDisabled: false,
         isMainModalVisible: false,
         showAlert: false,
+        currentLikeCount: 0,
+        currentDislikeCount: 0,
         tempLocation: [],
-        locationImageList: '',
+        locationImageList: [],
         image: null,
         tempLocationTitle: '',
         base64Image: '',
@@ -56,7 +59,8 @@ getSingleLocation = async (location) => {
     const json = await response.json();
     this.setState({ tempLocation: json.doc });
     this.setState({ tempLocationTitle: json.doc.title });
-    console.log(this.state.tempLocationTitle);
+    this.setState({ currentLikeCount: json.doc.likes });
+    this.setState({ currentDislikeCount: json.doc.dislikes });
     this.downloadUserImage();
 };
 toggleMainModal = (location) => {
@@ -89,12 +93,7 @@ selectPhotoTapped = async () => {
      allowsEditing: true,
      aspect: [4, 3],
    });
-
-   console.log(result);
-
-   if (!result.cancelled) {
-     this.setState({ image  : result.uri });
-   }
+   if (!result.cancelled) {this.setState({ image  : result.uri });}
    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
    this.uploadLocationImage();
  };
@@ -135,17 +134,22 @@ downloadUserImage = async () => {
     const downloadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/locationimages/" + this.state.tempLocationTitle;
     const response = await fetch(downloadLocationImageURL);
     const json = await response.json();
-    console.log("Image coming back below:");
-    console.log(json.doc[0].base64);
 
-
-    this.setState({locationImageList: json.doc[0].base64});
-    console.log("Locaiton Image Below (B64): ");
+    // length of zero means no images exist for location
+    if(json.doc.length === 0){
+        console.log("No images exist for given location");
+    }
+    else{
+        var locationImageListTemp = [];
+        for (i = 0; i < json.doc.length; i++) {
+            locationImageListTemp[i] = json.doc[i].base64;
+        }
+    }
+    this.setState({locationImageList: locationImageListTemp});
+    console.log("Locaiton Image Array Below: ");
     console.log(this.state.locationImageList);
-
-    // Array of images goes there
-    // if the length of array is zero make sure to display test image
 };
+
 likePress = (location, choice) => {
    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikes";
    fetch(url, {
@@ -174,6 +178,9 @@ likePress = (location, choice) => {
         });
     }
    this.setState({ isButtonDisabled: true});
+   if(choice === "like"){this.state.currentLikeCount++;}
+   else{this.state.currentDislikeCount++;}
+
    this.showAlert();
 }
   render() {
@@ -228,10 +235,16 @@ likePress = (location, choice) => {
                                <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                                    <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
                                </TouchableOpacity>
-                           <Image style={{width: 400, height: 300}} source={require('../assets/images/bunsTestImage2.png')} />
-                           <Image style={{width: 400, height: 300}} source={{ uri: this.state.locationImageList }}/>
-
-
+                           {/* <Image style={{width: 400, height: 300}} source={{uri: this.state.locationImageList[1] }} />
+                           <Image style={{width: 400, height: 300}} source={{uri: this.state.locationImageList[2] }} />
+                           <Image style={{width: 400, height: 300}} source={{uri: this.state.locationImageList[3] }} />  */}
+                           <ScrollView horizontal>
+                               {this.state.locationImageList.map((image, key) => {
+                                 return (
+                                   <Image style={{width: 400, height: 300}}  key={key} source={{uri: image }}></Image>
+                                 );
+                              })}
+                          </ScrollView>
                     </ScrollView>
 
                     <List>
@@ -259,12 +272,12 @@ likePress = (location, choice) => {
                    </List>
                    <View style={styles.rowContainer}>
                     <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconTextLeft}>  {this.state.tempLocation.likes} </Text>
+                        <Text style={styles.thumbsIconTextLeft}>  {this.state.currentLikeCount} </Text>
                         <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/>
                     </TouchableOpacity>
                     <View style={styles.likeImageBuffer}></View>
                     <TouchableOpacity style={styles.thumbButtonOpacityRight}  onPress={() => this.likePress(this.state.tempLocation.title, "dislike")} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconTextRight}>{this.state.tempLocation.dislikes} </Text>
+                        <Text style={styles.thumbsIconTextRight}>{this.state.currentDislikeCount} </Text>
                         <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
 
                     </TouchableOpacity>
