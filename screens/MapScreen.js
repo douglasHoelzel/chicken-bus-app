@@ -230,20 +230,17 @@ likePress = (location, choice) => {
               <View style={{width: 372}}>
                 <Text style={styles.detailsHeader}>Details </Text>
                     <ScrollView horizontal>
-                           <Image style={{width: 413, height: 300}}source={require('../assets/images/defaultLocationImage.png')} />
-                               {/* Add Photo Button */}
-                               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
-                                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
-                               </TouchableOpacity>
-                           {/* <Image style={{width: 400, height: 300}} source={{uri: this.state.locationImageList[1] }} />
-                           <Image style={{width: 400, height: 300}} source={{uri: this.state.locationImageList[2] }} />
-                           <Image style={{width: 400, height: 300}} source={{uri: this.state.locationImageList[3] }} />  */}
                            <ScrollView horizontal>
+                               {/* Dynamic List of Location Images */}
                                {this.state.locationImageList.map((image, key) => {
                                  return (
                                    <Image style={{width: 400, height: 300}}  key={key} source={{uri: image }}></Image>
                                  );
                               })}
+                              {/* Add Photo Button */}
+                              <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
+                                  <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
+                              </TouchableOpacity>
                           </ScrollView>
                     </ScrollView>
 
