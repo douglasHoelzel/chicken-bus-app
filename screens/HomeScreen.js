@@ -309,7 +309,7 @@ renderCurrentState(){
                     value = {this.state.email}
                 />
             </View>
-            {/* Password */}
+            {/* Password Field */}
             <View style={styles.passwordContainer}>
                 <TextInput
                     style={{height: 50,
@@ -322,32 +322,27 @@ renderCurrentState(){
                     value = {this.state.password}
                 />
             </View>
-
-            {/* Sign In Button */}
+            {/* Standard Sign In Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.onEmailSignInPress(this.state.email, this.state.password)}
-                    >
-                    <Text style={styles.buttonText}> Sign In </Text>
+                        onPress={() => this.onEmailSignInPress(this.state.email, this.state.password)}>
+                    <Text style={styles.buttonText}> Sign In</Text>
                     </TouchableOpacity>
             </View>
             {/* Create Account Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.toggleSignUpModal()}
-                    >
+                        onPress={() => this.toggleSignUpModal()}>
                     <Text style={styles.buttonText}> Create Account </Text>
                     </TouchableOpacity>
             </View>
-            {/*Google Button*/}
+            {/* Google Sign In Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.loginWithGoogle()}
-
-                    >
+                        onPress={() => this.loginWithGoogle()}>
                     <Text style={styles.buttonText}> Sign In With Google </Text>
                     </TouchableOpacity>
             </View>
@@ -355,9 +350,7 @@ renderCurrentState(){
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.loginWithFacebook()}
-
-                    >
+                        onPress={() => this.loginWithFacebook()}>
                     <Text style={styles.buttonText}> Sign In With Facebook </Text>
                     </TouchableOpacity>
             </View>

@@ -71,7 +71,6 @@ onSignOutPress = () => {
 
 uploadUserImage = () => {
     console.log("Uploading user image");
-
     // Converts image URL to Base64 String
     Image.getSize(this.state.image, (width, height) => {
       let imageSettings = {
@@ -81,8 +80,8 @@ uploadUserImage = () => {
       ImageEditor.cropImage(this.state.image, imageSettings, (uri) => {
         ImageStore.getBase64ForTag(uri, (data) => {
           this.setState({base64Image: data});
-          GLOBAL.USERIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
-          console.log("BASE64:  " + GLOBAL.USERIMAGEBASE64);
+          GLOBAL.LOCATIONIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
+          console.log("BASE64:  " + GLOBAL.LOCATIONIMAGEBASE64);
           const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
           fetch(uploadUserImageURL, {
                  method: 'POST',
@@ -113,8 +112,6 @@ downloadUserImage = async () => {
         console.log("Defaul user image detected");
     }
     else{
-        console.log("json.doc");
-        console.log(json.doc);
         GLOBAL.USERIMAGEBASE64 = json.doc;
     }
 };
