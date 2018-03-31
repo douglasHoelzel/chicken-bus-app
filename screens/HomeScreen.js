@@ -18,15 +18,12 @@ import * as firebase from 'firebase';
 import Modal from "react-native-modal";
 import { Button, List, ListItem } from 'native-base';
 import { TabNavigator } from 'react-navigation';
-
 GLOBAL = require('./Global.js');
 
 
 
 {/* Notes:
-    Currently there is a bug in the create account Modal
-    where if you enter jibberish as a username without an email @
-    symbol it crashes
+
 */}
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -81,6 +78,7 @@ loginWithGoogle = async() => {
       console.log("Email: " + user.email);
       this.getUserInfo(user.uid);
     this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
+    this.downloadUserImage();
     this.props.navigation.navigate('Map');
 
         {/* Sends New User Information to Database*/}
@@ -132,7 +130,7 @@ loginWithFacebook = async() => {
       console.log("Email: " + user.email);
       //this.getUserInfo(user.uid);
       this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
-
+      this.downloadUserImage();
       this.props.navigation.navigate('Map');
 
         {/* Sends New User Information to Database*/}
@@ -175,6 +173,7 @@ onEmailSignInPress = (email, password) => {
         console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
         this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
+        this.downloadUserImage();
         this.props.navigation.navigate('Map');
       })
     .catch((error) =>  {
@@ -187,7 +186,7 @@ onEmailSignInPress = (email, password) => {
 };
 
 onEmailSignUpPress = (userName, email, password) => {
-    console.log("New User Name Being Entered : " + userName + " email: " + email + " password: " + password);
+    console.log("New Screen Name Being Entered : " + userName + " email: " + email + " password: " + password);
     this.setState({loading: true});
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
@@ -199,6 +198,7 @@ onEmailSignUpPress = (userName, email, password) => {
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
+        this.downloadUserImage();
         fetch(url, {
                method: 'POST',
                headers: {
@@ -223,6 +223,21 @@ onEmailSignUpPress = (userName, email, password) => {
     this.toggleSignUpModal();
 };
 
+downloadUserImage = async () => {
+    console.log("Downloading user image");
+    const downloadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/getuserimage/" + GLOBAL.USERID;
+    const response = await fetch(downloadUserImageURL);
+    const json = await response.json();
+
+    if(json.doc === "Default Image" || json.doc === "" || json.doc === " "){
+        console.log("Defaul user image detected");
+    }
+    else{
+        console.log("json.doc");
+        console.log(json.doc);
+        GLOBAL.USERIMAGEBASE64 = json.doc;
+    }
+};
 
 getUserInfo = async (userID) => {
     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/getuser/" + userID;
@@ -247,7 +262,7 @@ onCreateAccountPress = (userName, email, password) => {
 
 onCreateUserNamePress = (userName) => {
     console.log("Creating Username");
-    console.log("New User Name Being Entered : " + userName);
+    console.log("New Screen Name Being Entered : " + userName);
     GLOBAL.USERNAME = this.state.userName;
     this.toggleCreateUserNameModal();
 
@@ -294,7 +309,7 @@ renderCurrentState(){
                     value = {this.state.email}
                 />
             </View>
-            {/* Password */}
+            {/* Password Field */}
             <View style={styles.passwordContainer}>
                 <TextInput
                     style={{height: 50,
@@ -306,41 +321,28 @@ renderCurrentState(){
                     onChangeText={(password) => this.setState({password})}
                     value = {this.state.password}
                 />
-                <Text style={styles.showPasswordText}>Show Password</Text>
-
-                <Switch
-                  style={{marginTop:-25,
-                    marginLeft:110}}
-                  onValueChange={this.toggleSwitch}
-                  value={!this.state.showPassword}
-                />
             </View>
-
-            {/* Sign In Button */}
+            {/* Standard Sign In Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.onEmailSignInPress(this.state.email, this.state.password)}
-                    >
-                    <Text style={styles.buttonText}> Sign In </Text>
+                        onPress={() => this.onEmailSignInPress(this.state.email, this.state.password)}>
+                    <Text style={styles.buttonText}> Sign In</Text>
                     </TouchableOpacity>
             </View>
             {/* Create Account Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.toggleSignUpModal()}
-                    >
+                        onPress={() => this.toggleSignUpModal()}>
                     <Text style={styles.buttonText}> Create Account </Text>
                     </TouchableOpacity>
             </View>
-            {/*Google Button*/}
+            {/* Google Sign In Button */}
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.loginWithGoogle()}
-
-                    >
+                        onPress={() => this.loginWithGoogle()}>
                     <Text style={styles.buttonText}> Sign In With Google </Text>
                     </TouchableOpacity>
             </View>
@@ -348,9 +350,7 @@ renderCurrentState(){
             <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonCell}
-                        onPress={() => this.loginWithFacebook()}
-
-                    >
+                        onPress={() => this.loginWithFacebook()}>
                     <Text style={styles.buttonText}> Sign In With Facebook </Text>
                     </TouchableOpacity>
             </View>
@@ -369,7 +369,7 @@ renderCurrentState(){
                             marginLeft: 20,
                             backgroundColor: '#E4E4E4',
                             borderRadius: 6}}
-                        placeholder="User Name"
+                        placeholder="Screen Name"
                         onChangeText={(userName) => this.setState({userName})}
                         value = {this.state.userName}
                     />
@@ -429,7 +429,7 @@ renderCurrentState(){
              <ScrollView>
              <View style={{width: 372}}>
              {/* Modal Header */}
-             <Text style={styles.detailsHeader}>Create your username </Text>
+             <Text style={styles.detailsHeader}>Create your screen name </Text>
                  {/* Modal Username */}
                  <View style={styles.userNameContainer}>
                      <TextInput
@@ -438,7 +438,7 @@ renderCurrentState(){
                              marginLeft: 20,
                              backgroundColor: '#E4E4E4',
                              borderRadius: 6}}
-                         placeholder="User Name"
+                         placeholder="Screen Name"
                          onChangeText={(userName) => this.setState({userName})}
                          value = {this.state.userName}
                      />

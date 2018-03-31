@@ -70,7 +70,7 @@ export default class AddLocation extends React.Component {
       }
       else{
         //If form is complete, send post to api
-        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/addlocation";
+        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/addlocation";
         fetch(url, {
               method: 'POST',
               headers: {
@@ -141,9 +141,27 @@ export default class AddLocation extends React.Component {
         this.setState({markerVisible: false});
         this.setState({markerLat: 0});
         this.setState({markerLong: 0});
+        this.uploadLocationImage();
       }
   }
-
+  uploadLocationImage = () => {
+      console.log("Uploading default location image");
+            const uploadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploadlocationimage";
+            fetch(uploadLocationImageURL, {
+                   method: 'POST',
+                   headers: {
+                     Accept: 'application/json',
+                     'Content-Type': 'application/json',
+                   },
+                   body: JSON.stringify({
+                     location: this.state.desc,
+                     base64: GLOBAL.DEFAULTLOCATIONIMAGE,
+                   })
+              })
+            .catch((error) => {
+            console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
+            })
+  };
   mapPress = (event) => {
     console.log("Latitude: " + event.nativeEvent.coordinate.latitude
      + " Longitude: " + event.nativeEvent.coordinate.longitude);

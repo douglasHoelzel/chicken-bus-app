@@ -11,21 +11,24 @@ import {
   View,
   Alert,
   PixelRatio,
-  TextInput
+  TextInput,
+  ImageStore,
+  ImageEditor,
 } from 'react-native';
 import * as firebase from 'firebase';
 import { Button, List, ListItem } from 'native-base';
 import { MonoText } from '../components/StyledText';
 import Modal from "react-native-modal";
 import { ImagePicker, WebBrowser } from 'expo';
+import TimerMixin from 'react-timer-mixin';
 GLOBAL = require('./Global.js');
+
 
 
 {/* Notes:
     Once image can be uploaded to Firebase:
         - Upon creation of account have defauly image be loaded to Account
         - Pull and display profile
-
 */}
 
 export default class SettingsScreen extends React.Component {
@@ -38,24 +41,25 @@ constructor(props){
       this.state = {
           userImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
+          isUserNameModalVisible2: false,
           newUserName: '',
           image: null,
+          base64Image: '',
       };
 }
 componentWillMount(){
-    GLOBAL.USERIMAGE = this.state.userImage;
+    //this.downloadUserImage();
 }
 
 toggleUserNameModal = () => {
       this.setState({ isUserNameModalVisible: !this.state.isUserNameModalVisible });
 }
-
 onChangeUserNamePress = (newUserName) => {
     if(newUserName === ''){
-          Alert.alert("Enter a new user name");
+          Alert.alert("Enter a new screen name");
     }
     else{
-      console.log("Chaning user name to: " + newUserName);
+      console.log("Chaning screen name to: " + newUserName);
       this.toggleUserNameModal();
       this.setState({newUserName: ''});
    }
@@ -64,6 +68,54 @@ onSignOutPress = () => {
     console.log("User Signing Out");
     this.clearAllData();
 };
+
+uploadUserImage = () => {
+    console.log("Uploading user image");
+    // Converts image URL to Base64 String
+    Image.getSize(this.state.image, (width, height) => {
+      let imageSettings = {
+        offset: { x: 0, y: 0 },
+        size: { width: width, height: height }
+      };
+      ImageEditor.cropImage(this.state.image, imageSettings, (uri) => {
+        ImageStore.getBase64ForTag(uri, (data) => {
+          this.setState({base64Image: data});
+          GLOBAL.LOCATIONIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
+          console.log("BASE64:  " + GLOBAL.LOCATIONIMAGEBASE64);
+          const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
+          fetch(uploadUserImageURL, {
+                 method: 'POST',
+                 headers: {
+                   Accept: 'application/json',
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                   userID: GLOBAL.USERID,
+                   base64: GLOBAL.USERIMAGEBASE64,
+                 })
+            })
+          .catch((error) => {
+          console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
+          });
+        }, e => console.warn("getBase64ForTag: ", e))
+      }, e => console.warn("cropImage: ", e))
+    })
+};
+
+downloadUserImage = async () => {
+    console.log("Downloading user image");
+    const downloadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/getuserimage/" + GLOBAL.USERID;
+    const response = await fetch(downloadUserImageURL);
+    const json = await response.json();
+
+    if(json.doc === "Default Image" || json.doc === "" || json.doc === " "){
+        console.log("Defaul user image detected");
+    }
+    else{
+        GLOBAL.USERIMAGEBASE64 = json.doc;
+    }
+};
+
 clearAllData = () => {
     console.log("Clearning All User Data on Sign Out");
     this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
@@ -71,8 +123,10 @@ clearAllData = () => {
     GLOBAL.USERNAME = '';
     GLOBAL.EMAIL = '';
     GLOBAL.ISLOGGEDIN = false;
+    GLOBAL.USERIMAGEBASE64 = GLOBAL.DEFAULTIMAGE;
     this.props.navigation.navigate('Home');
 }
+
 selectPhotoTapped = async () => {
     console.log("Add Photo Button Clicked");
 
@@ -86,6 +140,8 @@ selectPhotoTapped = async () => {
    if (!result.cancelled) {
      this.setState({ image  : result.uri });
    }
+   GLOBAL.USERIMAGEBASE64 = this.state.image;
+   this.uploadUserImage();
  };
 
 
@@ -98,9 +154,7 @@ render() {
       <Text style={styles.profileHeader}>{GLOBAL.USERNAME} </Text>
           <List>
               <ListItem >
-                  <Image style={styles.profileImage}
-                  source={GLOBAL.USERIMAGE}
-                  />
+                  <Image style={styles.profileImage} source={{ uri: GLOBAL.USERIMAGEBASE64 }}/>
               {/* Add Photo Button */}
               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
@@ -112,8 +166,6 @@ render() {
           title="Pick an image from camera roll"
           onPress={this._pickImage}
         />
-        {image &&
-          <Image source={{ uri: image }}  style={styles.profileImage}/>}
       </View>
               {/* Profile Details */}
               </ListItem>
@@ -142,10 +194,10 @@ render() {
                 <Text>Placeholder: Some other data can go here </Text>
               </ListItem>
          </List>
-         {/* Change User Name Button */}
+         {/* Change Screen Name Button */}
          <Button block style={styles.backButton}
           onPress={() => this.toggleUserNameModal()}>
-             <Text style={styles.changeUserNameButtonText}>Change User Name</Text>
+             <Text style={styles.changeUserNameButtonText}>Change Screen Name</Text>
          </Button>
          <Button block
              style={styles.signOutButton}
@@ -155,16 +207,15 @@ render() {
     </ScrollView>
 
 
-
     {/* Create Account Modal */}
     <Modal style={styles.modal} isVisible={this.state.isUserNameModalVisible}>
       <ScrollView>
       <View style={{width: 372}}>
       {/* Modal Header */}
-      <Text style={styles.detailsHeader}>Change your user name </Text>
-      {/* Modal User Name Field */}
+      <Text style={styles.detailsHeader}>Change your screen name </Text>
+      {/* Modal Screen Name Field */}
       <View style={styles.userNameContainer}>
-          <Text style={styles.currentUserName}>Current User Name: </Text>
+          <Text style={styles.currentUserName}>Current Screen Name: </Text>
           <Text style={styles.userNameText}>{GLOBAL.USERNAME}</Text>
           <TextInput
               style={{height: 50,
@@ -173,7 +224,7 @@ render() {
                   marginBottom: 10,
                   backgroundColor: '#E4E4E4',
                   borderRadius: 6}}
-              placeholder="New user name"
+              placeholder="New Screen name"
               onChangeText={(newUserName) => this.setState({newUserName})}
               value = {this.state.newUserName}/>
       </View>
@@ -214,7 +265,8 @@ profileHeader:{
 profileImage:{
     height: 300,
     width: 300,
-    marginLeft: 40
+    marginLeft: 40,
+    borderRadius: 150,
 },
 modal: {
   flex: 1,

@@ -1,24 +1,18 @@
 import React from 'react';
 import {
-  Image, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated
+  Image, Alert, Item, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated, ImageStore, ImageEditor,
 } from 'react-native';
-import { WebBrowser } from 'expo';
-import { MapView } from 'expo';
+import { ImagePicker, WebBrowser, MapView} from 'expo';
 import { Marker, Callout } from 'expo';
 import { Button, List, ListItem, Header, Left, Body, Right, Icon, Title} from 'native-base';
 import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { createStore } from 'redux';
-
 GLOBAL = require('./Global.js');
-{/* Notes:
-    Later:
-    Custom modal for like / dislike (cool animation)
-    Fix spacing around like / dislike buttons
-    Share on facebook button
 
-    Other:
-    API key for Google geocoding: AIzaSyBF6LAi7J1sHx6Xsd5m-praYGy6Ys6R0eI
+{/* Notes:
+    - Put default image for Locations
+    - Be able to display list of images
 */}
 var imageMap = {
   'Food' : require('../assets/images/redMarker.png'),
@@ -37,7 +31,13 @@ constructor(props){
         isButtonDisabled: false,
         isMainModalVisible: false,
         showAlert: false,
+        currentLikeCount: 0,
+        currentDislikeCount: 0,
         tempLocation: [],
+        locationImageList: [],
+        image: null,
+        tempLocationTitle: '',
+        base64Image: '',
     };
 }
 
@@ -49,15 +49,19 @@ componentWillMount(){
         this.getAllLocations();
 }
 getAllLocations = async () => {
-    const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/alllocations");
+    const response = await fetch("https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/alllocations");
     const json = await response.json();
     this.setState({ markers: json.doc });
 };
 getSingleLocation = async (location) => {
-    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/getlocation/" + location;
+    const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/getlocation/" + location;
     const response = await fetch(url);
     const json = await response.json();
     this.setState({ tempLocation: json.doc });
+    this.setState({ tempLocationTitle: json.doc.title });
+    this.setState({ currentLikeCount: json.doc.likes });
+    this.setState({ currentDislikeCount: json.doc.dislikes });
+    this.downloadUserImage();
 };
 toggleMainModal = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
@@ -83,8 +87,71 @@ hideAlert = () => {
       showAlert: false
     });
 };
+selectPhotoTapped = async () => {
+    console.log("Add Photo Location Button Clicked");
+   let result = await ImagePicker.launchImageLibraryAsync({
+     allowsEditing: true,
+     aspect: [4, 3],
+   });
+   if (!result.cancelled) {this.setState({ image  : result.uri });}
+   GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
+   this.uploadLocationImage();
+ };
+uploadLocationImage = () => {
+    console.log("Uploading location image");
+    // Converts image URL to Base64 String
+    Image.getSize(this.state.image, (width, height) => {
+      let imageSettings = {
+        offset: { x: 0, y: 0 },
+        size: { width: width, height: height }
+      };
+      ImageEditor.cropImage(this.state.image, imageSettings, (uri) => {
+        ImageStore.getBase64ForTag(uri, (data) => {
+          this.setState({base64Image: data});
+          GLOBAL.LOCATIONIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
+          console.log("BASE64:  " + GLOBAL.LOCATIONIMAGEBASE64);
+          const uploadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploadlocationimage";
+          fetch(uploadLocationImageURL, {
+                 method: 'POST',
+                 headers: {
+                   Accept: 'application/json',
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                   location: this.state.tempLocationTitle,
+                   base64: GLOBAL.LOCATIONIMAGEBASE64,
+                 })
+            })
+          .catch((error) => {
+          console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
+          });
+        }, e => console.warn("getBase64ForTag: ", e))
+      }, e => console.warn("cropImage: ", e))
+    })
+};
+downloadUserImage = async () => {
+    console.log("Downloading location image");
+    const downloadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/locationimages/" + this.state.tempLocationTitle;
+    const response = await fetch(downloadLocationImageURL);
+    const json = await response.json();
+
+    // length of zero means no images exist for location
+    if(json.doc.length === 0){
+        console.log("No images exist for given location");
+    }
+    else{
+        var locationImageListTemp = [];
+        for (i = 0; i < json.doc.length; i++) {
+            locationImageListTemp[i] = json.doc[i].base64;
+        }
+    }
+    this.setState({locationImageList: locationImageListTemp});
+    console.log("Locaiton Image Array Below: ");
+    console.log(this.state.locationImageList);
+};
+
 likePress = (location, choice) => {
-   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikes";
+   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikes";
    fetch(url, {
           method: 'POST',
           headers: {
@@ -97,7 +164,7 @@ likePress = (location, choice) => {
           })
         });
    if(GLOBAL.ISLOGGEDIN){
-   const url2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/api/updatelikedlocation";
+   const url2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikedlocation";
    fetch(url2, {
           method: 'POST',
           headers: {
@@ -111,6 +178,9 @@ likePress = (location, choice) => {
         });
     }
    this.setState({ isButtonDisabled: true});
+   if(choice === "like"){this.state.currentLikeCount++;}
+   else{this.state.currentDislikeCount++;}
+
    this.showAlert();
 }
   render() {
@@ -159,6 +229,20 @@ likePress = (location, choice) => {
                 <ScrollView>
               <View style={{width: 372}}>
                 <Text style={styles.detailsHeader}>Details </Text>
+                    <ScrollView horizontal>
+                           <ScrollView horizontal>
+                               {/* Dynamic List of Location Images */}
+                               {this.state.locationImageList.map((image, key) => {
+                                 return (
+                                   <Image style={{width: 400, height: 300}}  key={key} source={{uri: image }}></Image>
+                                 );
+                              })}
+                              {/* Add Photo Button */}
+                              <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
+                                  <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
+                              </TouchableOpacity>
+                          </ScrollView>
+                    </ScrollView>
 
                     <List>
                         <ListItem >
@@ -185,12 +269,12 @@ likePress = (location, choice) => {
                    </List>
                    <View style={styles.rowContainer}>
                     <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconTextLeft}>  {this.state.tempLocation.likes} </Text>
+                        <Text style={styles.thumbsIconTextLeft}>  {this.state.currentLikeCount} </Text>
                         <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/>
                     </TouchableOpacity>
                     <View style={styles.likeImageBuffer}></View>
                     <TouchableOpacity style={styles.thumbButtonOpacityRight}  onPress={() => this.likePress(this.state.tempLocation.title, "dislike")} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconTextRight}>{this.state.tempLocation.dislikes} </Text>
+                        <Text style={styles.thumbsIconTextRight}>{this.state.currentDislikeCount} </Text>
                         <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
 
                     </TouchableOpacity>
@@ -310,6 +394,20 @@ userButton:{
     borderRadius: 90,
     height: 40,
     width: 40
+},
+addPhotoButton:{
+    backgroundColor: '#E0E0E0',
+    width: 50,
+    height: 50,
+    marginTop: 240,
+    marginLeft: -90,
+    borderRadius: 100,
+},
+plusSignIcon:{
+    width: 20,
+    height: 20,
+    marginTop: 15,
+    marginLeft: 15,
 },
 userButtonIcon:{
     marginLeft: 10,
