@@ -374,11 +374,11 @@ export default class AddLocation extends React.Component {
                  </Item>
 
                  <Item style={styles.walkingDescriptionFormText}>
-                   <Label style={styles.label}>Walking Description from Bus Stop: </Label>
-                   <Input
-                     value={this.state.walkingDesc}
-                     onChangeText={(wd) => this.setState({walkingDesc: wd})}
-                   />
+                   <Label style={styles.label}>Walking Description: </Label>
+                     <Input
+                       value={this.state.walkingDesc}
+                       onChangeText={(wd) => this.setState({walkingDesc: wd})}
+                     />
                  </Item>
 
 
@@ -398,7 +398,7 @@ export default class AddLocation extends React.Component {
              <Button block
                style={styles.mapButton}
                onPress={() => this.openRouteModal()}>
-                 <Text style={styles.buttonText}>Describe how to get here!</Text>
+                 <Text style={styles.buttonText}>Describe Nearest Bus Stop</Text>
              </Button>
 
              <Item style={styles.formText}>
@@ -443,7 +443,6 @@ const styles = StyleSheet.create({
 
   },
   walkingDescriptionFormText: {
-    flex: 1,
   },
   label: {
     fontSize: 15,
