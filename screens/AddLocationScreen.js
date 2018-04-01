@@ -32,12 +32,19 @@ export default class AddLocation extends React.Component {
     this.state = {
         markers: [],
         modalVisible: false,
+        routeModalVisible: false,
         markerVisible: false,
+        locationSubmitted: false,
+        routeSubmitted: false,
         location: '',
         desc: '',
         lat: '',
         long: '',
         cat: '',
+        busOperator: '',
+        routeName: '',
+        busStop: '',
+        walkingDesc: '',
         markerLat: 0,
         markerLong: 0,
     };
@@ -47,31 +54,40 @@ export default class AddLocation extends React.Component {
     header: null,
   };
 
-  openModal() {
+  openModal = () => {
     this.setState({modalVisible:true});
-  }
-
-  closeModal() {
+  };
+  closeModal = () => {
     this.setState({modalVisible:false});
-  }
-
-//Takes input from form, sends to api
-  submitPress = (location, desc, lat, long, cat) => {
-    //Check if parts of form are empty, alert user to complete form.
-      if(!location || !desc || !lat || !long || !cat){
-        console.log("Please fill out entire form before submitting.")
-        Alert.alert(
-          'Form Incomplete',
-          'Please complete form before submitting.',
-          [
-            {text: 'OK', onPress: () => console.log('OK pressed')},
-          ],
-        )
-      }
-      else{
-        //If form is complete, send post to api
-        const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/addlocation";
-        fetch(url, {
+  };
+  openRouteModal = () => {
+    this.setState({routeModalVisible:true});
+  };
+  closeRouteModal = () => {
+    this.setState({routeModalVisible:false});
+  };
+  uploadLocationImage = () => {
+      console.log("Uploading default location image");
+            const uploadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploadlocationimage";
+            fetch(uploadLocationImageURL, {
+                   method: 'POST',
+                   headers: {
+                     Accept: 'application/json',
+                     'Content-Type': 'application/json',
+                   },
+                   body: JSON.stringify({
+                     location: this.state.location,
+                     base64: GLOBAL.DEFAULTLOCATIONIMAGE,
+                   })
+              })
+            .catch((error) => {
+            console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
+            })
+  };
+  uploadLocation = (location, desc, lat, long, cat) => {
+        console.log("Uploading location");
+        const locationUrl = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/addlocation";
+        fetch(locationUrl, {
               method: 'POST',
               headers: {
                 'Accept': 'application/json',
@@ -87,81 +103,126 @@ export default class AddLocation extends React.Component {
         }).then(response => {
           //if response is 200 (success), alert user and log response
           if(response.status === 200) {
-            Alert.alert(
-              'SUBMISSION SUCCESSFUL',
-              'Thank you for your submission!',
-              [
-                {text: 'OK', onPress: () => console.log('OK pressed')},
-              ],
-            )
-              console.log("The Submission Was Successful");
+              console.log("The Location Submission Was Successful");
+              this.state.locationSubmitted = true;
           }
           //if response is status 400 (key not unique), alert user location exists and log response
           else if(response.status === 400){
-            Alert.alert(
-              'SUBMISSION FAILED',
-              'A location with this name has already been added!',
-              [
-                {text: 'OK', onPress: () => console.log('OK pressed')},
-              ],
-            )
-              console.log("An Error Has Occurred: Duplicate Key Error");
+              console.log("A Location Submission Error Has Occurred");
 
           }
           //if any other response is received, alert user something went wrong and log response
           else{
-            Alert.alert(
-              'SUBMISSION FAILED',
-              'Unfortunately, we cannot accept this submission at this time.',
-              [
-                {text: 'OK', onPress: () => console.log('OK pressed')},
-              ],
-            )
               console.log("An Unknown Error Has Occurred");
           }
           console.log("Response status: " + response.status)
 
         }).catch(err => {
           //for if something goes wrong contacting the api
+          console.log(err);
+        });
+
+  };
+  uploadRoute = (location, busOperator, routeName, busStop, walkingDesc) => {
+            console.log("Uploading Route");
+            const routeUrl = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/routeapi/addroute";
+            fetch(routeUrl, {
+                  method: 'POST',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    location: location,
+                    operator: busOperator,
+                    name: routeName,
+                    stop: busStop,
+                    walkingDescription: walkingDesc,
+                  })
+            }).then(response => {
+              //if response is 200 (success), alert user and log response
+              if(response.status === 200) {
+                  console.log("The Route Submission Was Successful");
+                  this.state.routeSubmitted = true;
+              }
+              //if response is status 400 (key not unique), alert user location exists and log response
+              else if(response.status === 400){
+                  console.log("A Route Submission Error Has Occurred");
+              }
+              //if any other response is received, alert user something went wrong and log response
+              else{
+                  console.log("An Unknown Error Has Occurred");
+              }
+              console.log("Response status: " + response.status)
+
+            }).catch(err => {
+              //for if something goes wrong contacting the api
+              console.log(err);
+            });
+
+  };
+  clearAllState = () => {
+    console.log("Clearing State");
+    clearState = '';
+    this.setState({location: clearState});
+    this.setState({desc: clearState});
+    this.setState({lat: clearState});
+    this.setState({long: clearState});
+    this.setState({cat: clearState});
+    this.setState({markerVisible: false});
+    this.setState({locationSubmitted: false});
+    this.setState({routeSubmitted: false});
+    this.setState({markerLat: 0});
+    this.setState({markerLong: 0});
+    this.setState({busOperator: clearState});
+    this.setState({routeName: clearState});
+    this.setState({busStop: clearState});
+    this.setState({walkingDesc: clearState});
+  }
+
+//Takes input from form, sends to api
+  submitPress = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
+    //Check if parts of form are empty, alert user to complete form.
+      if(!location || !desc || !lat || !long || !cat || !busOperator || !routeName){
+        console.log("Please fill out entire form before submitting.")
+        Alert.alert(
+          'Form Incomplete',
+          'Please complete form before submitting.',
+          [
+            {text: 'OK', onPress: () => console.log('OK pressed')},
+          ],
+        )
+      }
+      else{
+        //If form is complete, send post requests
+        this.uploadLocation(location, desc, lat, long, cat);
+        this.uploadRoute(location, busOperator, routeName, busStop, walkingDesc);
+        this.uploadLocationImage();
+
+        if(this.state.routeSubmitted == true && this.state.locationSubmitted == true){
           Alert.alert(
-            'UNABLE TO SUBMIT',
-            'Something is preventing submission. Please try again later.',
+            'SUBMISSION SUCCESSFUL',
+            'Thank you for your submission!',
             [
               {text: 'OK', onPress: () => console.log('OK pressed')},
             ],
           )
-          console.log(err);
-        });
-        clearState = '';
-        this.setState({location: clearState});
-        this.setState({desc: clearState});
-        this.setState({lat: clearState});
-        this.setState({long: clearState});
-        this.setState({cat: clearState});
-        this.setState({markerVisible: false});
-        this.setState({markerLat: 0});
-        this.setState({markerLong: 0});
-        this.uploadLocationImage();
+        }
+        else{
+          Alert.alert(
+            'SUBMISSION FAILED',
+            'Unfortunately, we cannot accept this submission at this time.',
+            [
+              {text: 'OK', onPress: () => console.log('OK pressed')},
+            ],
+          )
+
+        }
+        this.clearAllState();
+
       }
   }
-  uploadLocationImage = () => {
-      console.log("Uploading default location image");
-            const uploadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploadlocationimage";
-            fetch(uploadLocationImageURL, {
-                   method: 'POST',
-                   headers: {
-                     Accept: 'application/json',
-                     'Content-Type': 'application/json',
-                   },
-                   body: JSON.stringify({
-                     location: this.state.desc,
-                     base64: GLOBAL.DEFAULTLOCATIONIMAGE,
-                   })
-              })
-            .catch((error) => {
-            console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
-            })
-  };
+
   mapPress = (event) => {
     console.log("Latitude: " + event.nativeEvent.coordinate.latitude
      + " Longitude: " + event.nativeEvent.coordinate.longitude);
@@ -279,6 +340,73 @@ export default class AddLocation extends React.Component {
             </Item>
 
 
+
+            <Modal
+                 visible={this.state.routeModalVisible}
+                 animationType={'slide'}
+                 onRequestClose={() => this.closeRouteModal()}
+             >
+               <View style={styles.modalContainer}>
+                 <View style={styles.upperRouteModalContainer}>
+
+                 <Item style={styles.formText}>
+                   <Label style={styles.label}>Operator: </Label>
+                   <Input
+                     value={this.state.busOperator}
+                     onChangeText={(op) => this.setState({busOperator: op})}
+                   />
+                 </Item>
+
+                 <Item style={styles.formText}>
+                   <Label style={styles.label}>Route Name: </Label>
+                   <Input
+                     value={this.state.routeName}
+                     onChangeText={(rn) => this.setState({routeName: rn})}
+                   />
+                 </Item>
+
+                 <Item style={styles.formText}>
+                   <Label style={styles.label}>Bus Stop: </Label>
+                   <Input
+                     value={this.state.busStop}
+                     onChangeText={(bs) => this.setState({busStop: bs})}
+                   />
+                 </Item>
+
+                 <Item style={styles.walkingDescriptionFormText}>
+                   <Label style={styles.label}>Walking Description from Bus Stop: </Label>
+                   <Input
+                     value={this.state.walkingDesc}
+                     onChangeText={(wd) => this.setState({walkingDesc: wd})}
+                   />
+                 </Item>
+
+
+
+                 </View>
+                 <View style={styles.lowerModalContainer}>
+                   <Button block
+                     style={styles.mapModalButton}
+                     onPress={() => this.closeRouteModal()}>
+                       <Text style={styles.buttonText}>DONE</Text>
+                   </Button>
+                 </View>
+               </View>
+             </Modal>
+
+
+             <Button block
+               style={styles.mapButton}
+               onPress={() => this.openRouteModal()}>
+                 <Text style={styles.buttonText}>Describe how to get here!</Text>
+             </Button>
+
+             <Item style={styles.formText}>
+               <Label style={styles.label}>     </Label>
+             </Item>
+
+
+
             <Button block
               style={styles.submitButton}
               onPress={() => this.submitPress(
@@ -287,6 +415,10 @@ export default class AddLocation extends React.Component {
                 this.state.lat,
                 this.state.long,
                 this.state.cat,
+                this.state.busOperator,
+                this.state.routeName,
+                this.state.busStop,
+                this.state.walkingDesc,
               )}>
                 <Text style={styles.buttonText}>SUBMIT</Text>
             </Button>
@@ -309,6 +441,9 @@ const styles = StyleSheet.create({
   },
   formText: {
 
+  },
+  walkingDescriptionFormText: {
+    flex: 1,
   },
   label: {
     fontSize: 15,
@@ -333,6 +468,10 @@ const styles = StyleSheet.create({
   },
   upperModalContainer: {
     flex: 8,
+  },
+  upperRouteModalContainer: {
+    flex: 8,
+    marginTop: 20,
   },
   lowerModalContainer: {
     flex: 1,
