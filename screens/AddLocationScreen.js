@@ -23,7 +23,6 @@ import {
 } from 'native-base';
 import { MapView } from 'expo';
 import { WebBrowser } from 'expo';
-
 import { MonoText } from '../components/StyledText';
 
 export default class AddLocation extends React.Component {

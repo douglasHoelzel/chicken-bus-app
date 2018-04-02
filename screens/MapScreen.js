@@ -3,7 +3,7 @@ import {
   Image, Alert, Item, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated, ImageStore, ImageEditor,
 } from 'react-native';
 import { ImagePicker, WebBrowser, MapView} from 'expo';
-import { Marker, Callout } from 'expo';
+import { Marker, CameraRoll, Callout, Camera, Permissions } from 'expo';
 import { Button, List, ListItem, Header, Left, Body, Right, Icon, Title, Card, CardItem} from 'native-base';
 import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -101,7 +101,7 @@ hideAlert = () => {
     });
 };
 selectPhotoTapped = async () => {
-    console.log("Add Photo Location Button Clicked");
+   console.log("Add Photo Location Button Clicked");
    let result = await ImagePicker.launchImageLibraryAsync({
      allowsEditing: true,
      aspect: [4, 3],
@@ -110,15 +110,17 @@ selectPhotoTapped = async () => {
    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
    this.uploadLocationImage();
  };
- takePhotoTapped = async () => {
-     console.log("Take Photo Button Clicked");
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-    if (!result.cancelled) {this.setState({ image  : result.uri });}
-    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
-    this.uploadLocationImage();
+
+takePhotoTapped = async () => {
+    console.log("Take Photo Button Clicked");
+      let result = await ImagePicker.launchCameraAsync({
+        allowEditing: false,
+        exif: true,
+        aspect: [4, 3],
+      });
+      if (!result.cancelled) {this.setState({ image  : result.uri });}
+      GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
+      this.uploadLocationImage();
   };
 uploadLocationImage = () => {
     console.log("Uploading location image");
@@ -279,7 +281,7 @@ likePress = (location, choice) => {
                               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
                               </TouchableOpacity>
-                              <TouchableOpacity style={styles.takePhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
+                              <TouchableOpacity style={styles.takePhotoButton}  onPress={this.takePhotoTapped.bind(this)}>
                                   <Image style={styles.cameraIcon} source={require('../assets/images/cameraIcon.png')}/>
                               </TouchableOpacity>
                           </ScrollView>
