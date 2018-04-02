@@ -97,6 +97,16 @@ selectPhotoTapped = async () => {
    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
    this.uploadLocationImage();
  };
+ takePhotoTapped = async () => {
+     console.log("Take Photo Button Clicked");
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+    if (!result.cancelled) {this.setState({ image  : result.uri });}
+    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
+    this.uploadLocationImage();
+  };
 uploadLocationImage = () => {
     console.log("Uploading location image");
     // Converts image URL to Base64 String
@@ -139,9 +149,15 @@ downloadUserImage = async () => {
     if(json.doc.length === 0){
         console.log("No images exist for given location");
     }
-    else{
+    if(json.doc.length === 1){
         var locationImageListTemp = [];
         for (i = 0; i < json.doc.length; i++) {
+            locationImageListTemp[i] = json.doc[i].base64;
+        }
+    }
+    else{
+        var locationImageListTemp = [];
+        for (i = 1; i < json.doc.length; i++) {
             locationImageListTemp[i] = json.doc[i].base64;
         }
     }
@@ -240,6 +256,9 @@ likePress = (location, choice) => {
                               {/* Add Photo Button */}
                               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
+                              </TouchableOpacity>
+                              <TouchableOpacity style={styles.takePhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
+                                  <Image style={styles.cameraIcon} source={require('../assets/images/cameraIcon.png')}/>
                               </TouchableOpacity>
                           </ScrollView>
                     </ScrollView>
@@ -400,10 +419,26 @@ addPhotoButton:{
     width: 50,
     height: 50,
     marginTop: 240,
-    marginLeft: -90,
+    marginLeft: -150,
     borderRadius: 100,
+    position: 'relative',
+},
+takePhotoButton:{
+    backgroundColor: '#E0E0E0',
+    width: 50,
+    height: 50,
+    marginTop: 240,
+    marginLeft: 3,
+    borderRadius: 100,
+    position: 'relative',
 },
 plusSignIcon:{
+    width: 20,
+    height: 20,
+    marginTop: 15,
+    marginLeft: 15,
+},
+cameraIcon:{
     width: 20,
     height: 20,
     marginTop: 15,

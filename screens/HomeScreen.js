@@ -75,7 +75,6 @@ loginWithGoogle = async() => {
       GLOBAL.ISLOGGEDIN = true;
       GLOBAL.USERNAME = this.state.userName;
       GLOBAL.EMAIL = user.email;
-      console.log("Email: " + user.email);
       this.getUserInfo(user.uid);
     this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
     this.downloadUserImage();
@@ -127,7 +126,6 @@ loginWithFacebook = async() => {
       GLOBAL.USERID = user.uid;
       GLOBAL.ISLOGGEDIN = true;
       GLOBAL.EMAIL = user.email;
-      console.log("Email: " + user.email);
       //this.getUserInfo(user.uid);
       this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
       this.downloadUserImage();
@@ -170,7 +168,6 @@ onEmailSignInPress = (email, password) => {
         GLOBAL.ISLOGGEDIN = true;
         GLOBAL.USERNAME = this.state.userName;
         GLOBAL.EMAIL = user.email;
-        console.log("Email: " + user.email);
         this.getUserInfo(user.uid);
         this.setState({loading: false, isLoggedIn: true, email: '', userName: '', userID: '', password: ''});
         this.downloadUserImage();
@@ -229,13 +226,15 @@ downloadUserImage = async () => {
     const response = await fetch(downloadUserImageURL);
     const json = await response.json();
 
-    if(json.doc === "Default Image" || json.doc === "" || json.doc === " "){
+    if(json.doc.userImage === "Default Image" || json.doc.userImage === "" || json.doc.userImage === " "){
         console.log("Defaul user image detected");
+        console.log("json.doc.userImage");
+        console.log(json.doc.userImage);
     }
     else{
-        console.log("json.doc");
-        console.log(json.doc);
-        GLOBAL.USERIMAGEBASE64 = json.doc;
+        console.log("json.doc.userImage");
+        console.log(json.doc.userImage);
+        GLOBAL.USERIMAGEBASE64 = json.doc.userImage;
     }
 };
 

@@ -80,8 +80,7 @@ uploadUserImage = () => {
       ImageEditor.cropImage(this.state.image, imageSettings, (uri) => {
         ImageStore.getBase64ForTag(uri, (data) => {
           this.setState({base64Image: data});
-          GLOBAL.LOCATIONIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
-          console.log("BASE64:  " + GLOBAL.LOCATIONIMAGEBASE64);
+          GLOBAL.USERIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
           const uploadUserImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploaduserimage";
           fetch(uploadUserImageURL, {
                  method: 'POST',
@@ -100,6 +99,7 @@ uploadUserImage = () => {
         }, e => console.warn("getBase64ForTag: ", e))
       }, e => console.warn("cropImage: ", e))
     })
+    console.log("Image uploaded successfully");
 };
 
 downloadUserImage = async () => {
@@ -108,11 +108,13 @@ downloadUserImage = async () => {
     const response = await fetch(downloadUserImageURL);
     const json = await response.json();
 
-    if(json.doc === "Default Image" || json.doc === "" || json.doc === " "){
+    if(json.doc.userImage === "Default Image" || json.doc.userImage === "" || json.doc.userImage === " "){
         console.log("Defaul user image detected");
+        console.log("json.doc.userImage");
+        console.log(json.doc.userImage);
     }
     else{
-        GLOBAL.USERIMAGEBASE64 = json.doc;
+        GLOBAL.USERIMAGEBASE64 = json.doc.userImage;
     }
 };
 
