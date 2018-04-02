@@ -317,31 +317,10 @@ export default class AddLocation extends React.Component {
             </Item>
 
             <Button block
-              style={styles.mapButton}
+              style={styles.selectLocationButton}
               onPress={() => this.openModal()}>
                 <Text style={styles.buttonText}>Select Location</Text>
             </Button>
-
-
-            <Item style={styles.formText}>
-              <Label style={styles.label}>Latitude: </Label>
-              <Input
-                value={this.state.lat}
-                onChangeText={(la) => this.setState({lat: la})}
-              />
-            </Item>
-
-
-            <Item style={styles.formText}>
-              <Label style={styles.label}>Longitude: </Label>
-              <Input
-                value={this.state.long}
-                onChangeText={(lo) => this.setState({long: lo})}
-              />
-            </Item>
-
-
-
             <Modal
                  visible={this.state.routeModalVisible}
                  animationType={'slide'}
@@ -401,13 +380,9 @@ export default class AddLocation extends React.Component {
                onPress={() => this.openRouteModal()}>
                  <Text style={styles.buttonText}>Describe Nearest Bus Stop</Text>
              </Button>
-
              <Item style={styles.formText}>
-               <Label style={styles.label}>     </Label>
+               <Label style={styles.label}></Label>
              </Item>
-
-
-
             <Button block
               style={styles.submitButton}
               onPress={() => this.submitPress(
@@ -421,7 +396,7 @@ export default class AddLocation extends React.Component {
                 this.state.busStop,
                 this.state.walkingDesc,
               )}>
-                <Text style={styles.buttonText}>SUBMIT</Text>
+                <Text style={styles.buttonText}>Submit</Text>
             </Button>
 
           </Form>
@@ -486,6 +461,13 @@ const styles = StyleSheet.create({
   },
   mapButton: {
     borderRadius: 0,
+    backgroundColor: '#5E8DF7',
+    height: 50,
+  },
+  selectLocationButton: {
+    borderRadius: 0,
+    marginBottom: 15,
+    marginTop: 30,
     backgroundColor: '#5E8DF7',
     height: 50,
   },
