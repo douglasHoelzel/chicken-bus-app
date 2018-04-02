@@ -172,7 +172,7 @@ downloadUserImage = async () => {
     }
     else{
         var locationImageListTemp = [];
-        for (i = 1; i < json.doc.length; i++) {
+        for (i = 1; i < json.doc.length - 1; i++) {
             locationImageListTemp[i] = json.doc[i].base64;
         }
     }
