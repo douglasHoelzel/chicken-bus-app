@@ -195,7 +195,6 @@ onEmailSignUpPress = (userName, email, password) => {
         {/* Sends New User Information to Database*/}
         const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/adduser";
         console.log("UserID: " + GLOBAL.USERID + " USERNAME: " + GLOBAL.USERNAME );
-        this.downloadUserImage();
         fetch(url, {
                method: 'POST',
                headers: {
@@ -226,14 +225,13 @@ downloadUserImage = async () => {
     const response = await fetch(downloadUserImageURL);
     const json = await response.json();
 
+    console.log(json.doc.userImage);
     if(json.doc.userImage === "Default Image" || json.doc.userImage === "" || json.doc.userImage === " "){
         console.log("Defaul user image detected");
-        console.log("json.doc.userImage");
         console.log(json.doc.userImage);
     }
     else{
-        console.log("json.doc.userImage");
-        console.log(json.doc.userImage);
+        console.log("Cusom user image found");
         GLOBAL.USERIMAGEBASE64 = json.doc.userImage;
     }
 };
