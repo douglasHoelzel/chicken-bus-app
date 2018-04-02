@@ -42,6 +42,7 @@ constructor(props){
           userImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
           isUserNameModalVisible2: false,
+          isDeleteAccountModalVisible: false,
           newUserName: '',
           image: null,
           base64Image: '',
@@ -53,6 +54,9 @@ componentWillMount(){
 
 toggleUserNameModal = () => {
       this.setState({ isUserNameModalVisible: !this.state.isUserNameModalVisible });
+}
+toggleDeleteAccountModal = () => {
+      this.setState({ isDeleteAccountModalVisible: !this.state.isDeleteAccountModalVisible });
 }
 onChangeUserNamePress = (newUserName) => {
     if(newUserName === ''){
@@ -68,7 +72,21 @@ onSignOutPress = () => {
     console.log("User Signing Out");
     this.clearAllData();
 };
-
+onDeleteAccountConfirm = () => {
+    console.log("Account Deleted");
+    this.clearAllData();
+    this.toggleDeleteAccountModal();
+};
+deleteAccountClicked = () => {
+    Alert.alert(
+          'Account deleted',
+          'successfully',
+          [
+            {text: 'OK', onPress: () => this.onDeleteAccountConfirm()},
+          ],
+          { cancelable: false }
+      )
+};
 uploadUserImage = () => {
     console.log("Uploading user image");
     // Converts image URL to Base64 String
@@ -201,10 +219,16 @@ render() {
           onPress={() => this.toggleUserNameModal()}>
              <Text style={styles.changeUserNameButtonText}>Change Screen Name</Text>
          </Button>
+         {/* Sign Out Button */}
          <Button block
              style={styles.signOutButton}
              onPress={() => this.onSignOutPress()}>
              <Text style={styles.signOutButtonText}> Sign Out </Text>
+         </Button>
+         {/* Delete Account Button */}
+         <Button block style={styles.deleteAccountButton}
+          onPress={() => this.toggleDeleteAccountModal()}>
+             <Text style={styles.changeUserNameButtonText}>Delete Account</Text>
          </Button>
     </ScrollView>
 
@@ -244,6 +268,27 @@ render() {
      </View>
      </ScrollView>
      </Modal>
+     {/* Delete Account Modal */}
+     <Modal style={styles.modal} isVisible={this.state.isDeleteAccountModalVisible}>
+       <ScrollView>
+       <View style={{width: 372}}>
+       {/* Modal Header */}
+       <Text style={styles.detailsHeader}>Delete Account </Text>
+       <Text style={styles.deleteText}> Are you sure you want to delete your account?</Text>
+           {/* Delete Button */}
+           <Button block style={styles.deleteYesButton}
+            onPress={() => this.deleteAccountClicked()}>
+               <Text style={styles.changeUserNameButtonText}>Delete Account</Text>
+           </Button>
+       {/* Back Button */}
+       <Button block style={styles.backButton}
+        onPress={() => this.toggleDeleteAccountModal()}>
+           <Text style={styles.changeUserNameButtonText}>Back</Text>
+       </Button>
+
+      </View>
+      </ScrollView>
+      </Modal>
       </View>
     );
  }
@@ -302,6 +347,12 @@ backButton: {
   backgroundColor: '#5E8DF7',
   height: 50,
 },
+deleteAccountButton: {
+  marginTop: 10,
+  borderRadius: 0,
+  backgroundColor: '#F25D49',
+  height: 50,
+},
 changeUserNameButtonText: {
     justifyContent: 'center',
     color: '#fff',
@@ -343,5 +394,15 @@ signOutButtonText:{
     color: '#fff',
     fontWeight: 'bold',
     fontSize:  18,
+},
+deleteText:{
+    marginTop: 50,
+    marginBottom: 200,
+},
+deleteYesButton:{
+    marginTop: 5,
+    borderRadius: 0,
+    backgroundColor: '#F25D49',
+    height: 50,
 }
 });
