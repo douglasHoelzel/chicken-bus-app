@@ -104,7 +104,7 @@ export default class AddLocation extends React.Component {
           //if response is 200 (success), alert user and log response
           if(response.status === 200) {
               console.log("The Location Submission Was Successful");
-              this.state.locationSubmitted = true;
+              this.setState({locationSubmitted: true});
           }
           //if response is status 400 (key not unique), alert user location exists and log response
           else if(response.status === 400){
@@ -143,7 +143,7 @@ export default class AddLocation extends React.Component {
               //if response is 200 (success), alert user and log response
               if(response.status === 200) {
                   console.log("The Route Submission Was Successful");
-                  this.state.routeSubmitted = true;
+                  this.setState({routeSubmitted: true});
               }
               //if response is status 400 (key not unique), alert user location exists and log response
               else if(response.status === 400){
@@ -183,7 +183,7 @@ export default class AddLocation extends React.Component {
 //Takes input from form, sends to api
   submitPress = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
     //Check if parts of form are empty, alert user to complete form.
-      if(!location || !desc || !lat || !long || !cat || !busOperator || !routeName){
+      if(!location || !desc || !lat || !long || !cat || !busOperator || !routeName || !busStop){
         console.log("Please fill out entire form before submitting.")
         Alert.alert(
           'Form Incomplete',
@@ -204,21 +204,22 @@ export default class AddLocation extends React.Component {
             'SUBMISSION SUCCESSFUL',
             'Thank you for your submission!',
             [
-              {text: 'OK', onPress: () => console.log('OK pressed')},
+              {text: 'OK', onPress: () =>   this.clearAllState()},
             ],
           )
         }
         else{
+          console.log("RouteSubmitted: " + this.state.routeSubmitted + "  LocationSubmitted: " + this.state.locationSubmitted);
           Alert.alert(
-            'SUBMISSION FAILED',
-            'Unfortunately, we cannot accept this submission at this time.',
+            'THANK YOU',
+            ' ',
             [
-              {text: 'OK', onPress: () => console.log('OK pressed')},
+              {text: 'OK', onPress: () =>   this.clearAllState()},
             ],
           )
 
         }
-        this.clearAllState();
+
 
       }
   }
