@@ -78,6 +78,13 @@ onDeleteAccountConfirm = () => {
     this.toggleDeleteAccountModal();
 };
 deleteAccountClicked = () => {
+    var user = firebase.auth().currentUser;
+
+    user.delete().then(function() {
+      console.log("User deleted");
+    }).catch(function(error) {
+      console.log("User delete error");
+    });
     Alert.alert(
           'Account deleted',
           'successfully',
@@ -128,8 +135,6 @@ downloadUserImage = async () => {
 
     if(json.doc.userImage === "Default Image" || json.doc.userImage === "" || json.doc.userImage === " "){
         console.log("Defaul user image detected");
-        console.log("json.doc.userImage");
-        console.log(json.doc.userImage);
     }
     else{
         GLOBAL.USERIMAGEBASE64 = json.doc.userImage;
@@ -148,15 +153,11 @@ clearAllData = () => {
 }
 
 selectPhotoTapped = async () => {
-    console.log("Add Photo Button Clicked");
-
+   console.log("Add Photo Button Clicked");
    let result = await ImagePicker.launchImageLibraryAsync({
      allowsEditing: true,
      aspect: [4, 3],
    });
-
-   console.log(result);
-
    if (!result.cancelled) {
      this.setState({ image  : result.uri });
    }
