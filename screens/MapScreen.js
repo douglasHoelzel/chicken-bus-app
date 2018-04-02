@@ -307,10 +307,7 @@ likePress = (location, choice) => {
                           <ListItem>
                             <Text>Placeholder: More information can go here </Text>
                           </ListItem>
-                          <Button block style={styles.backButton}
-                              onPress={() => this.toggleRouteModal(this.state.tempLocation.title)}>
-                              <Text>View Nearby Bus Routes </Text>
-                          </Button>
+
                      </List>
                      <View style={styles.rowContainer}>
                       <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}>
@@ -325,6 +322,10 @@ likePress = (location, choice) => {
                       </TouchableOpacity>
                       </View>
 
+                      <Button block style={styles.busRouteButton}
+                          onPress={() => this.toggleRouteModal(this.state.tempLocation.title)}>
+                          <Text style={styles.backButtonText}>View Nearby Bus Routes </Text>
+                      </Button>
                       <Button block style={styles.backButton}
                           onPress={this.toggleMainModalNoAjax}>
                           <Text style={styles.backButtonText}>Back</Text>
@@ -367,7 +368,7 @@ likePress = (location, choice) => {
                       flex: 1,
                     }}
                         onPress={() => this.toggleRouteModalNoAjax(this.state.tempLocation.title)}>
-                        <Text>Back</Text>
+                        <Text style={styles.backButtonText}>Back</Text>
                     </Button>
                 </View>
               </Modal>
@@ -441,6 +442,12 @@ modal: {
   backgroundColor: '#FFFFFF',
 },
 backButton: {
+  borderRadius: 0,
+  backgroundColor: '#5E8DF7',
+  height: 50,
+  marginTop: 10,
+},
+busRouteButton: {
   borderRadius: 0,
   backgroundColor: '#5E8DF7',
   height: 50,

@@ -201,7 +201,7 @@ export default class AddLocation extends React.Component {
 
         if(this.state.routeSubmitted == true && this.state.locationSubmitted == true){
           Alert.alert(
-            'SUBMISSION SUCCESSFUL',
+            'Submission Successful',
             'Thank you for your submission!',
             [
               {text: 'OK', onPress: () =>   this.clearAllState()},
@@ -211,7 +211,7 @@ export default class AddLocation extends React.Component {
         else{
           console.log("RouteSubmitted: " + this.state.routeSubmitted + "  LocationSubmitted: " + this.state.locationSubmitted);
           Alert.alert(
-            'THANK YOU',
+            'Submission Successful',
             ' ',
             [
               {text: 'OK', onPress: () =>   this.clearAllState()},
