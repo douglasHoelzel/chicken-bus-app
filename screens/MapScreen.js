@@ -3,8 +3,8 @@ import {
   Image, Alert, Item, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated, ImageStore, ImageEditor,
 } from 'react-native';
 import { ImagePicker, WebBrowser, MapView} from 'expo';
-import { Marker, Callout } from 'expo';
-import { Button, List, ListItem, Header, Left, Body, Right, Icon, Title} from 'native-base';
+import { Marker, CameraRoll, Callout, Camera, Permissions } from 'expo';
+import { Button, List, ListItem, Header, Left, Body, Right, Icon, Title, Card, CardItem} from 'native-base';
 import Modal from "react-native-modal";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { createStore } from 'redux';
@@ -28,8 +28,10 @@ constructor(props){
     super(props);
     this.state = {
         markers: [],
+        tempRoutes: [],
         isButtonDisabled: false,
         isMainModalVisible: false,
+        isRouteModalVisible: false,
         showAlert: false,
         currentLikeCount: 0,
         currentDislikeCount: 0,
@@ -67,9 +69,20 @@ toggleMainModal = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
     this.getSingleLocation(location);
 }
+toggleRouteModal = (location) => {
+      console.log("Toggling Route Modal On");
+      console.log("Location used: " + location);
+      this.toggleMainModalNoAjax(location);
+      this.getLocationRoutes(location);
+      this.setState({ isRouteModalVisible: !this.state.isRouteModalVisible });
+}
 toggleMainModalNoAjax = (location) => {
     this.setState({ isMainModalVisible: !this.state.isMainModalVisible });
     this.setState({ isButtonDisabled: false});
+}
+toggleRouteModalNoAjax = (location) => {
+      this.setState({ isRouteModalVisible: !this.state.isRouteModalVisible });
+      this.toggleMainModal(location);
 }
 showAlert = () => {
     this.setState({
@@ -88,7 +101,7 @@ hideAlert = () => {
     });
 };
 selectPhotoTapped = async () => {
-    console.log("Add Photo Location Button Clicked");
+   console.log("Add Photo Location Button Clicked");
    let result = await ImagePicker.launchImageLibraryAsync({
      allowsEditing: true,
      aspect: [4, 3],
@@ -97,6 +110,18 @@ selectPhotoTapped = async () => {
    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
    this.uploadLocationImage();
  };
+
+takePhotoTapped = async () => {
+    console.log("Take Photo Button Clicked");
+      let result = await ImagePicker.launchCameraAsync({
+        allowEditing: false,
+        exif: true,
+        aspect: [4, 3],
+      });
+      if (!result.cancelled) {this.setState({ image  : result.uri });}
+      GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
+      this.uploadLocationImage();
+  };
 uploadLocationImage = () => {
     console.log("Uploading location image");
     // Converts image URL to Base64 String
@@ -139,15 +164,30 @@ downloadUserImage = async () => {
     if(json.doc.length === 0){
         console.log("No images exist for given location");
     }
-    else{
+    if(json.doc.length === 1){
         var locationImageListTemp = [];
         for (i = 0; i < json.doc.length; i++) {
+            locationImageListTemp[i] = json.doc[i].base64;
+        }
+    }
+    else{
+        var locationImageListTemp = [];
+        for (i = 1; i < json.doc.length - 1; i++) {
             locationImageListTemp[i] = json.doc[i].base64;
         }
     }
     this.setState({locationImageList: locationImageListTemp});
     console.log("Locaiton Image Array Below: ");
     console.log(this.state.locationImageList);
+};
+getLocationRoutes = async (location) => {
+  console.log("Retreiving location routes");
+  const getRouteUrl = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/routeapi/locationroutes/" + location;
+  const response = await fetch(getRouteUrl);
+  const json = await response.json();
+  this.setState({ tempRoutes: json.doc });
+  console.log(json.doc);
+
 };
 
 likePress = (location, choice) => {
@@ -201,7 +241,7 @@ likePress = (location, choice) => {
             </Header>
 
             {/* Map */}
-            <MapView
+              <MapView
                 style={{ flex: 1 }}
                 initialRegion={{
                   latitude: 35.889942,
@@ -225,7 +265,7 @@ likePress = (location, choice) => {
               </MapView>
 
               <Modal style={styles.modal}
-                isVisible={this.state.isMainModalVisible}>
+                visible={this.state.isMainModalVisible}>
                 <ScrollView>
               <View style={{width: 372}}>
                 <Text style={styles.detailsHeader}>Details </Text>
@@ -241,52 +281,100 @@ likePress = (location, choice) => {
                               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
                               </TouchableOpacity>
+                              <TouchableOpacity style={styles.takePhotoButton}  onPress={this.takePhotoTapped.bind(this)}>
+                                  <Image style={styles.cameraIcon} source={require('../assets/images/cameraIcon.png')}/>
+                              </TouchableOpacity>
                           </ScrollView>
                     </ScrollView>
 
-                    <List>
-                        <ListItem >
-                          <Text>Name: {this.state.tempLocation.title} </Text>
-                        </ListItem>
-                        <ListItem>
-                          <Text>Description: {this.state.tempLocation.description}</Text>
-                        </ListItem>
-                        <ListItem>
-                          <Text>Category: {this.state.tempLocation.category} </Text>
-                        </ListItem>
-                        <ListItem>
-                          <Text>City: Chapel Hill </Text>
-                        </ListItem>
-                        <ListItem>
-                          <Text>Times Visited:  847 </Text>
-                        </ListItem>
-                        <ListItem>
-                          <Text>Comments:  Comments can go here </Text>
-                        </ListItem>
-                        <ListItem>
-                          <Text>Placeholder: Some other data can go here </Text>
-                        </ListItem>
-                   </List>
-                   <View style={styles.rowContainer}>
-                    <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconTextLeft}>  {this.state.currentLikeCount} </Text>
-                        <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/>
-                    </TouchableOpacity>
-                    <View style={styles.likeImageBuffer}></View>
-                    <TouchableOpacity style={styles.thumbButtonOpacityRight}  onPress={() => this.likePress(this.state.tempLocation.title, "dislike")} disabled={this.state.isButtonDisabled}>
-                        <Text style={styles.thumbsIconTextRight}>{this.state.currentDislikeCount} </Text>
-                        <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
+                      <List>
+                          <ListItem >
+                            <Text>Name: {this.state.tempLocation.title} </Text>
+                          </ListItem>
+                          <ListItem>
+                            <Text>Description: {this.state.tempLocation.description}</Text>
+                          </ListItem>
+                          <ListItem>
+                            <Text>Category: {this.state.tempLocation.category} </Text>
+                          </ListItem>
+                          <ListItem>
+                            <Text>City: Chapel Hill </Text>
+                          </ListItem>
+                          <ListItem>
+                            <Text>Times Visited:  847 </Text>
+                          </ListItem>
+                          <ListItem>
+                            <Text>Comments:  Comments can go here </Text>
+                          </ListItem>
+                          <ListItem>
+                            <Text>Placeholder: More information can go here </Text>
+                          </ListItem>
 
-                    </TouchableOpacity>
-                    </View>
+                     </List>
+                     <View style={styles.rowContainer}>
+                      <TouchableOpacity style={styles.thumbButtonOpacityLeft} onPress={() => this.likePress(this.state.tempLocation.title, "like")} disabled={this.state.isButtonDisabled}>
+                          <Text style={styles.thumbsIconTextLeft}>  {this.state.currentLikeCount} </Text>
+                          <Image style={styles.thumbsUpIcon} source={require('../assets/images/thumbsUpIcon.png')}/>
+                      </TouchableOpacity>
+                      <View style={styles.likeImageBuffer}></View>
+                      <TouchableOpacity style={styles.thumbButtonOpacityRight}  onPress={() => this.likePress(this.state.tempLocation.title, "dislike")} disabled={this.state.isButtonDisabled}>
+                          <Text style={styles.thumbsIconTextRight}>{this.state.currentDislikeCount} </Text>
+                          <Image style={styles.thumbsDownIcon} source={require('../assets/images/thumbsDownIcon.png')}/>
 
-                    <Button block style={styles.backButton}
-                        onPress={this.toggleMainModalNoAjax}>
+                      </TouchableOpacity>
+                      </View>
+
+                      <Button block style={styles.busRouteButton}
+                          onPress={() => this.toggleRouteModal(this.state.tempLocation.title)}>
+                          <Text style={styles.backButtonText}>View Nearby Bus Routes </Text>
+                      </Button>
+                      <Button block style={styles.backButton}
+                          onPress={this.toggleMainModalNoAjax}>
+                          <Text style={styles.backButtonText}>Back</Text>
+                      </Button>
+                </View>
+                </ScrollView>
+              </Modal>
+
+              <Modal style={{flex: 1, backgroundColor: '#FFF'}}
+                visible={this.state.isRouteModalVisible}>
+                <View style={{flex: 10}}>
+                  <ScrollView>
+                      {this.state.tempRoutes.map(tempRoute => (
+                        <Card
+                        key={tempRoute._id}>
+                          <CardItem>
+                            <Body>
+                                <Text>{tempRoute.operator} </Text>
+                                <Text>{tempRoute.name} </Text>
+                                <Text>{tempRoute.stop} </Text>
+                                <Text>{tempRoute.walkingDescription}</Text>
+                            </Body>
+                          </CardItem>
+                        </Card>
+
+
+
+                      ))}
+                    </ScrollView>
+                </View>
+                <View style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                    <Button block style={{
+                      borderRadius: 0,
+                      backgroundColor: '#5E8DF7',
+                      height: 50,
+                      flex: 1,
+                    }}
+                        onPress={() => this.toggleRouteModalNoAjax(this.state.tempLocation.title)}>
                         <Text style={styles.backButtonText}>Back</Text>
                     </Button>
-              </View>
-              </ScrollView>
+                </View>
               </Modal>
+
       </View>
 
 
@@ -359,6 +447,12 @@ backButton: {
   borderRadius: 0,
   backgroundColor: '#5E8DF7',
   height: 50,
+  marginTop: 10,
+},
+busRouteButton: {
+  borderRadius: 0,
+  backgroundColor: '#5E8DF7',
+  height: 50,
 },
 backButtonText: {
     justifyContent: 'center',
@@ -400,10 +494,26 @@ addPhotoButton:{
     width: 50,
     height: 50,
     marginTop: 240,
-    marginLeft: -90,
+    marginLeft: -150,
     borderRadius: 100,
+    position: 'relative',
+},
+takePhotoButton:{
+    backgroundColor: '#E0E0E0',
+    width: 50,
+    height: 50,
+    marginTop: 240,
+    marginLeft: 3,
+    borderRadius: 100,
+    position: 'relative',
 },
 plusSignIcon:{
+    width: 20,
+    height: 20,
+    marginTop: 15,
+    marginLeft: 15,
+},
+cameraIcon:{
     width: 20,
     height: 20,
     marginTop: 15,
