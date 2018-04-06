@@ -102,6 +102,11 @@ hideAlert = () => {
 };
 selectPhotoTapped = async () => {
    console.log("Add Photo Location Button Clicked");
+   if(!GLOBAL.ISLOGGEDIN){
+     this.toggleMainModalNoAjax();
+     Alert.alert("MUST BE LOGGED IN");
+     this.props.navigation.navigate('Home');
+   }else {
    let result = await ImagePicker.launchImageLibraryAsync({
      allowsEditing: true,
      aspect: [4, 3],
@@ -109,10 +114,15 @@ selectPhotoTapped = async () => {
    if (!result.cancelled) {this.setState({ image  : result.uri });}
    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
    this.uploadLocationImage();
- };
+} };
 
 takePhotoTapped = async () => {
     console.log("Take Photo Button Clicked");
+    if(!GLOBAL.ISLOGGEDIN){
+      this.toggleMainModalNoAjax();
+      Alert.alert("MUST BE LOGGED IN");
+      this.props.navigation.navigate('Home');
+    }else {
       let result = await ImagePicker.launchCameraAsync({
         allowEditing: false,
         exif: true,
@@ -121,7 +131,7 @@ takePhotoTapped = async () => {
       if (!result.cancelled) {this.setState({ image  : result.uri });}
       GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
       this.uploadLocationImage();
-  };
+}  };
 uploadLocationImage = () => {
     console.log("Uploading location image");
     // Converts image URL to Base64 String
@@ -191,19 +201,25 @@ getLocationRoutes = async (location) => {
 };
 
 likePress = (location, choice) => {
-   const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikes";
-   fetch(url, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            type: choice,
-            title: location,
-          })
-        });
-   if(GLOBAL.ISLOGGEDIN){
+
+   if(!GLOBAL.ISLOGGEDIN) {
+     this.toggleMainModalNoAjax();
+     Alert.alert("MUST BE LOGGED IN");
+     this.props.navigation.navigate('Home');
+   }
+   else if(GLOBAL.ISLOGGEDIN){
+     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikes";
+     fetch(url, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type: choice,
+              title: location,
+            })
+          });
    const url2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/updatelikedlocation";
    fetch(url2, {
           method: 'POST',
@@ -216,12 +232,13 @@ likePress = (location, choice) => {
             title: location,
           })
         });
-    }
-   this.setState({ isButtonDisabled: true});
-   if(choice === "like"){this.state.currentLikeCount++;}
-   else{this.state.currentDislikeCount++;}
+        this.setState({ isButtonDisabled: true});
+        if(choice === "like"){this.state.currentLikeCount++;}
+        else{this.state.currentDislikeCount++;}
 
-   this.showAlert();
+        this.showAlert();
+    }
+
 }
   render() {
     return (
