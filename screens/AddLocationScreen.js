@@ -54,14 +54,22 @@ export default class AddLocation extends React.Component {
   };
 
   openModal = () => {
+    if(!GLOBAL.ISLOGGEDIN){
+      Alert.alert("MUST BE LOGGED IN");
+      this.props.navigation.navigate('Home');
+    } else {
     this.setState({modalVisible:true});
-  };
+  }};
   closeModal = () => {
     this.setState({modalVisible:false});
   };
   openRouteModal = () => {
+    if(!GLOBAL.ISLOGGEDIN){
+      Alert.alert("MUST BE LOGGED IN");
+      this.props.navigation.navigate('Home');
+    } else {
     this.setState({routeModalVisible:true});
-  };
+  }};
   closeRouteModal = () => {
     this.setState({routeModalVisible:false});
   };
@@ -181,8 +189,12 @@ export default class AddLocation extends React.Component {
 
 //Takes input from form, sends to api
   submitPress = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
+    if(!GLOBAL.ISLOGGEDIN){
+      Alert.alert("MUST BE LOGGED IN");
+      this.props.navigation.navigate('Home');
+    }
     //Check if parts of form are empty, alert user to complete form.
-      if(!location || !desc || !lat || !long || !cat || !busOperator || !routeName || !busStop){
+      else if(!location || !desc || !lat || !long || !cat || !busOperator || !routeName || !busStop){
         console.log("Please fill out entire form before submitting.")
         Alert.alert(
           'Form Incomplete',
