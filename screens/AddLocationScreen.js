@@ -185,10 +185,19 @@ export default class AddLocation extends React.Component {
     this.setState({routeName: clearState});
     this.setState({busStop: clearState});
     this.setState({walkingDesc: clearState});
+    GLOBAL.LATITUDE = '';
+    GLOBAL.LONGITUDE = '';
   }
 
 //Takes input from form, sends to api
   submitPress = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
+    console.log("Latitude: " + GLOBAL.LATITUDE + "     Longitude: " + GLOBAL.LONGITUDE);
+    if(!lat) {
+      lat = GLOBAL.LATITUDE;
+    }
+    if(!long){
+      long = GLOBAL.LONGITUDE;
+    }
     if(!GLOBAL.ISLOGGEDIN){
       Alert.alert("MUST BE LOGGED IN");
       this.props.navigation.navigate('Home');

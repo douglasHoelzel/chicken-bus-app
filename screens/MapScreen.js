@@ -116,6 +116,36 @@ selectPhotoTapped = async () => {
    this.uploadLocationImage();
 } };
 
+longPress = (event) => {
+    console.log("Latitude: " + event.nativeEvent.coordinate.latitude
+     + " Longitude: " + event.nativeEvent.coordinate.longitude);
+    GLOBAL.LATITUDE = event.nativeEvent.coordinate.latitude;
+    GLOBAL.LONGITUDE = event.nativeEvent.coordinate.longitude;
+    if(!GLOBAL.ISLOGGEDIN){
+      Alert.alert("PLEASE LOG IN");
+      this.props.navigation.navigate('Home');
+    }
+    else{
+      Alert.alert(
+        'Add Location',
+        'Would you like to add a location here?',
+        [
+          {text: 'No', onPress: () => {
+            console.log('No Pressed');
+            GLOBAL.LATITUDE = '';
+            GLOBAL.LONGITUDE = '';
+          }},
+          {text: 'Yes', onPress: () => {
+            this.props.navigation.navigate('Add');
+          }},
+        ],
+      )
+    }
+
+}
+
+
+
 takePhotoTapped = async () => {
     console.log("Take Photo Button Clicked");
     if(!GLOBAL.ISLOGGEDIN){
@@ -265,7 +295,8 @@ likePress = (location, choice) => {
                   longitude: -78.862621,
                   latitudeDelta: 1,
                   longitudeDelta: 1,
-                }}>
+                }}
+                onLongPress={(event) => this.longPress(event)}>
                   {this.state.markers.map(marker => (
                   <MapView.Marker
                   coordinate={{
