@@ -145,7 +145,9 @@ loginWithFacebook = async() => {
                  username: GLOBAL.USERNAME,
                })
           });
-      })
+      })for (var i = 0; i < array.length; i++) {
+          array[i]
+      }
     .catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
