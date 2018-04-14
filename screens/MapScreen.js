@@ -149,8 +149,8 @@ longPress = (event) => {
 takePhotoTapped = async () => {
     console.log("Take Photo Button Clicked");
     if(!GLOBAL.ISLOGGEDIN){
-      this.toggleMainModalNoAjax();
       Alert.alert("MUST BE LOGGED IN");
+      this.toggleMainModalNoAjax();
       this.props.navigation.navigate('Home');
     }else {
       let result = await ImagePicker.launchCameraAsync({
@@ -195,7 +195,7 @@ uploadLocationImage = () => {
     })
 };
 downloadUserImage = async () => {
-    console.log("Downloading location image");
+    console.log("Downloading location image(s)");
     const downloadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/locationimages/" + this.state.tempLocationTitle;
     const response = await fetch(downloadLocationImageURL);
     const json = await response.json();
@@ -212,7 +212,7 @@ downloadUserImage = async () => {
     }
     else{
         var locationImageListTemp = [];
-        for (i = 1; i < json.doc.length - 1; i++) {
+        for (i = 1; i < json.doc.length; i++) {
             locationImageListTemp[i] = json.doc[i].base64;
         }
     }
