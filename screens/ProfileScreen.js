@@ -53,10 +53,20 @@ componentWillMount(){
 }
 
 toggleUserNameModal = () => {
+  if(!GLOBAL.ISLOGGEDIN){
+    Alert.alert("MUST BE LOGGED IN");
+    this.props.navigation.navigate('Home');
+  }else {
       this.setState({ isUserNameModalVisible: !this.state.isUserNameModalVisible });
+    }
 }
 toggleDeleteAccountModal = () => {
+  if(!GLOBAL.ISLOGGEDIN){
+    Alert.alert("MUST BE LOGGED IN");
+    this.props.navigation.navigate('Home');
+  }else {
       this.setState({ isDeleteAccountModalVisible: !this.state.isDeleteAccountModalVisible });
+}
 }
 onChangeUserNamePress = (newUserName) => {
     if(newUserName === ''){
@@ -69,9 +79,13 @@ onChangeUserNamePress = (newUserName) => {
    }
 };
 onSignOutPress = () => {
+  if(!GLOBAL.ISLOGGEDIN){
+     Alert.alert("MUST BE LOGGED IN");
+     this.props.navigation.navigate('Home');
+   }else {
     console.log("User Signing Out");
     this.clearAllData();
-};
+}};
 onDeleteAccountConfirm = () => {
     console.log("Account Deleted");
     this.clearAllData();
@@ -142,7 +156,7 @@ downloadUserImage = async () => {
 };
 
 clearAllData = () => {
-    console.log("Clearning All User Data on Sign Out");
+    console.log("Clearing All User Data on Sign Out");
     this.setState({isLoggedIn: false, userName: '', userID: '', email: '', password: ''});
     GLOBAL.USERID = '';
     GLOBAL.USERNAME = '';
@@ -154,6 +168,10 @@ clearAllData = () => {
 
 selectPhotoTapped = async () => {
    console.log("Add Photo Button Clicked");
+   if(!GLOBAL.ISLOGGEDIN){
+     Alert.alert("MUST BE LOGGED IN");
+     this.props.navigation.navigate('Home');
+   }else {
    let result = await ImagePicker.launchImageLibraryAsync({
      allowsEditing: true,
      aspect: [4, 3],
@@ -163,7 +181,7 @@ selectPhotoTapped = async () => {
    }
    GLOBAL.USERIMAGEBASE64 = this.state.image;
    this.uploadUserImage();
- };
+ }};
 
 
 

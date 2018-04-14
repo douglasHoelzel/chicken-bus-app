@@ -52,6 +52,9 @@ componentWillMount(){
     firebase.initializeApp(firebaseConfig);
 }
 loginWithGoogle = async() => {
+  if (GLOBAL.ISLOGGEDIN) {
+    Alert.alert("ALREADY LOGGED IN", "SIGN OUT TO LOG INTO ANOTHER ACCOUNT");
+  } else {
   const result = await Expo.Google.logInAsync({
     androidClientId: '396242534921-ql4pfkgkonbqe357ed9vn3tm2hi5ihoo.apps.googleusercontent.com',
     iosClientId: '396242534921-j13r4u4pfenrqpdmgq0ekgfesuhcrg6d.apps.googleusercontent.com',
@@ -102,10 +105,13 @@ loginWithGoogle = async() => {
       Alert.alert(errorMessage);
       this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     });
-  }
+  }}
 }
 
 loginWithFacebook = async() => {
+  if (GLOBAL.ISLOGGEDIN) {
+    Alert.alert("ALREADY LOGGED IN", "SIGN OUT TO LOG INTO ANOTHER ACCOUNT");
+  } else {
   const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
     '201285720459409',
   {scope: 'email,public_profile'}
@@ -157,10 +163,13 @@ loginWithFacebook = async() => {
     });
 
   }
-
+}
 }
 
 onEmailSignInPress = (email, password) => {
+  if (GLOBAL.ISLOGGEDIN) {
+    Alert.alert("ALREADY LOGGED IN", "SIGN OUT TO LOG INTO ANOTHER ACCOUNT");
+  } else {
     console.log("Existing user signing in");
     this.setState({loading: true});
     firebase.auth().signInWithEmailAndPassword(email, password)
@@ -182,7 +191,7 @@ onEmailSignInPress = (email, password) => {
         Alert.alert(errorMessage);
         this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     })
-};
+}};
 
 onEmailSignUpPress = (userName, email, password) => {
     console.log("New Screen Name Being Entered : " + userName + " email: " + email + " password: " + password);
@@ -248,8 +257,11 @@ getUserInfo = async (userID) => {
 };
 
 toggleSignUpModal = () => {
+  if (GLOBAL.ISLOGGEDIN) {
+    Alert.alert("ALREADY LOGGED IN", "SIGN OUT TO LOG INTO ANOTHER ACCOUNT");
+  } else {
     this.setState({ isSignUpModalVisible: !this.state.isSignUpModalVisible });
-}
+}}
 toggleCreateUserNameModal = () => {
     this.setState({ isCreateUserNameModalVisible: !this.state.isCreateUserNameModalVisible });
 }
