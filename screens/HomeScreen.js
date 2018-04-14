@@ -157,11 +157,9 @@ loginWithFacebook = async() => {
       Alert.alert(errorMessage);
       this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     });
-
-  }
+        }
+    }
 }
-}
-
 onEmailSignInPress = (email, password) => {
   if (GLOBAL.ISLOGGEDIN) {
     Alert.alert("ALREADY LOGGED IN", "SIGN OUT TO LOG INTO ANOTHER ACCOUNT");
@@ -188,7 +186,6 @@ onEmailSignInPress = (email, password) => {
         this.setState({loading: false, isLoggedIn: false, userID: '', email: '', userName: '', password: '', email: ''});
     })
 }};
-
 onEmailSignUpPress = (userName, email, password) => {
     console.log("New Screen Name Being Entered : " + userName + " email: " + email + " password: " + password);
     this.setState({loading: true});
