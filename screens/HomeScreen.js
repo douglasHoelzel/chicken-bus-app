@@ -22,9 +22,7 @@ GLOBAL = require('./Global.js');
 
 
 
-{/* Notes:
 
-*/}
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -151,9 +149,7 @@ loginWithFacebook = async() => {
                  username: GLOBAL.USERNAME,
                })
           });
-      })for (var i = 0; i < array.length; i++) {
-          array[i]
-      }
+      })
     .catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
