@@ -192,6 +192,21 @@ export default class AddLocation extends React.Component {
 //Takes input from form, sends to api
   submitPress = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
     console.log("Latitude: " + GLOBAL.LATITUDE + "     Longitude: " + GLOBAL.LONGITUDE);
+    const uploadLocationImageURL2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/updatescore";
+    fetch(uploadLocationImageURL2, {
+           method: 'POST',
+           headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             userID: GLOBAL.USERID,
+             score: "100",
+           })
+      })
+    .catch((error) => {
+    console.log("Error in uploading point add (add location)");
+    });
     if(!lat) {
       lat = GLOBAL.LATITUDE;
     }

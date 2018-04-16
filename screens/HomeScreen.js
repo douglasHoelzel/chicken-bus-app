@@ -161,6 +161,7 @@ loginWithFacebook = async() => {
     }
 }
 onEmailSignInPress = (email, password) => {
+    console.log("TEST STRING FOR DEMO");
   if (GLOBAL.ISLOGGEDIN) {
     Alert.alert("ALREADY LOGGED IN", "SIGN OUT TO LOG INTO ANOTHER ACCOUNT");
   } else {
@@ -244,9 +245,11 @@ getUserInfo = async (userID) => {
     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/getuser/" + userID;
     const response = await fetch(url);
     const json = await response.json();
+    console.log(json);
     GLOBAL.USERNAME = json.doc.username;
     GLOBAL.USERID = json.doc.userID;
     GLOBAL.ISLOGGEDIN = true;
+    GLOBAL.REPUTATION = json.doc.userReputation;
 };
 
 toggleSignUpModal = () => {

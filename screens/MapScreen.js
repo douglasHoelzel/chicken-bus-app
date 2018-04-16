@@ -142,11 +142,25 @@ longPress = (event) => {
         ],
       )
     }
-
 }
 
 takePhotoTapped = async () => {
     console.log("Take Photo Button Clicked");
+    const uploadLocationImageURL2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/updatescore";
+    fetch(uploadLocationImageURL2, {
+           method: 'POST',
+           headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             userID: GLOBAL.USERID,
+             score: "50",
+           })
+      })
+    .catch((error) => {
+    console.log("Error in uploading point add");
+    });
     if(!GLOBAL.ISLOGGEDIN){
       Alert.alert("MUST BE LOGGED IN");
       this.toggleMainModalNoAjax();
@@ -164,6 +178,21 @@ takePhotoTapped = async () => {
 }  };
 uploadLocationImage = () => {
     console.log("Uploading location image");
+    const uploadLocationImageURL2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/updatescore";
+    fetch(uploadLocationImageURL2, {
+           method: 'POST',
+           headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             userID: GLOBAL.USERID,
+             score: "50",
+           })
+      })
+    .catch((error) => {
+    console.log("Error in uploading point add");
+    });
     // Converts image URL to Base64 String
     Image.getSize(this.state.image, (width, height) => {
       let imageSettings = {
@@ -231,7 +260,6 @@ getLocationRoutes = async (location) => {
 };
 
 likePress = (location, choice) => {
-
    if(!GLOBAL.ISLOGGEDIN) {
      this.toggleMainModalNoAjax();
      Alert.alert("MUST BE LOGGED IN");

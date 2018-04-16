@@ -190,7 +190,8 @@ render() {
   return (
       <View style={styles.container}>
       <ScrollView>
-      <Text style={styles.profileHeader}>{GLOBAL.USERNAME} </Text>
+      <Text style={styles.profileHeader}>{GLOBAL.USERNAME}</Text>
+       <Image style={styles.userBadgeImage} source={require('../assets/images/badge1.png')}/>
           <List>
               <ListItem >
                   <Image style={styles.profileImage} source={{ uri: GLOBAL.USERIMAGEBASE64 }}/>
@@ -212,7 +213,7 @@ render() {
                 <Text>Email: {GLOBAL.EMAIL}</Text>
               </ListItem>
               <ListItem>
-                <Text>Reputation: 63 </Text>
+                <Text>Reputation: { GLOBAL.REPUTATION } </Text>
               </ListItem>
               <ListItem>
                 <Text>Locations Added:  11 </Text>
@@ -413,6 +414,12 @@ signOutButtonText:{
     color: '#fff',
     fontWeight: 'bold',
     fontSize:  18,
+},
+userBadgeImage:{
+    height: 50,
+    width: 50,
+    marginLeft: 350,
+    marginTop: -55,
 },
 deleteText:{
     marginTop: 50,
