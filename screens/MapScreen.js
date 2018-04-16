@@ -107,6 +107,7 @@ selectPhotoTapped = async () => {
      Alert.alert("MUST BE LOGGED IN");
      this.props.navigation.navigate('Home');
    }else {
+   this.toggleMainModalNoAjax();
    let result = await ImagePicker.launchImageLibraryAsync({
      allowsEditing: true,
      aspect: [4, 3],
@@ -144,8 +145,6 @@ longPress = (event) => {
 
 }
 
-
-
 takePhotoTapped = async () => {
     console.log("Take Photo Button Clicked");
     if(!GLOBAL.ISLOGGEDIN){
@@ -153,6 +152,7 @@ takePhotoTapped = async () => {
       this.toggleMainModalNoAjax();
       this.props.navigation.navigate('Home');
     }else {
+      this.toggleMainModalNoAjax();
       let result = await ImagePicker.launchCameraAsync({
         allowEditing: false,
         exif: true,
