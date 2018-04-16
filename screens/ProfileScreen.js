@@ -41,6 +41,7 @@ constructor(props){
       this.state = {
           userImage: require('../assets/images/testUserImage.png'),
           isUserNameModalVisible: false,
+          isBadgeModalVisible: false,
           isUserNameModalVisible2: false,
           isDeleteAccountModalVisible: false,
           newUserName: '',
@@ -60,13 +61,16 @@ toggleUserNameModal = () => {
       this.setState({ isUserNameModalVisible: !this.state.isUserNameModalVisible });
     }
 }
+toggleBadgeModal = () => {
+      this.setState({ isBadgeModalVisible: !this.state.isBadgeModalVisible });
+}
 toggleDeleteAccountModal = () => {
   if(!GLOBAL.ISLOGGEDIN){
     Alert.alert("MUST BE LOGGED IN");
     this.props.navigation.navigate('Home');
   }else {
       this.setState({ isDeleteAccountModalVisible: !this.state.isDeleteAccountModalVisible });
-}
+  }
 }
 onChangeUserNamePress = (newUserName) => {
     if(newUserName === ''){
@@ -191,7 +195,10 @@ render() {
       <View style={styles.container}>
       <ScrollView>
       <Text style={styles.profileHeader}>{GLOBAL.USERNAME}</Text>
-       <Image style={styles.userBadgeImage} source={require('../assets/images/badge1.png')}/>
+      {/* Badge Information Button */}
+      <TouchableOpacity  style={styles.badgeButton} onPress={() => this.toggleBadgeModal()}>
+          <Image style={styles.userBadgeImage} source={ GLOBAL.REPUTATION_IMAGE }></Image>
+          </TouchableOpacity>
           <List>
               <ListItem >
                   <Image style={styles.profileImage} source={{ uri: GLOBAL.USERIMAGEBASE64 }}/>
@@ -305,10 +312,46 @@ render() {
         onPress={() => this.toggleDeleteAccountModal()}>
            <Text style={styles.changeUserNameButtonText}>Back</Text>
        </Button>
-
       </View>
       </ScrollView>
       </Modal>
+
+      {/* Badge Modal */}
+      <Modal style={styles.modal} isVisible={this.state.isBadgeModalVisible}>
+        <ScrollView>
+        <View style={{width: 372}}>
+        {/* Modal Header */}
+        <Text style={styles.detailsHeader}>Badge Information </Text>
+        <Text style={styles.badgeTopPadder}></Text>
+            <ListItem>
+              <Text>0 - 50: <Image style={styles.badgeInfoButton1} source={require('../assets/images/badge1.png')}/></Text>
+            </ListItem>
+            <ListItem>
+              <Text>10 - 400: <Image style={styles.badgeInfoButton2} source={require('../assets/images/badge2.png')}/></Text>
+            </ListItem>
+            <ListItem>
+              <Text>401 - 600: <Image style={styles.badgeInfoButton3} source={require('../assets/images/badge3.png')}/></Text>
+            </ListItem>
+            <ListItem>
+              <Text>601 - 1200: <Image style={styles.badgeInfoButton4} source={require('../assets/images/badge4.png')}/></Text>
+            </ListItem>
+            <ListItem>
+              <Text>1201 - 1800: <Image style={styles.badgeInfoButton5} source={require('../assets/images/badge5.png')}/></Text>
+            </ListItem>
+            <ListItem>
+              <Text>1800 and up: <Image style={styles.badgeInfoButton6} source={require('../assets/images/badge6.png')}/></Text>
+            </ListItem>
+
+        {/* Back Button */}
+        <Button block style={styles.backButton}
+         onPress={() => this.toggleBadgeModal()}>
+            <Text style={styles.changeUserNameButtonText}>Back</Text>
+        </Button>
+       </View>
+       </ScrollView>
+       </Modal>
+
+
       </View>
     );
  }
@@ -420,6 +463,50 @@ userBadgeImage:{
     width: 50,
     marginLeft: 350,
     marginTop: -55,
+},
+badgeButton:{
+    height: 50,
+    width: 50,
+},
+badgeInfoButton1:{
+    marginTop: 10,
+    marginLeft: 137,
+    height: 30,
+    width: 30,
+},
+badgeInfoButton2:{
+    marginTop: 10,
+    marginLeft: 122,
+    height: 30,
+    width: 30,
+},
+badgeInfoButton3:{
+    marginTop: 10,
+    marginLeft: 113,
+    height: 30,
+    width: 30,
+},
+badgeInfoButton4:{
+    marginTop: 10,
+    marginLeft: 108,
+    height: 30,
+    width: 30,
+},
+badgeInfoButton5:{
+    marginTop: 10,
+    marginLeft: 102,
+    height: 30,
+    width: 30,
+},
+badgeInfoButton6:{
+    marginTop: 10,
+    marginLeft: 98,
+    height: 30,
+    width: 30,
+},
+badgeTopPadder:{
+    marginTop: 40,
+    marginBottom: 40,
 },
 deleteText:{
     marginTop: 50,

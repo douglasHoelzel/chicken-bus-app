@@ -155,7 +155,7 @@ takePhotoTapped = async () => {
            },
            body: JSON.stringify({
              userID: GLOBAL.USERID,
-             score: "50",
+             score: "200",
            })
       })
     .catch((error) => {
@@ -187,7 +187,7 @@ uploadLocationImage = () => {
            },
            body: JSON.stringify({
              userID: GLOBAL.USERID,
-             score: "50",
+             score: "200",
            })
       })
     .catch((error) => {

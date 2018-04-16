@@ -250,6 +250,14 @@ getUserInfo = async (userID) => {
     GLOBAL.USERID = json.doc.userID;
     GLOBAL.ISLOGGEDIN = true;
     GLOBAL.REPUTATION = json.doc.userReputation;
+    console.log("Global Rep: " + GLOBAL.REPUTATION);
+    if(GLOBAL.REPUTATION > 10 &&  GLOBAL.REPUTATION < 400){ console.log("User rep is between 10 and 400"); GLOBAL.REPUTATION_IMAGE = require('../assets/images/badge2.png'); }
+    else if(GLOBAL.REPUTATION > 400 && GLOBAL.REPUTATION < 600   ){ console.log("User rep is between 400 and 600"); GLOBAL.REPUTATION_IMAGE = require('../assets/images/badge3.png');}
+    else if(GLOBAL.REPUTATION > 600 && GLOBAL.REPUTATION < 1200  ){ console.log("User rep is between 600 and 1200"); GLOBAL.REPUTATION_IMAGE = require('../assets/images/badge4.png');}
+    else if(GLOBAL.REPUTATION > 1200 && GLOBAL.REPUTATION < 1800 ){ console.log("User rep is between 1200 and 1800"); GLOBAL.REPUTATION_IMAGE = require('../assets/images/badge5.png');}
+    else if(GLOBAL.REPUTATION > 1800 ){ console.log("User rep is above 1800"); GLOBAL.REPUTATION_IMAGE = require('../assets/images/badge6.png');}
+    else{GLOBAL.REPUTATION_IMAGE = require('../assets/images/badge1.png'); console.log("User rep is less than 10"); }
+
 };
 
 toggleSignUpModal = () => {
