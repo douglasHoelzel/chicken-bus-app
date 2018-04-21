@@ -32,6 +32,7 @@ constructor(props){
         isButtonDisabled: false,
         isMainModalVisible: false,
         isRouteModalVisible: false,
+        isUserLocationModalVisible: false,
         showAlert: false,
         currentLikeCount: 0,
         currentDislikeCount: 0,
@@ -84,6 +85,16 @@ toggleRouteModalNoAjax = (location) => {
       this.setState({ isRouteModalVisible: !this.state.isRouteModalVisible });
       this.toggleMainModal(location);
 }
+toggleUserLocationModal = (location) => {
+      console.log("Location used: " + location);
+      this.setState({ isUserLocationModalVisible: !this.state.isUserLocationModalVisible });
+      this.toggleMainModalNoAjax(location);
+}
+
+toggleUserLocationModalNoAjax = (location) => {
+      this.setState({ isUserLocationModalVisible: !this.state.isUserLocationModalVisible });
+      this.toggleMainModal(location);
+}
 showAlert = () => {
     this.setState({
       showAlert: true
@@ -99,6 +110,18 @@ hideAlert = () => {
     this.setState({
       showAlert: false
     });
+};
+
+onDoublePress = (date) => {
+  const time = new Date().getTime();
+	const delta = time - this.lastPress;
+
+	const DOUBLE_PRESS_DELAY = 400;
+	if (delta < DOUBLE_PRESS_DELAY) {
+    this.toggleUserLocationModal(this.state.tempLocation.title);
+		// Success double press
+	}
+	this.lastPress = time;
 };
 selectPhotoTapped = async () => {
    console.log("Add Photo Location Button Clicked");
@@ -348,11 +371,18 @@ likePress = (location, choice) => {
                     <ScrollView horizontal>
                            <ScrollView horizontal>
                                {/* Dynamic List of Location Images */}
+
                                {this.state.locationImageList.map((image, key) => {
+
                                  return (
+                                   <TouchableOpacity key={key} onPress={() => this.onDoublePress()}>
                                    <Image style={{width: 400, height: 300}}  key={key} source={{uri: image }}></Image>
+                                   </TouchableOpacity>
+
                                  );
+
                               })}
+
                               {/* Add Photo Button */}
                               <TouchableOpacity style={styles.addPhotoButton}  onPress={this.selectPhotoTapped.bind(this)}>
                                   <Image style={styles.plusSignIcon} source={require('../assets/images/plusSignIcon.png')}/>
@@ -400,6 +430,7 @@ likePress = (location, choice) => {
                       </TouchableOpacity>
                       </View>
 
+
                       <Button block style={styles.busRouteButton}
                           onPress={() => this.toggleRouteModal(this.state.tempLocation.title)}>
                           <Text style={styles.backButtonText}>View Nearby Bus Routes </Text>
@@ -411,6 +442,35 @@ likePress = (location, choice) => {
                 </View>
                 </ScrollView>
               </Modal>
+
+              {/* User Location Modal */}
+              <Modal style={{flex: 1, backgroundColor: '#FFF'}} isVisible={this.state.isUserLocationModalVisible}>
+              <View style={{flex: 10}}>
+              <List>
+                <ListItem>
+                <Text>Posted by: </Text>
+                </ListItem>
+                <ListItem>
+                <Text>John Doe </Text>
+                </ListItem>
+              </List>
+              </View>
+                <View style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                    <Button block style={{
+                      borderRadius: 0,
+                      backgroundColor: '#5E8DF7',
+                      height: 50,
+                      flex: 1,
+                    }}
+                        onPress={() => this.toggleUserLocationModalNoAjax(this.state.tempLocation.title)}>
+                        <Text style={styles.backButtonText}>Back</Text>
+                    </Button>
+                </View>
+               </Modal>
 
               <Modal style={{flex: 1, backgroundColor: '#FFF'}}
                 visible={this.state.isRouteModalVisible}>
@@ -450,7 +510,6 @@ likePress = (location, choice) => {
                     </Button>
                 </View>
               </Modal>
-
       </View>
 
 
