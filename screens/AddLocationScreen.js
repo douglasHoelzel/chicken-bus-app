@@ -9,6 +9,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Animated,
+  ImageStore,
+  ImageEditor
 } from 'react-native';
 import {
   Button,
@@ -21,8 +24,8 @@ import {
   Label,
   Picker,
 } from 'native-base';
-import { MapView } from 'expo';
-import { WebBrowser } from 'expo';
+import { MapView, ImagePicker } from 'expo';
+import { WebBrowser, Marker, CameraRoll, Callout, Camera, Permissions } from 'expo';
 import { MonoText } from '../components/StyledText';
 
 export default class AddLocation extends React.Component {
@@ -46,6 +49,8 @@ export default class AddLocation extends React.Component {
         walkingDesc: '',
         markerLat: 0,
         markerLong: 0,
+        image: null,
+        base64Image: '',
     };
   }
 
@@ -55,6 +60,7 @@ export default class AddLocation extends React.Component {
 
   openModal = () => {
     if(!GLOBAL.ISLOGGEDIN){
+      this.clearAllState();
       Alert.alert("MUST BE LOGGED IN");
       this.props.navigation.navigate('Home');
     } else {
@@ -65,6 +71,7 @@ export default class AddLocation extends React.Component {
   };
   openRouteModal = () => {
     if(!GLOBAL.ISLOGGEDIN){
+      this.clearAllState();
       Alert.alert("MUST BE LOGGED IN");
       this.props.navigation.navigate('Home');
     } else {
@@ -73,7 +80,93 @@ export default class AddLocation extends React.Component {
   closeRouteModal = () => {
     this.setState({routeModalVisible:false});
   };
+
+  selectImage = async () => {
+    console.log("Add Photo Location Button Clicked");
+    if(!GLOBAL.ISLOGGEDIN){
+      this.clearAllState();
+      Alert.alert("MUST BE LOGGED IN");
+      this.props.navigation.navigate('Home');
+    }else {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+    if (!result.cancelled) {this.setState({ image  : result.uri });}
+    GLOBAL.LOCATIONIMAGEBASE64 = this.state.image;
+ }
+  }
+
   uploadLocationImage = () => {
+    this.addPointsForImage();
+    Image.getSize(this.state.image, (width, height) => {
+      let imageSettings = {
+        offset: { x: 0, y: 0 },
+        size: { width: width, height: height }
+      };
+      ImageEditor.cropImage(this.state.image, imageSettings, (uri) => {
+        ImageStore.getBase64ForTag(uri, (data) => {
+          this.setState({base64Image: data});
+          GLOBAL.LOCATIONIMAGEBASE64 = "data:image/png;base64," + this.state.base64Image;
+          console.log("BASE64:  " + GLOBAL.LOCATIONIMAGEBASE64);
+          const uploadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploadlocationimage";
+          fetch(uploadLocationImageURL, {
+                 method: 'POST',
+                 headers: {
+                   Accept: 'application/json',
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                   location: this.state.location,
+                   base64: GLOBAL.LOCATIONIMAGEBASE64,
+                 })
+            }).then(response => {
+              //if response is 200 (success), alert user and log response
+              if(response.status === 200) {
+                  console.log("The Image Submission Was Successful");
+                  if(this.state.routeSubmitted == true && this.state.locationSubmitted == true){
+                    Alert.alert(
+                      'Submission Successful',
+                      'Thank you for your submission!',
+                      [
+                        {text: 'OK', onPress: () =>   this.clearAllState()},
+                      ],
+                    )
+                  }
+                  else{
+                    console.log("RouteSubmitted: " + this.state.routeSubmitted + "  LocationSubmitted: " + this.state.locationSubmitted);
+                    Alert.alert(
+                      'Part of the Submission Could Not be Accepted at this Time.',
+                      ' ',
+                      [
+                        {text: 'OK', onPress: () =>   this.clearAllState()},
+                      ],
+                    )
+
+                  }
+
+              }
+              //if response is status 400 (key not unique), alert user location exists and log response
+              else if(response.status === 400){
+                  console.log("An Image Submission Error Has Occurred");
+              }
+              //if any other response is received, alert user something went wrong and log response
+              else{
+                  console.log("An Unknown Error Has Occurred");
+              }
+              console.log("Response status: " + response.status)
+
+            })
+          .catch((error) => {
+          console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
+          });
+        }, e => console.warn("getBase64ForTag: ", e))
+      }, e => console.warn("cropImage: ", e))
+    })
+
+  }
+
+  uploadDefaultLocationImage = () => {
       console.log("Uploading default location image");
             const uploadLocationImageURL = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/imageapi/uploadlocationimage";
             fetch(uploadLocationImageURL, {
@@ -86,12 +179,47 @@ export default class AddLocation extends React.Component {
                      location: this.state.location,
                      base64: GLOBAL.DEFAULTLOCATIONIMAGE,
                    })
+              }).then(response => {
+                //if response is 200 (success), alert user and log response
+                if(response.status === 200) {
+                    console.log("The Image Submission Was Successful");
+                    if(this.state.routeSubmitted == true && this.state.locationSubmitted == true){
+                      Alert.alert(
+                        'Submission Successful',
+                        'Thank you for your submission!',
+                        [
+                          {text: 'OK', onPress: () =>   this.clearAllState()},
+                        ],
+                      )
+                    }
+                    else{
+                      console.log("RouteSubmitted: " + this.state.routeSubmitted + "  LocationSubmitted: " + this.state.locationSubmitted);
+                      Alert.alert(
+                        'Part of the Submission Cannot Be Accepted at this Time.',
+                        ' ',
+                        [
+                          {text: 'OK', onPress: () =>   this.clearAllState()},
+                        ],
+                      )
+
+                    }
+                }
+                //if response is status 400 (key not unique), alert user location exists and log response
+                else if(response.status === 400){
+                    console.log("An Image Submission Error Has Occurred");
+                }
+                //if any other response is received, alert user something went wrong and log response
+                else{
+                    console.log("An Unknown Error Has Occurred");
+                }
+                console.log("Response status: " + response.status)
+
               })
             .catch((error) => {
             console.log("Error in uploading user image: " + error.code + " USER IMAGE UPLOAD ERROR MESSAGE: " + error.message);
             })
   };
-  uploadLocation = (location, desc, lat, long, cat) => {
+  uploadLocation = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
         console.log("Uploading location");
         const locationUrl = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/addlocation";
         fetch(locationUrl, {
@@ -112,6 +240,7 @@ export default class AddLocation extends React.Component {
           if(response.status === 200) {
               console.log("The Location Submission Was Successful");
               this.setState({locationSubmitted: true});
+              this.uploadRoute(location, busOperator, routeName, busStop, walkingDesc);
           }
           //if response is status 400 (key not unique), alert user location exists and log response
           else if(response.status === 400){
@@ -151,6 +280,12 @@ export default class AddLocation extends React.Component {
               if(response.status === 200) {
                   console.log("The Route Submission Was Successful");
                   this.setState({routeSubmitted: true});
+                  if(!this.state.image){
+                    this.uploadDefaultLocationImage();
+                  }
+                  else{
+                    this.uploadLocationImage();
+                  }
               }
               //if response is status 400 (key not unique), alert user location exists and log response
               else if(response.status === 400){
@@ -189,9 +324,7 @@ export default class AddLocation extends React.Component {
     GLOBAL.LONGITUDE = '';
   }
 
-//Takes input from form, sends to api
-  submitPress = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
-    console.log("Latitude: " + GLOBAL.LATITUDE + "     Longitude: " + GLOBAL.LONGITUDE);
+  addPointsForLocation = () => {
     const uploadLocationImageURL2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/updatescore";
     fetch(uploadLocationImageURL2, {
            method: 'POST',
@@ -207,6 +340,28 @@ export default class AddLocation extends React.Component {
     .catch((error) => {
     console.log("Error in uploading point add (add location)");
     });
+  }
+  addPointsForImage = () => {
+    const uploadLocationImageURL2 = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/userapi/updatescore";
+    fetch(uploadLocationImageURL2, {
+           method: 'POST',
+           headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             userID: GLOBAL.USERID,
+             score: "100",
+           })
+      })
+    .catch((error) => {
+    console.log("Error in uploading point add (add location)");
+    });
+  }
+
+//Takes input from form, sends to api
+  submitPress = (location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc) => {
+    console.log("Latitude: " + GLOBAL.LATITUDE + "     Longitude: " + GLOBAL.LONGITUDE);
     if(!lat) {
       lat = GLOBAL.LATITUDE;
     }
@@ -214,6 +369,7 @@ export default class AddLocation extends React.Component {
       long = GLOBAL.LONGITUDE;
     }
     if(!GLOBAL.ISLOGGEDIN){
+      this.clearAllState();
       Alert.alert("MUST BE LOGGED IN");
       this.props.navigation.navigate('Home');
     }
@@ -230,32 +386,8 @@ export default class AddLocation extends React.Component {
       }
       else{
         //If form is complete, send post requests
-        this.uploadLocation(location, desc, lat, long, cat);
-        this.uploadRoute(location, busOperator, routeName, busStop, walkingDesc);
-        this.uploadLocationImage();
-
-        if(this.state.routeSubmitted == true && this.state.locationSubmitted == true){
-          Alert.alert(
-            'Submission Successful',
-            'Thank you for your submission!',
-            [
-              {text: 'OK', onPress: () =>   this.clearAllState()},
-            ],
-          )
-        }
-        else{
-          console.log("RouteSubmitted: " + this.state.routeSubmitted + "  LocationSubmitted: " + this.state.locationSubmitted);
-          Alert.alert(
-            'Submission Successful',
-            ' ',
-            [
-              {text: 'OK', onPress: () =>   this.clearAllState()},
-            ],
-          )
-
-        }
-
-
+        this.addPointsForLocation();
+        this.uploadLocation(location, desc, lat, long, cat, busOperator, routeName, busStop, walkingDesc);
       }
   }
 
@@ -352,7 +484,7 @@ export default class AddLocation extends React.Component {
             </Item>
 
             <Button block
-              style={styles.selectLocationButton}
+              style={styles.mapButton}
               onPress={() => this.openModal()}>
                 <Text style={styles.buttonText}>Select Location</Text>
             </Button>
@@ -409,12 +541,26 @@ export default class AddLocation extends React.Component {
                </View>
              </Modal>
 
+             <Item style={styles.formText}>
+               <Label style={styles.label}></Label>
+             </Item>
 
              <Button block
                style={styles.mapButton}
                onPress={() => this.openRouteModal()}>
                  <Text style={styles.buttonText}>Describe Nearest Bus Stop</Text>
              </Button>
+             <Item style={styles.formText}>
+               <Label style={styles.label}></Label>
+             </Item>
+             <Button block
+               style={styles.mapButton}
+               onPress={() => this.selectImage()}>
+                 <Text style={styles.buttonText}>Select Image</Text>
+             </Button>
+             <Item style={styles.formText}>
+               <Label style={styles.label}></Label>
+             </Item>
              <Item style={styles.formText}>
                <Label style={styles.label}></Label>
              </Item>
