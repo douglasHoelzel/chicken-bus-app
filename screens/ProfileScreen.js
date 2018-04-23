@@ -327,7 +327,7 @@ render() {
               <Text>Under 50: <Image style={styles.badgeInfoButton1} source={require('../assets/images/badge1.png')}/></Text>
             </ListItem>
             <ListItem>
-              <Text>10 - 400: <Image style={styles.badgeInfoButton2} source={require('../assets/images/badge2.png')}/></Text>
+              <Text>50 - 400: <Image style={styles.badgeInfoButton2} source={require('../assets/images/badge2.png')}/></Text>
             </ListItem>
             <ListItem>
               <Text>401 - 600: <Image style={styles.badgeInfoButton3} source={require('../assets/images/badge3.png')}/></Text>

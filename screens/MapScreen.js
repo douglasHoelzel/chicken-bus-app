@@ -29,6 +29,7 @@ constructor(props){
     this.state = {
         markers: [],
         tempRoutes: [],
+        tempContributor: 'Doug',
         isButtonDisabled: false,
         isMainModalVisible: false,
         isRouteModalVisible: false,
@@ -413,7 +414,7 @@ likePress = (location, choice) => {
                             <Text>Comments:  Comments can go here </Text>
                           </ListItem>
                           <ListItem>
-                            <Text>Placeholder: More information can go here </Text>
+                            <Text>Contributor:  <Image style={styles.userBadgeImage} source={ GLOBAL.REPUTATION_IMAGE }></Image> { this.state.tempContributor }</Text>
                           </ListItem>
 
                      </List>
@@ -647,6 +648,12 @@ plusSignIcon:{
     height: 20,
     marginTop: 15,
     marginLeft: 15,
+},
+userBadgeImage:{
+    height: 20,
+    width: 20,
+    marginLeft: 0,
+    marginTop: 5,
 },
 cameraIcon:{
     width: 20,
