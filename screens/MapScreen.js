@@ -29,7 +29,7 @@ constructor(props){
     this.state = {
         markers: [],
         tempRoutes: [],
-        contributor: 'Doug',
+        contributor: '',
         isButtonDisabled: false,
         isMainModalVisible: false,
         isRouteModalVisible: false,
@@ -68,7 +68,7 @@ getSingleLocation = async (location) => {
     this.setState({ currentLikeCount: json.doc.likes });
     this.setState({ currentDislikeCount: json.doc.dislikes });
     // uncomment the line below when the backend is ready for contributor
-    //this.setState({ contributor: json.doc.contributor });
+    this.setState({ contributor: json.doc.contributor });
     this.downloadUserImage();
 };
 toggleMainModal = (location) => {
