@@ -234,6 +234,9 @@ export default class AddLocation extends React.Component {
                 latitude: lat,
                 longitude: long,
                 category: cat,
+             // one the backend can accept the contributor
+             // parameter uncomment the line below
+             // contributor: GLOBAL.USERNAME,
               })
         }).then(response => {
           //if response is 200 (success), alert user and log response

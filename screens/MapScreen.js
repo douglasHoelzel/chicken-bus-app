@@ -29,7 +29,7 @@ constructor(props){
     this.state = {
         markers: [],
         tempRoutes: [],
-        tempContributor: 'Doug',
+        contributor: 'Doug',
         isButtonDisabled: false,
         isMainModalVisible: false,
         isRouteModalVisible: false,
@@ -61,10 +61,14 @@ getSingleLocation = async (location) => {
     const url = "https://nodejs-mongo-persistent-nmchenry.cloudapps.unc.edu/locationapi/getlocation/" + location;
     const response = await fetch(url);
     const json = await response.json();
+    console.log("data coming back from single location ajax call");
+    console.log(json);
     this.setState({ tempLocation: json.doc });
     this.setState({ tempLocationTitle: json.doc.title });
     this.setState({ currentLikeCount: json.doc.likes });
     this.setState({ currentDislikeCount: json.doc.dislikes });
+    // uncomment the line below when the backend is ready for contributor
+    //this.setState({ contributor: json.doc.contributor });
     this.downloadUserImage();
 };
 toggleMainModal = (location) => {
@@ -414,7 +418,7 @@ likePress = (location, choice) => {
                             <Text>Comments:  Comments can go here </Text>
                           </ListItem>
                           <ListItem>
-                            <Text>Contributor:  <Image style={styles.userBadgeImage} source={ GLOBAL.REPUTATION_IMAGE }></Image> { this.state.tempContributor }</Text>
+                            <Text>Contributor:  <Image style={styles.userBadgeImage} source={ GLOBAL.REPUTATION_IMAGE }></Image> { this.state.contributor }</Text>
                           </ListItem>
 
                      </List>
