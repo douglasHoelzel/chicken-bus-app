@@ -67,7 +67,6 @@ getSingleLocation = async (location) => {
     this.setState({ tempLocationTitle: json.doc.title });
     this.setState({ currentLikeCount: json.doc.likes });
     this.setState({ currentDislikeCount: json.doc.dislikes });
-    // uncomment the line below when the backend is ready for contributor
     this.setState({ contributor: json.doc.contributor });
     this.downloadUserImage();
 };
