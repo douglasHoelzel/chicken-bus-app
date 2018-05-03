@@ -408,15 +408,6 @@ likePress = (location, choice) => {
                             <Text>Category: {this.state.tempLocation.category} </Text>
                           </ListItem>
                           <ListItem>
-                            <Text>City: Chapel Hill </Text>
-                          </ListItem>
-                          <ListItem>
-                            <Text>Times Visited:  847 </Text>
-                          </ListItem>
-                          <ListItem>
-                            <Text>Comments:  Comments can go here </Text>
-                          </ListItem>
-                          <ListItem>
                             <Text>Contributor:  <Image style={styles.userBadgeImage} source={ GLOBAL.REPUTATION_IMAGE }></Image> { this.state.contributor }</Text>
                           </ListItem>
 
