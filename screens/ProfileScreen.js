@@ -222,24 +222,6 @@ render() {
               <ListItem>
                 <Text>Reputation: { GLOBAL.REPUTATION } </Text>
               </ListItem>
-              <ListItem>
-                <Text>Locations Added:  11 </Text>
-              </ListItem>
-              <ListItem>
-                <Text>Liked Locations:  23 </Text>
-              </ListItem>
-              <ListItem>
-                <Text>Comments:  Comments can go here </Text>
-              </ListItem>
-              <ListItem>
-                <Text>Placeholder: Some other data can go here </Text>
-              </ListItem>
-              <ListItem>
-                <Text>Placeholder: Some other data can go here </Text>
-              </ListItem>
-              <ListItem>
-                <Text>Placeholder: Some other data can go here </Text>
-              </ListItem>
          </List>
          {/* Change Screen Name Button */}
          <Button block style={styles.backButton}
