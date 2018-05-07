@@ -222,6 +222,18 @@ render() {
               <ListItem>
                 <Text>Reputation: { GLOBAL.REPUTATION } </Text>
               </ListItem>
+              <ListItem>
+                <Text>Locations Added:  11 </Text>
+              </ListItem>
+              <ListItem>
+                <Text>Liked Locations:  23 </Text>
+              </ListItem>
+              <ListItem>
+                <Text>Comments: Reputation rising quickly </Text>
+              </ListItem>
+              <ListItem>
+                <Text>Username: {GLOBAL.USERNAME} </Text>
+              </ListItem>
          </List>
          {/* Change Screen Name Button */}
          <Button block style={styles.backButton}
@@ -309,7 +321,7 @@ render() {
               <Text>Under 50: <Image style={styles.badgeInfoButton1} source={require('../assets/images/badge1.png')}/></Text>
             </ListItem>
             <ListItem>
-              <Text>50 - 400: <Image style={styles.badgeInfoButton2} source={require('../assets/images/badge2.png')}/></Text>
+              <Text>10 - 400: <Image style={styles.badgeInfoButton2} source={require('../assets/images/badge2.png')}/></Text>
             </ListItem>
             <ListItem>
               <Text>401 - 600: <Image style={styles.badgeInfoButton3} source={require('../assets/images/badge3.png')}/></Text>
